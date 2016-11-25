@@ -11,34 +11,17 @@
 -------------------------------------------------
 """
 import re
+import sys
 import requests
-from lxml import etree
 
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
-def robust(func):
-    def decorate(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except Exception as e:
-            print u"sorry, 抓取出错。错误原因:"
-            print e
-
-    return decorate
-
-
-def verifyProxy(proxy):
-    """
-    检查代理格式
-    :param proxy:
-    :return:
-    """
-    verify_regex = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}"
-    return True if re.findall(verify_regex, proxy) else False
+from Util.utilFunction import robustCrawl, getHtmlTree
 
 
 # 快代理
-# noinspection PyPep8Naming
-@robust
+@robustCrawl
 def freeProxyFirst(page=10):
     """
     抓取快代理IP http://www.kuaidaili.com/
@@ -48,25 +31,45 @@ def freeProxyFirst(page=10):
     url_list = ('http://www.kuaidaili.com/proxylist/{page}/'.format(page=page) for page in range(1, page + 1))
     # 页数不用太多， 后面的全是历史IP， 可用性不高
     for url in url_list:
-        html = requests.get(url).content
-        tree = etree.HTML(html)
+        tree = getHtmlTree(url)
         proxy_list = tree.xpath('.//div[@id="index_free_list"]//tbody/tr')
         for proxy in proxy_list:
             yield ':'.join(proxy.xpath('./td/text()')[0:2])
 
 
 # 代理66
-@robust
-def freeProxySecond(proxy_number):
+@robustCrawl
+def freeProxySecond(proxy_number=100):
     """
     抓取代理66 http://www.66ip.cn/
     :param proxy_number: 代理数量
     :return:
     """
-    pass
+    url = "http://m.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
+        proxy_number)
+    html = requests.get(url).content
+    for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}', html):
+        yield proxy
 
+# 快代理
+def freeProxyThird(days=1):
+    """
+    抓取快代理 http://www.youdaili.net/Daili/http/
+    :param days:
+    :return:
+    """
+    url = "http://www.youdaili.net/Daili/http/"
+    tree = getHtmlTree(url)
+    page_url_list = tree.xpath('.//div[@class="chunlist"]/ul//a/@href')[0:days]
+    for page_url in page_url_list:
+        html = requests.get(page_url).content
+        proxy_list = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}', html)
+        for proxy in proxy_list:
+            yield proxy
 
 if __name__ == '__main__':
-    # for e in freeProxyFirst():
-    #     print e
-    pass
+    for e in freeProxyThird():
+        print e
+
+
+
