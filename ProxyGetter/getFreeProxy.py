@@ -51,10 +51,11 @@ def freeProxySecond(proxy_number=100):
     for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}', html):
         yield proxy
 
-# 快代理
+# 有代理
+@robustCrawl
 def freeProxyThird(days=1):
     """
-    抓取快代理 http://www.youdaili.net/Daili/http/
+    抓取有代理 http://www.youdaili.net/Daili/http/
     :param days:
     :return:
     """
@@ -67,8 +68,20 @@ def freeProxyThird(days=1):
         for proxy in proxy_list:
             yield proxy
 
+# 西刺
+@robustCrawl
+def freeProxyFourth():
+    """
+    抓取西刺代理 http://api.xicidaili.com/free2016.txt
+    :return:
+    """
+    url = "http://api.xicidaili.com/free2016.txt"
+    html = requests.get(url).content
+    for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}', html):
+            yield proxy
+
 if __name__ == '__main__':
-    for e in freeProxyThird():
+    for e in freeProxyFourth():
         print e
 
 
