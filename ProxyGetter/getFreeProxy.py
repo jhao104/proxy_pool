@@ -46,10 +46,11 @@ def freeProxySecond(proxy_number=100):
     :return:
     """
     url = "http://m.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
-        proxy_number)
+            proxy_number)
     html = requests.get(url).content
     for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}', html):
         yield proxy
+
 
 # 有代理
 @robustCrawl
@@ -68,6 +69,7 @@ def freeProxyThird(days=1):
         for proxy in proxy_list:
             yield proxy
 
+
 # 西刺
 @robustCrawl
 def freeProxyFourth():
@@ -78,11 +80,23 @@ def freeProxyFourth():
     url = "http://api.xicidaili.com/free2016.txt"
     html = requests.get(url).content
     for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}', html):
-            yield proxy
+        yield proxy
+
+
+# guobanjia
+@robustCrawl
+def freeProxyFifth():
+    """
+    抓取guobanjia http://www.goubanjia.com/free/gngn/index.shtml
+    :return:
+    """
+    url = "http://www.goubanjia.com/free/gngn/index.shtml"
+    tree = getHtmlTree(url)
+    proxy_list = tree.xpath('.//td[@class="ip"]')
+    for proxy in proxy_list:
+        yield ''.join(proxy.xpath('.//text()'))
+
 
 if __name__ == '__main__':
-    for e in freeProxyFourth():
+    for e in freeProxyFifth():
         print e
-
-
-
