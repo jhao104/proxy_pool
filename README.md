@@ -26,12 +26,19 @@
 代理池由四部分组成:
 
 * ProxyGetter:
+
 　　代理获取接口，目前有5个免费代理源，每调用一次就会抓取这个5个网站的最新代理放入DB，可自行添加额外的代理获取接口；
+
 * DB:
+
 　　用于存放代理IP，现在暂时只支持SSDB。至于为什么选择SSDB，大家可以参考这篇[文章](https://www.sdk.cn/news/2684),个人觉得SSDB是个不错的Redis替代方案；
+
 * Schedule:
+
 　　计划任务用户定时去检测DB中的代理可用性，删除不可用的代理。同时也会主动通过ProxyGetter去获取最新代理放入DB；
+
 * ProxyApi:
+
 　　代理池的外部接口，由于现在这么代理池功能比较简单，由Flask就能搞定。功能是给爬虫提供get/delete/refresh等接口，方便爬虫直接使用。
 <!--#### 功能图纸-->
 <!--![设计](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p2.png)-->
