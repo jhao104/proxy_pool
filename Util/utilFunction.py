@@ -2,7 +2,7 @@
 """
 -------------------------------------------------
    File Name：     utilFunction.py  
-   Description :  工具函数
+   Description :  tool function
    Author :       JHao
    date：          2016/11/25
 -------------------------------------------------
