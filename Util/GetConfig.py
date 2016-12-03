@@ -42,7 +42,7 @@ class GetConfig(object):
 
     @LazyProperty
     def db_port(self):
-        return self.config_file.get('DB', 'port')
+        return int(self.config_file.get('DB', 'port'))
 
 
 if __name__ == '__main__':
