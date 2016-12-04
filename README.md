@@ -97,5 +97,39 @@ pip install -r requirements.txt
 ```
 
 ### 5、使用
+　　定时任务启动后，会通过代理获取方法fetch所有代理放入数据库并验证。此后默认每20分钟会重复执行一次。定时任务启动大概一两分钟后，便可在SSDB中看到刷新出来的可用的代理：
+    ![useful_proxy](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p3.png)
+    
+　　启动ProxyApi.py后即可在浏览器中使用接口获取代理，一下是浏览器中的截图:
 
-待更新，请耐心等待。。。。
+　　index页面:
+    ![index](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p6.png)
+    
+　　get：
+    ![get](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p5.png)
+
+　　get_all：
+    ![get_all](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p4.png)
+    
+
+　　爬虫中使用，如果要在爬虫代码中使用的话， 可以将此api封装成函数直接使用，例如:
+```
+import requests
+
+def get_proxy():
+    return requests.get("http://127.0.0.1:5000/get/").content
+
+def delete_proxy(proxy):
+    requests.get("http://127.0.0.1:5000/delete/?proxy={}".format(proxy))
+
+# your spider code
+
+def spider():
+    # ....
+    requests.get('https://www.example.com', proxies={"http": "http://{}".format(get_proxy)})
+    # ....
+
+```
+
+### 6、最后
+　　时间仓促，功能和代码都比较简陋，以后有时间再改进。喜欢的在github上给个star。感谢！
