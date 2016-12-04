@@ -42,7 +42,7 @@
 
 　　代理池的外部接口，由于现在这么代理池功能比较简单，花两个小时看了下[Flask](http://flask.pocoo.org/)，愉快的决定用Flask搞定。功能是给爬虫提供get/delete/refresh等接口，方便爬虫直接使用。
 <!--#### 功能图纸-->
-![设计](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p2.png)
+![设计](https://pic2.zhimg.com/v2-f2756da2986aa8a8cab1f9562a115b55_b.png)
 
 ### 3、代码模块
 
@@ -98,18 +98,19 @@ pip install -r requirements.txt
 
 ### 5、使用
 　　定时任务启动后，会通过代理获取方法fetch所有代理放入数据库并验证。此后默认每20分钟会重复执行一次。定时任务启动大概一两分钟后，便可在SSDB中看到刷新出来的可用的代理：
-    ![useful_proxy](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p3.png)
+    
+![useful_proxy](https://pic2.zhimg.com/v2-12f9b7eb72f60663212f317535a113d1_b.png)
     
 　　启动ProxyApi.py后即可在浏览器中使用接口获取代理，一下是浏览器中的截图:
 
 　　index页面:
-    ![index](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p6.png)
+    ![index](https://pic3.zhimg.com/v2-a867aa3db1d413fea8aeeb4c693f004a_b.png)
     
 　　get：
-    ![get](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p5.png)
+    ![get](https://pic1.zhimg.com/v2-f54b876b428893235533de20f2edbfe0_b.png)
 
 　　get_all：
-    ![get_all](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p4.png)
+    ![get_all](https://pic3.zhimg.com/v2-5c79f8c07e04f9ef655b9bea406d0306_b.png)
     
 
 　　爬虫中使用，如果要在爬虫代码中使用的话， 可以将此api封装成函数直接使用，例如:
