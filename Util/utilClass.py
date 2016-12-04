@@ -29,3 +29,18 @@ class LazyProperty(object):
             value = self.func(instance)
             setattr(instance, self.func.__name__, value)
             return value
+
+
+from ConfigParser import ConfigParser
+
+
+class ConfigParse(ConfigParser):
+    """
+    rewrite ConfigParser, for support upper option
+    """
+
+    def __init__(self):
+        ConfigParser.__init__(self)
+
+    def optionxform(self, optionstr):
+        return optionstr
