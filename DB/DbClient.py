@@ -12,7 +12,11 @@
 """
 __author__ = 'JHao'
 
+import os
+import sys
 from Util.GetConfig import GetConfig
+
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
 class DbClient(object):
@@ -51,6 +55,9 @@ class DbClient(object):
 
     def pop(self, **kwargs):
         return self.client.pop(**kwargs)
+
+    def changeTable(self, name):
+        self.client.changeTable(name)
 
 
 if __name__ == "__main__":

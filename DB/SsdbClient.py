@@ -33,7 +33,7 @@ class SsdbClient(object):
         self.name = name
         self.__conn = SSDB(connection_pool=BlockingConnectionPool(host=host, port=port))
 
-    def get(self, **kwargs):
+    def get(self):
         """
         get an item from the queue front
         :return:
@@ -41,19 +41,22 @@ class SsdbClient(object):
         value = self.__conn.qfront(name=self.name)
         return value
 
-    def put(self, value, **kwargs):
+    def put(self, value):
         """
         put an  item in the back of a queue
         :param value:
         :return:
         """
         value = json.dump(value, ensure_ascii=False).encode('utf-8') if isinstance(value, (dict, list)) else value
-        return self.__conn.qpush_back(self.name, value, **kwargs)
+        return self.__conn.qpush_back(self.name, value)
 
-    def pop(self, **kwargs):
+    def pop(self):
         """
         pop an item from the queue front
         :return:
         """
         value = self.__conn.qpop_front(self.name)
         return value[0] if value else value
+
+    def changeTable(self, name):
+        self.name = name
