@@ -56,10 +56,16 @@ class DbClient(object):
     def pop(self, **kwargs):
         return self.client.pop(**kwargs)
 
+    def delete(self, value, **kwargs):
+        return self.client.delete(value, **kwargs)
+
+    def getAll(self):
+        return self.client.getAll()
+
     def changeTable(self, name):
         self.client.changeTable(name)
 
 
 if __name__ == "__main__":
-    account = DbClient().pop()
+    account = DbClient().delete('123')
     print(account)

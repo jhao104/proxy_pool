@@ -14,6 +14,7 @@ __author__ = 'JHao'
 
 from ssdb.connection import BlockingConnectionPool
 from ssdb import SSDB
+import random
 import json
 
 
@@ -35,28 +36,40 @@ class SsdbClient(object):
 
     def get(self):
         """
-        get an item from the queue front
+        get an item
         :return:
         """
-        value = self.__conn.qfront(name=self.name)
-        return value
+        values = self.__conn.hgetall(name=self.name)
+        return random.choice(values.keys())
 
     def put(self, value):
         """
-        put an  item in the back of a queue
+        put an  item
         :param value:
         :return:
         """
         value = json.dump(value, ensure_ascii=False).encode('utf-8') if isinstance(value, (dict, list)) else value
-        return self.__conn.qpush_back(self.name, value)
+        return self.__conn.hset(self.name, value, None)
 
     def pop(self):
         """
-        pop an item from the queue front
+        pop an item
         :return:
         """
-        value = self.__conn.qpop_front(self.name)
-        return value[0] if value else value
+        key = self.get()
+        self.__conn.hdel(self.name, key)
+        return key
+
+    def delete(self, key):
+        """
+        delete an item
+        :param key:
+        :return:
+        """
+        self.__conn.hdel(self.name, key)
+
+    def getAll(self):
+        return self.__conn.hgetall(self.name).keys()
 
     def changeTable(self, name):
         self.name = name
