@@ -42,7 +42,7 @@
 
 　　代理池的外部接口，由于现在这么代理池功能比较简单，花两个小时看了下[Flask](http://flask.pocoo.org/)，愉快的决定用Flask搞定。功能是给爬虫提供get/delete/refresh等接口，方便爬虫直接使用。
 <!--#### 功能图纸-->
-<!--![设计](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p2.png)-->
+![设计](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p2.png)
 
 ### 3、代码模块
 
@@ -87,6 +87,7 @@ pip install -r requirements.txt
 
 ```
 需要分别启动定时任务和api
+到Config.ini中配置你的SSDB
 
 到Schedule目录下:
 >>>python ProxyRefreshSchedule.py
@@ -94,4 +95,7 @@ pip install -r requirements.txt
 到Api目录下:
 >>>python ProxyApi.py
 ```
+
+### 5、使用
+
 待更新，请耐心等待。。。。
