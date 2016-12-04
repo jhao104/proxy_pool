@@ -104,13 +104,16 @@ pip install -r requirements.txt
 　　启动ProxyApi.py后即可在浏览器中使用接口获取代理，一下是浏览器中的截图:
 
 　　index页面:
-    ![index](https://pic3.zhimg.com/v2-a867aa3db1d413fea8aeeb4c693f004a_b.png)
+
+![index](https://pic3.zhimg.com/v2-a867aa3db1d413fea8aeeb4c693f004a_b.png)
     
 　　get：
-    ![get](https://pic1.zhimg.com/v2-f54b876b428893235533de20f2edbfe0_b.png)
+
+![get](https://pic1.zhimg.com/v2-f54b876b428893235533de20f2edbfe0_b.png)
 
 　　get_all：
-    ![get_all](https://pic3.zhimg.com/v2-5c79f8c07e04f9ef655b9bea406d0306_b.png)
+
+![get_all](https://pic3.zhimg.com/v2-5c79f8c07e04f9ef655b9bea406d0306_b.png)
     
 
 　　爬虫中使用，如果要在爬虫代码中使用的话， 可以将此api封装成函数直接使用，例如:
