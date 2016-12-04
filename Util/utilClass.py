@@ -8,6 +8,7 @@
 -------------------------------------------------
    Change Activity:
                    2016/12/3: Class LazyProperty
+                   2016/12/4: rewrite ConfigParser
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -44,3 +45,16 @@ class ConfigParse(ConfigParser):
 
     def optionxform(self, optionstr):
         return optionstr
+
+
+class Singleton(type):
+    """
+    Singleton Metaclass
+    """
+
+    _inst = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._inst:
+            cls._inst[cls] = super(Singleton, cls).__call__(*args)
+        return cls._inst[cls]

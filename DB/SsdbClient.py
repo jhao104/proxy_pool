@@ -40,7 +40,7 @@ class SsdbClient(object):
         :return:
         """
         values = self.__conn.hgetall(name=self.name)
-        return random.choice(values.keys())
+        return random.choice(values.keys()) if values else None
 
     def put(self, value):
         """
@@ -57,7 +57,8 @@ class SsdbClient(object):
         :return:
         """
         key = self.get()
-        self.__conn.hdel(self.name, key)
+        if key:
+            self.__conn.hdel(self.name, key)
         return key
 
     def delete(self, key):

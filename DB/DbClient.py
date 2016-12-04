@@ -15,6 +15,7 @@ __author__ = 'JHao'
 import os
 import sys
 from Util.GetConfig import GetConfig
+from Util.utilClass import Singleton
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -23,6 +24,8 @@ class DbClient(object):
     """
     DbClient
     """
+
+    __metaclass__ = Singleton
 
     def __init__(self):
         """
@@ -67,5 +70,8 @@ class DbClient(object):
 
 
 if __name__ == "__main__":
-    account = DbClient().delete('123')
+    account = DbClient()
+    print account.get()
+    account.changeTable('use')
+    account.put('ac')
     print(account)
