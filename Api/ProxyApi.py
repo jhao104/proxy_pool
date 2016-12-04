@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# !/usr/bin/env python
 """
 -------------------------------------------------
    File Name：     ProxyApi.py  
@@ -29,26 +30,31 @@ api_list = {
 def index():
     return jsonify(api_list)
 
+
 @app.route('/get/')
 def get():
     proxy = ProxyManager().get()
     return proxy
+
 
 @app.route('/refresh/')
 def refresh():
     ProxyManager().refresh()
     return 'success'
 
+
 @app.route('/get_all/')
 def getAll():
     proxys = ProxyManager().getAll()
     return jsonify(proxys)
+
 
 @app.route('/delete/', methods=['GET'])
 def delete():
     proxy = request.args.get('proxy')
     ProxyManager().delete(proxy)
     return 'success'
+
 
 if __name__ == '__main__':
     app.run()

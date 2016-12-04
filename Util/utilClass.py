@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# !/usr/bin/env python
 """
 -------------------------------------------------
    File Name：     utilClass.py  

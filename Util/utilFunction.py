@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# !/usr/bin/env python
 """
 -------------------------------------------------
    File Name：     utilFunction.py  
@@ -34,6 +35,7 @@ def verifyProxy(proxy):
     verify_regex = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}"
     return True if re.findall(verify_regex, proxy) else False
 
+
 def getHtmlTree(url, **kwargs):
     """
     获取html树
@@ -45,4 +47,3 @@ def getHtmlTree(url, **kwargs):
     from lxml import etree
     html = requests.get(url=url).content
     return etree.HTML(html)
-

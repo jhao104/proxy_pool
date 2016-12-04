@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# !/usr/bin/env python
 """
 -------------------------------------------------
    File Name：     ProxyManager.py  
@@ -15,6 +16,7 @@ __author__ = 'JHao'
 from DB.DbClient import DbClient
 from Util.GetConfig import GetConfig
 from ProxyGetter.GetFreeProxy import GetFreeProxy
+
 
 class ProxyManager(object):
     """
