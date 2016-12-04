@@ -98,7 +98,6 @@ pip install -r requirements.txt
 
 ### 5、使用
 　　定时任务启动后，会通过代理获取方法fetch所有代理放入数据库并验证。此后默认每20分钟会重复执行一次。定时任务启动大概一两分钟后，便可在SSDB中看到刷新出来的可用的代理：
-
     ![useful_proxy](http://ofcf9jxzt.bkt.clouddn.com/proxy_pool/p3.png)
     
 　　启动ProxyApi.py后即可在浏览器中使用接口获取代理，一下是浏览器中的截图:
