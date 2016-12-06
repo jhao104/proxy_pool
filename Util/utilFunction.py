@@ -32,7 +32,7 @@ def verifyProxy(proxy):
     :return:
     """
     import re
-    verify_regex = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}"
+    verify_regex = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}"
     return True if re.findall(verify_regex, proxy) else False
 
 

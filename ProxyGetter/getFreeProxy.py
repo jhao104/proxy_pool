@@ -56,7 +56,7 @@ class GetFreeProxy(object):
         url = "http://m.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
                 proxy_number)
         html = requests.get(url).content
-        for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}', html):
+        for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html):
             yield proxy
 
     @staticmethod
@@ -72,7 +72,7 @@ class GetFreeProxy(object):
         page_url_list = tree.xpath('.//div[@class="chunlist"]/ul//a/@href')[0:days]
         for page_url in page_url_list:
             html = requests.get(page_url).content
-            proxy_list = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}', html)
+            proxy_list = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html)
             for proxy in proxy_list:
                 yield proxy
 
@@ -85,7 +85,7 @@ class GetFreeProxy(object):
         """
         url = "http://api.xicidaili.com/free2016.txt"
         html = requests.get(url).content
-        for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,4}', html):
+        for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html):
             yield proxy
 
     @staticmethod
