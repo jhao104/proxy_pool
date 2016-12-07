@@ -53,24 +53,31 @@
 　　Python中高层次的数据结构,动态类型和动态绑定,使得它非常适合于快速应用开发,也适合于作为胶水语言连接已有的软件部件。用Python来搞这个代理IP池也很简单，代码分为6个模块：
 
 * Api:
+
 　　api接口相关代码，目前api是由Flask实现，代码也非常简单。客户端请求传给Flask，Flask调用ProxyManager中的实现，包括`get/delete/refresh/get_all`；
 
 * DB:
+
 　　数据库相关代码，目前数据库是采用SSDB。代码用工厂模式实现，方便日后扩展其他类型数据库；
 
 * Manager:
+
 　　`get/delete/refresh/get_all`等接口的具体实现类，目前代理池只负责管理proxy，日后可能会有更多功能，比如代理和爬虫的绑定，代理和账号的绑定等等；
 
 * ProxyGetter:
+
 　　代理获取的相关代码，目前抓取了[快代理](http://www.kuaidaili.com)、[代理66](http://www.66ip.cn/)、[有代理](http://www.youdaili.net/Daili/http/)、[西刺代理](http://api.xicidaili.com/free2016.txt)、[guobanjia](http://www.goubanjia.com/free/gngn/index.shtml)这个五个网站的免费代理，经测试这个5个网站每天更新的可用代理只有六七十个，当然也支持自己扩展代理接口；
 
 * Schedule:
+
 　　定时任务相关代码，现在只是实现定时去刷新代码，并验证可用代理，采用多进程方式；
 
 * Util:
+
 　　存放一些公共的模块方法或函数，包含`GetConfig`:读取配置文件config.ini的类，`ConfigParse`: 集成重写ConfigParser的类，使其对大小写敏感， `Singleton`:实现单例，`LazyProperty`:实现类属性惰性计算。等等；
 
 * 其他文件:
+
 　　配置文件:Config.ini,数据库配置和代理获取接口配置，可以在GetFreeProxy中添加新的代理获取方法，并在Config.ini中注册即可使用；
 
 ### 4、安装
