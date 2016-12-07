@@ -15,7 +15,7 @@ __author__ = 'JHao'
 
 from DB.DbClient import DbClient
 from Util.GetConfig import GetConfig
-from ProxyGetter.GetFreeProxy import GetFreeProxy
+from ProxyGetter.getFreeProxy import GetFreeProxy
 
 
 class ProxyManager(object):
