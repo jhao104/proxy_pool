@@ -100,7 +100,7 @@ pip install -r requirements.txt
 需要分别启动定时任务和api
 到Config.ini中配置你的SSDB
 
-到Schedule目录下:
+项目目录下:
 >>>python ProxyRefreshSchedule.py
 
 到Api目录下:
