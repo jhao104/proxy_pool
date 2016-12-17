@@ -101,10 +101,10 @@ pip install -r requirements.txt
 到Config.ini中配置你的SSDB
 
 项目目录下:
->>>python ProxyRefreshSchedule.py
+>>>python -m Schedule.ProxyRefreshSchedule
 
 到Api目录下:
->>>python ProxyApi.py
+>>>python -m Api.ProxyApi
 ```
 
 ### 5、使用
