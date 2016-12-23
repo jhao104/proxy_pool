@@ -17,6 +17,9 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from multiprocessing import Process
 import requests
 import time
+import sys
+
+sys.path.append('../')
 
 from Manager.ProxyManager import ProxyManager
 

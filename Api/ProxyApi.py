@@ -14,6 +14,10 @@
 __author__ = 'JHao'
 
 from flask import Flask, jsonify, request
+import sys
+
+sys.path.append('../')
+
 from Manager.ProxyManager import ProxyManager
 
 app = Flask(__name__)
