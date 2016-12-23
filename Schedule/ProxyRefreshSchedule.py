@@ -65,7 +65,7 @@ def main(process_num=100):
 if __name__ == '__main__':
     # pp = ProxyRefreshSchedule()
     # pp.main()
-    main()
+    # main()
     sched = BlockingScheduler()
-    sched.add_job(main, 'interval', minute=20)
+    sched.add_job(main, 'interval', minutes=20)
     sched.start()
