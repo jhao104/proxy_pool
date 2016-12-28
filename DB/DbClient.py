@@ -44,12 +44,16 @@ class DbClient(object):
         __type = None
         if "SSDB" == self.config.db_type:
             __type = "SsdbClient"
+        elif "MongoDB" == self.config.db_type:
+            __type = "MongoClient"
         else:
             pass
         assert __type, 'type error, Not support DB type: {}'.format(self.config.db_type)
         self.client = getattr(__import__(__type), __type)(name=self.config.db_name,
                                                           host=self.config.db_host,
-                                                          port=self.config.db_port)
+                                                          port=self.config.db_port,
+                                                          uname=self.config.db_uname,
+                                                          passwd=self.config.db_passwd)
 
     def get(self, **kwargs):
         return self.client.get(**kwargs)

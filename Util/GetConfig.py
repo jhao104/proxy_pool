@@ -49,6 +49,13 @@ class GetConfig(object):
     def proxy_getter_functions(self):
         return self.config_file.options('ProxyGetter')
 
+    @LazyProperty
+    def db_uname(self):
+        return self.config_file.get('DB', 'uname')
+
+    @LazyProperty
+    def db_passwd(self):
+        return self.config_file.get('DB', 'passwd')
 
 if __name__ == '__main__':
     gg = GetConfig()
@@ -56,4 +63,6 @@ if __name__ == '__main__':
     print gg.db_name
     print gg.db_host
     print gg.db_port
+    print gg.db_uname
+    print gg.db_passwd
     print gg.proxy_getter_functions
