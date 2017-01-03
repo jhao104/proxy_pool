@@ -101,7 +101,6 @@ class GetFreeProxy(object):
         for i in xrange(15):
             d = tree.xpath('.//table[@class="table"]/tbody/tr[{}]/td'.format(i + 1))[0]
             o = d.xpath('.//span/text() | .//div/text()')
-            a = ''.join(o[:-1]) + ':' + o[-1]
             yield ''.join(o[:-1]) + ':' + o[-1]
 
 
