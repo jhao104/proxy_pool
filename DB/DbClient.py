@@ -23,7 +23,22 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 class DbClient(object):
     """
-    DbClient
+    DbClient DB工厂类 提供get/put/pop/delete/getAll/changeTable方法
+
+    目前存放代理的table/collection/hash有两种：
+        raw_proxy： 存放原始的代理；
+        useful_proxy_queue： 存放检验后的代理；
+
+    抽象方法定义：
+        get: 随机返回一个代理；
+        put: 放回一个代理；
+        delete: 删除指定代理；
+        getAll: 返回所有代理；
+        changeTable: 切换 table or collection or hash
+
+        所有方法需要相应类去具体实现：
+            SSDB：SsdbClient.py
+
     """
 
     __metaclass__ = Singleton
