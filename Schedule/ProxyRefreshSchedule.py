@@ -13,11 +13,12 @@
 """
 __author__ = 'JHao'
 
-from apscheduler.schedulers.blocking import BlockingScheduler
-from multiprocessing import Process
-import requests
-import time
 import sys
+import time
+from multiprocessing import Process
+
+import requests
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 sys.path.append('../')
 
@@ -48,6 +49,7 @@ class ProxyRefreshSchedule(ProxyManager):
                 pass
             self.db.changeTable(self.raw_proxy_queue)
             raw_proxy = self.db.pop()
+            print 'validate a  proxy'
 
 
 def refreshPool():
@@ -58,17 +60,41 @@ def refreshPool():
 def main(process_num=100):
     p = ProxyRefreshSchedule()
     p.refresh()
-
+    pl = []
     for num in range(process_num):
         P = Process(target=refreshPool, args=())
-        P.start()
-    print '{time}: refresh complete!'.format(time=time.ctime())
+        P.daemon = True
+        pl.append(P)
 
+    for num in range(process_num):
+        pl[num].start()
+
+    print 'all proc start'
+
+    for num in range(process_num):
+        pl[num].join()
+
+
+#
+#     print '{time}: refresh complete!'.format(time=time.ctime())
+
+
+def main(process_num=100):
+    p = ProxyRefreshSchedule()
+    p.refresh()
+    for num in range(process_num):
+        P = Process(target=refreshPool, args=())
+        P.daemon = True
+        P.start()
+        P.join()
+
+
+print '{time}: refresh complete!'.format(time=time.ctime())
 
 if __name__ == '__main__':
     # pp = ProxyRefreshSchedule()
     # pp.main()
     # main()
     sched = BlockingScheduler()
-    sched.add_job(main, 'interval', minutes=20)
+    sched.add_job(main, 'interval', seconds=2)
     sched.start()

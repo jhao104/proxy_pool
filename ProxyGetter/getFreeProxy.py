@@ -20,6 +20,8 @@ sys.setdefaultencoding('utf-8')
 
 from Util.utilFunction import robustCrawl, getHtmlTree
 
+# for debug to disable insecureWarning
+requests.packages.urllib3.disable_warnings()
 
 class GetFreeProxy(object):
     """
@@ -44,6 +46,7 @@ class GetFreeProxy(object):
             proxy_list = tree.xpath('.//div[@id="index_free_list"]//tbody/tr')
             for proxy in proxy_list:
                 yield ':'.join(proxy.xpath('./td/text()')[0:2])
+        print 'finish kuaidaili fetching proxy ip'
 
     @staticmethod
     @robustCrawl
@@ -58,6 +61,7 @@ class GetFreeProxy(object):
         html = requests.get(url).content
         for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html):
             yield proxy
+        print 'finish 66ip fetching proxy ip'
 
     @staticmethod
     @robustCrawl
@@ -75,6 +79,7 @@ class GetFreeProxy(object):
             proxy_list = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html)
             for proxy in proxy_list:
                 yield proxy
+        print 'finish youdaili fetching proxy ip'
 
     @staticmethod
     @robustCrawl
@@ -87,6 +92,7 @@ class GetFreeProxy(object):
         html = requests.get(url).content
         for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html):
             yield proxy
+        print 'finish xici fetching proxy ip'
 
     @staticmethod
     @robustCrawl
@@ -102,6 +108,7 @@ class GetFreeProxy(object):
             d = tree.xpath('.//table[@class="table"]/tbody/tr[{}]/td'.format(i + 1))[0]
             o = d.xpath('.//span/text() | .//div/text()')
             yield ''.join(o[:-1]) + ':' + o[-1]
+        print 'finish guobanjia fetching proxy ip'
 
 
 if __name__ == '__main__':
