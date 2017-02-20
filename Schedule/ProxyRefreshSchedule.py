@@ -94,7 +94,7 @@ print '{time}: refresh complete!'.format(time=time.ctime())
 if __name__ == '__main__':
     # pp = ProxyRefreshSchedule()
     # pp.main()
-    # main()
+    main()
     sched = BlockingScheduler()
     sched.add_job(main, 'interval', seconds=2)
     sched.start()
