@@ -50,7 +50,7 @@ def refresh():
 @app.route('/get_all/')
 def getAll():
     proxys = ProxyManager().getAll()
-    return jsonify(proxys)
+    return jsonify(list(proxys))
 
 
 @app.route('/delete/', methods=['GET'])
@@ -59,6 +59,12 @@ def delete():
     ProxyManager().delete(proxy)
     return 'success'
 
+@app.route('/get_status/')
+def get_status():
+    status = ProxyManager().get_status()
+    return jsonify(status)
+
+
 
 if __name__ == '__main__':
-    app.run()
+    app.run(host='0.0.0.0', port=65432)

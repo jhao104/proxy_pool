@@ -15,6 +15,7 @@ __author__ = 'JHao'
 
 import os
 import sys
+
 from Util.GetConfig import GetConfig
 from Util.utilClass import Singleton
 
@@ -59,6 +60,8 @@ class DbClient(object):
         __type = None
         if "SSDB" == self.config.db_type:
             __type = "SsdbClient"
+        elif "REDIS" == self.config.db_type:
+            __type = "RedisClient"
         else:
             pass
         assert __type, 'type error, Not support DB type: {}'.format(self.config.db_type)
@@ -83,6 +86,9 @@ class DbClient(object):
 
     def changeTable(self, name):
         self.client.changeTable(name)
+
+    def get_status(self):
+        return self.client.get_status()
 
 
 if __name__ == "__main__":

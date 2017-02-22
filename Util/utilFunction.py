@@ -36,7 +36,7 @@ def verifyProxy(proxy):
     return True if re.findall(verify_regex, proxy) else False
 
 
-def getHtmlTree(url, **kwargs):
+def getHtmlTree(url, header=None, **kwargs):
     """
     获取html树
     :param url:
@@ -45,5 +45,5 @@ def getHtmlTree(url, **kwargs):
     """
     import requests
     from lxml import etree
-    html = requests.get(url=url).content
+    html = requests.get(url=url, headers=header).content
     return etree.HTML(html)

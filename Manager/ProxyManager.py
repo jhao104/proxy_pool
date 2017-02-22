@@ -51,7 +51,8 @@ class ProxyManager(object):
         :return:
         """
         self.db.changeTable(self.useful_proxy_queue)
-        return self.db.pop()
+        return self.db.get()
+        # return self.db.pop()
 
     def delete(self, proxy):
         """
@@ -70,7 +71,14 @@ class ProxyManager(object):
         self.db.changeTable(self.useful_proxy_queue)
         return self.db.getAll()
 
+    def get_status(self):
+        self.db.changeTable(self.raw_proxy_queue)
+        quan_raw_proxy = self.db.get_status()
+        self.db.changeTable(self.useful_proxy_queue)
+        quan_useful_queue = self.db.get_status()
+        return {'raw_proxy': quan_raw_proxy, 'useful_proxy_queue': quan_useful_queue}
 
 if __name__ == '__main__':
     pp = ProxyManager()
-    pp.refresh()
+    # pp.refresh()
+    print pp.get_status()
