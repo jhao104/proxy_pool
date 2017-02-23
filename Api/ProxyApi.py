@@ -13,8 +13,9 @@
 """
 __author__ = 'JHao'
 
-from flask import Flask, jsonify, request
 import sys
+
+from flask import Flask, jsonify, request
 
 sys.path.append('../')
 
@@ -59,11 +60,11 @@ def delete():
     ProxyManager().delete(proxy)
     return 'success'
 
+
 @app.route('/get_status/')
 def get_status():
     status = ProxyManager().get_status()
     return jsonify(status)
-
 
 
 if __name__ == '__main__':

@@ -145,25 +145,29 @@ class GetFreeProxy(object):
         tree = getHtmlTree(url, header=header)
         # 现在每天最多放15个（一页）
         for i in xrange(15):
-            d = tree.xpath('.//table[@class="table"]/tbody/tr[{}]/td'.format(i + 1))[0]
+            d = tree.xpath('//*[@id="list"]/table/tbody/tr[{}]/td'.format(i + 1))[0]
+            # print d
+
             o = d.xpath('.//span/text() | .//div/text()')
+            # print o
+
             yield ''.join(o[:-1]) + ':' + o[-1]
         print 'finish guobanjia fetching proxy ip'
 
 
 if __name__ == '__main__':
     gg = GetFreeProxy()
-    for e in gg.freeProxyFirst():
-        print e
-
-    for e in gg.freeProxySecond():
-        print e
-
-    for e in gg.freeProxyThird():
-        print e
+    # for e in gg.freeProxyFirst():
+    #     print e
+    #
+    # for e in gg.freeProxySecond():
+    #     print e
+    #
+    # for e in gg.freeProxyThird():
+    #     print e
 
     # for e in gg.freeProxyFourth():
     #     print e
     #
-    # for e in gg.freeProxyFifth():
-    #     print e
+    for e in gg.freeProxyFifth():
+        print e
