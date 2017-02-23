@@ -41,8 +41,8 @@ class ProxyRefreshSchedule(ProxyManager):
     def valid_proxy(self):
         logger_raw = logging.getLogger('apscheduler.raw_check-{}'.format(os.getpid()))
 
-        fmt = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
-        fh = logging.FileHandler(filename='../log/log.txt')
+        fmt = logging.Formatter('%(asctime)s - %(levelname)s : %(name)s : %(message)s')
+        fh = logging.FileHandler(filename='../log/raw_proxy_log.txt')
         fh.setFormatter(fmt=fmt)
         logger_raw.addHandler(fh)
 
@@ -72,8 +72,8 @@ class ProxyRefreshSchedule(ProxyManager):
     def validate_useful_proxy(self, proxy_list):
         logger_avail = logging.getLogger('apscheduler.avail_check-{}'.format(os.getpid()))
 
-        fmt = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
-        fh = logging.FileHandler(filename='../log/log.txt')
+        fmt = logging.Formatter('%(asctime)s - %(levelname)s : %(name)s : %(message)s')
+        fh = logging.FileHandler(filename='../log/available_proxy_log.txt')
         fh.setFormatter(fmt=fmt)
         logger_avail.addHandler(fh)
 
@@ -169,7 +169,7 @@ def test2():
 if __name__ == '__main__':
     log.setLevel(logging.DEBUG)  # DEBUG
 
-    fmt = logging.Formatter('%(levelname)s:%(name)s:%(message)s')
+    fmt = logging.Formatter('%(asctime)s - %(levelname)s : %(name)s : %(message)s')
     h = logging.StreamHandler()
     h.setFormatter(fmt)
     log.addHandler(h)
