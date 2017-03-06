@@ -5,11 +5,12 @@
 self.name为Redis中的一个key
 '''
 
-import random
 import json
+
 import redis
 
-class ReidsClient(object):
+
+class RedisClient(object):
     """
     Reids client
     """
@@ -27,12 +28,10 @@ class ReidsClient(object):
 
     def get(self):
         """
-        get an item
+        get random result
         :return:
         """
-        values = self.__conn.smembers(name=self.name)
-
-        return random.choice(list(values)) if values else None
+        return self.__conn.srandmember(name=self.name)
 
     def put(self, value):
         """
@@ -50,7 +49,7 @@ class ReidsClient(object):
         """
         value = self.get()
         if value:
-            self.__conn.spop(self.name, value)
+            self.__conn.spop(self.name)
         return value
 
     def delete(self, value):
@@ -64,4 +63,26 @@ class ReidsClient(object):
     def getAll(self):
         return self.__conn.smembers(self.name)
 
+    def get_status(self):
+        return self.__conn.scard(self.name)
 
+    def changeTable(self, name):
+        self.name = name
+
+
+if __name__ == '__main__':
+    redis_con = RedisClient('proxy', 'localhost', 6379)
+    # redis_con.put('abc')
+    # redis_con.put('123')
+    # redis_con.put('123.115.235.221:8800')
+    # print redis_con.getAll()
+    # redis_con.delete('abc')
+    # print redis_con.getAll()
+    # redis_con.pop()
+    # print redis_con.getAll()
+    redis_con.changeTable('raw_proxy')
+
+    redis_con.put('132.112.43.221:8888')
+    # redis_con.changeTable('proxy')
+    print redis_con.get_status()
+    print redis_con.getAll()
