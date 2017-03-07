@@ -44,8 +44,8 @@ class ProxyRefreshSchedule(ProxyManager):
         """
         self.db.changeTable(self.raw_proxy_queue)
         raw_proxy = self.db.pop()
+        self.log.info('%s start valid proxy' % time.ctime())
         while raw_proxy:
-            self.log.info('%s start valid proxy' % time.ctime())
             proxies = {"http": "http://{proxy}".format(proxy=raw_proxy),
                        "https": "https://{proxy}".format(proxy=raw_proxy)}
             try:
@@ -54,9 +54,9 @@ class ProxyRefreshSchedule(ProxyManager):
                 if r.status_code == 200:
                     self.db.changeTable(self.useful_proxy_queue)
                     self.db.put(raw_proxy)
-                    self.log.info('proxy: %s validation passes')
+                    self.log.debug('proxy: %s validation passes' % raw_proxy)
             except Exception, e:
-                print e
+                self.log.debug('proxy: %s validation fail' % raw_proxy)
                 pass
             self.db.changeTable(self.raw_proxy_queue)
             raw_proxy = self.db.pop()
@@ -74,7 +74,6 @@ def main(process_num=10):
     pl = []
     for num in range(process_num):
         proc = Process(target=refresh_pool, args=())
-        # proc.daemon = True
         pl.append(proc)
 
     for num in range(process_num):

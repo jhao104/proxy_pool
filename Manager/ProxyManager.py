@@ -38,7 +38,8 @@ class ProxyManager(object):
             proxy_set = set()
             # fetch raw proxy
             for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
-                proxy_set.add(proxy)
+                if proxy.strip():
+                    proxy_set.add(proxy.strip())
 
             # store raw proxy
             self.db.changeTable(self.raw_proxy_queue)

@@ -54,7 +54,6 @@ class GetFreeProxy(object):
         # 页数不用太多， 后面的全是历史IP， 可用性不高
 
         for url in url_list:
-            print url
             tree = getHtmlTree(url)
             proxy_list = tree.xpath('.//div[@id="index_free_list"]//tbody/tr')
             for proxy in proxy_list:
