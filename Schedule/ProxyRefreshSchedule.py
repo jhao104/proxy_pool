@@ -15,15 +15,14 @@
 
 import sys
 import time
-import requests
 from multiprocessing import Process
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 sys.path.append('../')
 
+from Util.utilFunction import validUsefulProxy
 from Manager.ProxyManager import ProxyManager
 from Util.LogHandler import LogHandler
-
 
 __author__ = 'JHao'
 
@@ -46,16 +45,11 @@ class ProxyRefreshSchedule(ProxyManager):
         raw_proxy = self.db.pop()
         self.log.info('%s start valid proxy' % time.ctime())
         while raw_proxy:
-            proxies = {"http": "http://{proxy}".format(proxy=raw_proxy),
-                       "https": "https://{proxy}".format(proxy=raw_proxy)}
-            try:
-                # 超过30秒的代理就不要了
-                r = requests.get('https://www.baidu.com/', proxies=proxies, timeout=30, verify=False)
-                if r.status_code == 200:
-                    self.db.changeTable(self.useful_proxy_queue)
-                    self.db.put(raw_proxy)
-                    self.log.debug('proxy: %s validation passes' % raw_proxy)
-            except Exception, e:
+            if validUsefulProxy(raw_proxy):
+                self.db.changeTable(self.useful_proxy_queue)
+                self.db.put(raw_proxy)
+                self.log.debug('proxy: %s validation passes' % raw_proxy)
+            else:
                 self.log.debug('proxy: %s validation fail' % raw_proxy)
                 pass
             self.db.changeTable(self.raw_proxy_queue)
@@ -70,7 +64,11 @@ def refresh_pool():
 
 def main(process_num=10):
     p = ProxyRefreshSchedule()
+
+    # 获取新代理
     p.refresh()
+
+    # 检验新代理
     pl = []
     for num in range(process_num):
         proc = Process(target=refresh_pool, args=())
@@ -84,7 +82,7 @@ def main(process_num=10):
 
 
 if __name__ == '__main__':
-    main()
+    # main()
     sched = BlockingScheduler()
     sched.add_job(main, 'interval', minutes=10)
     sched.start()
