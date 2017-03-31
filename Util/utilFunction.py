@@ -11,6 +11,7 @@
                    2016/11/25: 添加robustCrawl、verifyProxy、getHtmlTree
 -------------------------------------------------
 """
+import requests
 
 
 # noinspection PyPep8Naming
@@ -55,3 +56,20 @@ def getHtmlTree(url, **kwargs):
               }
     html = requests.get(url=url, headers=header, timeout=30).content
     return etree.HTML(html)
+
+
+def validUsefulProxy(proxy):
+    """
+    检验代理可以性
+    :param proxy:
+    :return:
+    """
+    proxies = {"http": "http://{proxy}".format(proxy=proxy),
+               "https": "https://{proxy}".format(proxy=proxy)}
+    try:
+        # 超过30秒的代理就不要了
+        r = requests.get('https://www.baidu.com/', proxies=proxies, timeout=30, verify=False)
+        if r.status_code == 200:
+            return True
+    except Exception, e:
+        return False
