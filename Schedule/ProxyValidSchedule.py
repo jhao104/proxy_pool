@@ -12,6 +12,10 @@
 """
 __author__ = 'JHao'
 
+import sys
+
+sys.path.append('../')
+
 from Util.utilFunction import validUsefulProxy
 from Manager.ProxyManager import ProxyManager
 from Util.LogHandler import LogHandler
@@ -40,6 +44,10 @@ class ProxyValidSchedule(ProxyManager):
     def main(self):
         self.__validProxy__()
 
+
+def run():
+    p = ProxyValidSchedule()
+    p.main()
 
 if __name__ == '__main__':
     p = ProxyValidSchedule()

@@ -104,7 +104,7 @@ pip install -r requirements.txt
 >>>python -m Schedule.ProxyRefreshSchedule
 
 到Api目录下:
->>>python -m Api.ProxyApi
+>>>python -m Run.main
 ```
 
 ### 5、使用
