@@ -3,6 +3,7 @@
 
 '''
 self.name为Redis中的一个key
+2017/4/17 修改pop
 '''
 
 import json
@@ -47,10 +48,7 @@ class RedisClient(object):
         pop an item
         :return:
         """
-        value = self.get()
-        if value:
-            self.__conn.spop(self.name)
-        return value
+        return self.__conn.spop(self.name)
 
     def delete(self, value):
         """
