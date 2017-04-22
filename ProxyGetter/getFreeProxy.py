@@ -12,12 +12,17 @@
 -------------------------------------------------
 """
 import re
-import sys
-
 import requests
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
+try:
+    from importlib import reload   #py3 实际不会实用，只是为了不显示语法错误
+except:
+    import sys     # py2
+    reload(sys)
+    sys.setdefaultencoding('utf-8')
+
+
+
 
 from Util.utilFunction import robustCrawl, getHtmlTree
 
@@ -137,4 +142,4 @@ if __name__ == '__main__':
     #     print e
 
     for e in gg.freeProxyFifth():
-        print e
+        print(e)

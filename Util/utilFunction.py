@@ -20,8 +20,8 @@ def robustCrawl(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            print u"sorry, 抓取出错。错误原因:"
-            print e
+            print(u"sorry, 抓取出错。错误原因:")
+            print(e)
 
     return decorate
 
@@ -71,5 +71,6 @@ def validUsefulProxy(proxy):
         r = requests.get('https://www.baidu.com/', proxies=proxies, timeout=30, verify=False)
         if r.status_code == 200:
             return True
-    except Exception, e:
+    except Exception as e:
+        print(e)
         return False

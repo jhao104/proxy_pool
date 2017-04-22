@@ -93,7 +93,7 @@ class DbClient(object):
 
 if __name__ == "__main__":
     account = DbClient()
-    print account.get()
+    print(account.get())
     account.changeTable('use')
     account.put('ac')
-    print(account)
+    print(account.get())

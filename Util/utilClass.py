@@ -33,7 +33,10 @@ class LazyProperty(object):
             return value
 
 
-from ConfigParser import ConfigParser
+try:
+    from configparser import ConfigParser # py3
+except:
+    from configparser import ConfigParser # py2
 
 
 class ConfigParse(ConfigParser):
@@ -43,6 +46,7 @@ class ConfigParse(ConfigParser):
 
     def __init__(self):
         ConfigParser.__init__(self)
+
 
     def optionxform(self, optionstr):
         return optionstr

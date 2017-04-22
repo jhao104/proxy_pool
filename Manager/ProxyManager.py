@@ -82,4 +82,4 @@ class ProxyManager(object):
 if __name__ == '__main__':
     pp = ProxyManager()
     # pp.refresh()
-    print pp.get_status()
+    print(pp.get_status())
