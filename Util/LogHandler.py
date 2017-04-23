@@ -75,6 +75,6 @@ class LogHandler(logging.Logger):
 
 
 if __name__ == '__main__':
-    log = LogHandler('test')
+    log = LogHandler(__name__)
     log.info('this is a test msg')
     pass

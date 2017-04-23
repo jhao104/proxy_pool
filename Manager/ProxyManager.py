@@ -27,7 +27,7 @@ class ProxyManager(object):
         self.db = DbClient()
         self.config = GetConfig()
         self.raw_proxy_queue = 'raw_proxy'
-        self.useful_proxy_queue = 'useful_proxy_queue'
+        self.useful_proxy_queue = 'useful_proxy'
 
     def refresh(self):
         """
@@ -37,7 +37,7 @@ class ProxyManager(object):
         for proxyGetter in self.config.proxy_getter_functions:
             proxy_set = set()
             # fetch raw proxy
-            for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
+            for proxy in getattr(GetFreeProxy, proxyGetter.strip())():   #get GetFreeProxy.freeProxyFirst and it is a iteration
                 if proxy.strip():
                     proxy_set.add(proxy.strip())
 
@@ -77,9 +77,9 @@ class ProxyManager(object):
         quan_raw_proxy = self.db.get_status()
         self.db.changeTable(self.useful_proxy_queue)
         quan_useful_queue = self.db.get_status()
-        return {'raw_proxy': quan_raw_proxy, 'useful_proxy_queue': quan_useful_queue}
+        return {'raw_proxy': quan_raw_proxy, 'useful_proxy': quan_useful_queue}
 
 if __name__ == '__main__':
     pp = ProxyManager()
-    # pp.refresh()
+    pp.refresh()
     print(pp.get_status())

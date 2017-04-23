@@ -31,9 +31,13 @@ class ProxyValidSchedule(ProxyManager):
         验证代理
         :return:
         """
-        while 1:
+        while True:
             self.db.changeTable(self.useful_proxy_queue)
             for each_proxy in self.db.getAll():
+                if isinstance(each_proxy,bytes):
+                    each_proxy = each_proxy.decode('utf-8')
+                    self.log.info(u'数据库返回数据类型为bytes')
+
                 if validUsefulProxy(each_proxy):
                     self.log.debug('proxy: {} validation pass'.format(each_proxy))
                 else:

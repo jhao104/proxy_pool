@@ -9,6 +9,7 @@
 -------------------------------------------------
    Change Activity:
                    2016/11/25: 
+                   这一部分考虑用scrapy框架代替
 -------------------------------------------------
 """
 import re
@@ -24,7 +25,7 @@ except:
 
 
 
-from Util.utilFunction import robustCrawl, getHtmlTree
+from Util.utilFunction import robustCrawl, getHtmlTree, getHTMLText
 
 # for debug to disable insecureWarning
 requests.packages.urllib3.disable_warnings()
@@ -48,7 +49,7 @@ class GetFreeProxy(object):
         pass
 
     @staticmethod
-    @robustCrawl
+    @robustCrawl    #decoration print error if exception happen
     def freeProxyFirst(page=10):
         """
         抓取快代理IP http://www.kuaidaili.com/
@@ -74,7 +75,8 @@ class GetFreeProxy(object):
         """
         url = "http://m.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
             proxy_number)
-        html = requests.get(url, headers=HEADER).content
+
+        html = getHTMLText(url, headers=HEADER)
         for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html):
             yield proxy
 

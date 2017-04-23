@@ -32,7 +32,7 @@ class RedisClient(object):
         get random result
         :return:
         """
-        return self.__conn.srandmember(name=self.name)
+        return self.__conn.srandmember(name=self.name).decode('utf-8')         #redis return bytes
 
     def put(self, value):
         """
@@ -81,7 +81,7 @@ if __name__ == '__main__':
     # print(redis_con.getAll())
     redis_con.changeTable('raw_proxy')
 
-    redis_con.put('132.112.43.221:8888')
+    # redis_con.put('132.112.43.221:8888')
     # redis_con.changeTable('proxy')
     print(redis_con.get_status())
     print(redis_con.getAll())

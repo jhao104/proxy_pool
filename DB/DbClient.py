@@ -39,6 +39,7 @@ class DbClient(object):
 
         所有方法需要相应类去具体实现：
             SSDB：SsdbClient.py
+            REDIS:RedisClient.py    只是对redis set的操作，不一定好复用
 
     """
 
