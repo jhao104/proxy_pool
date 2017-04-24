@@ -64,11 +64,10 @@ def validUsefulProxy(proxy):
     :param proxy:
     :return:
     """
-    proxies = {"http": "http://{proxy}".format(proxy=proxy),
-               "https": "https://{proxy}".format(proxy=proxy)}
+    proxies = {"https": "https://{proxy}".format(proxy=proxy)}
     try:
         # 超过30秒的代理就不要了
-        r = requests.get('https://www.baidu.com/', proxies=proxies, timeout=30, verify=False)
+        r = requests.get('https://www.baidu.com/', proxies=proxies, timeout=20, verify=False)
         if r.status_code == 200:
             return True
     except Exception, e:

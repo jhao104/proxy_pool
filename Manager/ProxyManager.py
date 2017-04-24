@@ -15,6 +15,7 @@ __author__ = 'JHao'
 
 from DB.DbClient import DbClient
 from Util.GetConfig import GetConfig
+from Util.LogHandler import LogHandler
 from ProxyGetter.getFreeProxy import GetFreeProxy
 
 
@@ -27,6 +28,7 @@ class ProxyManager(object):
         self.db = DbClient()
         self.config = GetConfig()
         self.raw_proxy_queue = 'raw_proxy'
+        self.log = LogHandler('proxy_manager')
         self.useful_proxy_queue = 'useful_proxy_queue'
 
     def refresh(self):
@@ -39,6 +41,7 @@ class ProxyManager(object):
             # fetch raw proxy
             for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
                 if proxy.strip():
+                    self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
                     proxy_set.add(proxy.strip())
 
             # store raw proxy
@@ -81,5 +84,5 @@ class ProxyManager(object):
 
 if __name__ == '__main__':
     pp = ProxyManager()
-    # pp.refresh()
-    print pp.get_status()
+    pp.refresh()
+    # print pp.get_status()

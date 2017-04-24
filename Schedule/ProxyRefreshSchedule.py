@@ -15,7 +15,7 @@
 
 import sys
 import time
-from multiprocessing import Process
+from threading import Thread
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 sys.path.append('../')
@@ -48,7 +48,7 @@ class ProxyRefreshSchedule(ProxyManager):
             if validUsefulProxy(raw_proxy):
                 self.db.changeTable(self.useful_proxy_queue)
                 self.db.put(raw_proxy)
-                self.log.debug('proxy: %s validation passes' % raw_proxy)
+                self.log.info('proxy: %s validation pass' % raw_proxy)
             else:
                 self.log.debug('proxy: %s validation fail' % raw_proxy)
                 pass
@@ -62,7 +62,7 @@ def refresh_pool():
     pp.valid_proxy()
 
 
-def main(process_num=10):
+def main(process_num=30):
     p = ProxyRefreshSchedule()
 
     # 获取新代理
@@ -71,7 +71,7 @@ def main(process_num=10):
     # 检验新代理
     pl = []
     for num in range(process_num):
-        proc = Process(target=refresh_pool, args=())
+        proc = Thread(target=refresh_pool, args=())
         pl.append(proc)
 
     for num in range(process_num):
