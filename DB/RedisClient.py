@@ -48,7 +48,7 @@ class RedisClient(object):
         pop an item
         :return:
         """
-        return self.__conn.spop(self.name)
+        return self.__conn.spop(self.name).decode('utf-8')                    #redis return bytes
 
     def delete(self, value):
         """
@@ -77,9 +77,10 @@ if __name__ == '__main__':
     # print(redis_con.getAll())
     # redis_con.delete('abc')
     # print(redis_con.getAll())
-    # redis_con.pop()
+
     # print(redis_con.getAll())
     redis_con.changeTable('raw_proxy')
+    redis_con.pop()
 
     # redis_con.put('132.112.43.221:8888')
     # redis_con.changeTable('proxy')
