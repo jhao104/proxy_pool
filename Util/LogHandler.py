@@ -12,6 +12,8 @@
 """
 __author__ = 'JHao'
 
+import os
+
 import logging
 
 from logging.handlers import TimedRotatingFileHandler
@@ -25,6 +27,10 @@ WARN = WARNING
 INFO = 20
 DEBUG = 10
 NOTSET = 0
+
+CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
+ROOT_PATH = os.path.join(CURRENT_PATH, os.pardir)
+LOG_PATH = os.path.join(ROOT_PATH, 'log')
 
 
 class LogHandler(logging.Logger):
@@ -45,7 +51,7 @@ class LogHandler(logging.Logger):
         :param level:
         :return:
         """
-        file_name = '../log/%s' % self.name
+        file_name = os.path.join(LOG_PATH, '{name}.log'.format(name=self.name))
         # 设置日志回滚, 保存在log目录, 一天保存一个文件, 保留15天
         file_handler = TimedRotatingFileHandler(filename=file_name, when='D', interval=1, backupCount=15)
         file_handler.suffix = '%Y%m%d.log'
@@ -75,6 +81,6 @@ class LogHandler(logging.Logger):
 
 
 if __name__ == '__main__':
-    log = LogHandler('test')
-    log.info('this is a test msg')
-    pass
+    log = LogHandler('test', level=WARNING)
+    log.error('this is a test msg')
+
