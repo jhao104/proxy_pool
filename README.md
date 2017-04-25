@@ -97,14 +97,14 @@ pip install -r requirements.txt
 启动:
 
 ```
-需要分别启动定时任务和api
-到Config.ini中配置你的SSDB
-
-到Schedule目录下:
->>>python ProxyRefreshSchedule.py
-
+如果你的依赖已经安全完成并且具备运行条件,可以直接在Run下运行main.py
 到Run目录下:
 >>>python main.py
+
+如果运行成功你应该可以看到有4个main.py进程在
+
+
+你也可以分别运行他们,依次到Api下启动ProxyApi.py,Schedule下启动ProxyRefreshSchedule.py和ProxyValidSchedule.py即可
 ```
 
 ### 5、使用
@@ -146,7 +146,7 @@ def spider():
 
 ```
 
-　　测试地址：http://123.207.35.36:5000。单机勿压测。谢谢
+　　测试地址：http://123.207.35.36:5000 单机勿压测。谢谢
 
 ### 6、最后
 　　时间仓促，功能和代码都比较简陋，以后有时间再改进。喜欢的在github上给个star。感谢！
