@@ -36,30 +36,29 @@ class ProxyRefreshSchedule(ProxyManager):
         ProxyManager.__init__(self)
         self.log = LogHandler('refresh_schedule')
 
-    def valid_proxy(self):
+    def validProxy(self):
         """
-        valid_proxy
+        验证raw_proxy_queue中的代理, 将可用的代理放入useful_proxy_queue
         :return:
         """
         self.db.changeTable(self.raw_proxy_queue)
         raw_proxy = self.db.pop()
-        self.log.info('%s start valid proxy' % time.ctime())
+        self.log.info('%s start validProxy_a' % time.ctime())
         while raw_proxy:
             if validUsefulProxy(raw_proxy):
                 self.db.changeTable(self.useful_proxy_queue)
                 self.db.put(raw_proxy)
-                self.log.info('proxy: %s validation pass' % raw_proxy)
+                self.log.info('validProxy_a: %s validation pass' % raw_proxy)
             else:
-                self.log.debug('proxy: %s validation fail' % raw_proxy)
-                pass
+                self.log.debug('validProxy_a: %s validation fail' % raw_proxy)
             self.db.changeTable(self.raw_proxy_queue)
             raw_proxy = self.db.pop()
-        self.log.info('%s valid proxy complete' % time.ctime())
+        self.log.info('%s validProxy_a complete' % time.ctime())
 
 
-def refresh_pool():
+def refreshPool():
     pp = ProxyRefreshSchedule()
-    pp.valid_proxy()
+    pp.validProxy()
 
 
 def main(process_num=30):
@@ -71,7 +70,7 @@ def main(process_num=30):
     # 检验新代理
     pl = []
     for num in range(process_num):
-        proc = Thread(target=refresh_pool, args=())
+        proc = Thread(target=refreshPool, args=())
         pl.append(proc)
 
     for num in range(process_num):
@@ -81,8 +80,12 @@ def main(process_num=30):
         pl[num].join()
 
 
-if __name__ == '__main__':
+def run():
     # main()
     sched = BlockingScheduler()
     sched.add_job(main, 'interval', minutes=10)
     sched.start()
+
+
+if __name__ == '__main__':
+    run()
