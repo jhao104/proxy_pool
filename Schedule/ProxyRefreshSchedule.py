@@ -10,6 +10,7 @@
    Change Activity:
                    2016/12/4: 代理定时刷新
                    2017/03/06: 使用LogHandler添加日志
+                   2017/04/26: raw_proxy_queue验证通过但useful_proxy_queue中已经存在的代理不在放入
 -------------------------------------------------
 """
 
@@ -44,8 +45,9 @@ class ProxyRefreshSchedule(ProxyManager):
         self.db.changeTable(self.raw_proxy_queue)
         raw_proxy = self.db.pop()
         self.log.info('%s start validProxy_a' % time.ctime())
+        exist_proxy = self.db.getAll()
         while raw_proxy:
-            if validUsefulProxy(raw_proxy):
+            if validUsefulProxy(raw_proxy) and (raw_proxy not in exist_proxy):
                 self.db.changeTable(self.useful_proxy_queue)
                 self.db.put(raw_proxy)
                 self.log.info('validProxy_a: %s validation pass' % raw_proxy)

@@ -21,14 +21,15 @@ from Util.LogHandler import LogHandler
 logger = LogHandler(__name__)
 
 
-def getHTMLText(url, headers = {'user':'Mozilla/5.0'}):
+def getHTMLText(url, headers={'user': 'Mozilla/5.0'}):
     try:
-        response = requests.get(url, headers = headers, timeout=10)
+        response = requests.get(url, headers=headers, timeout=10)
         response.raise_for_status()
         response.encoding = response.apparent_encoding
         return response.text
     except:
         return response.status_code
+
 
 # noinspection PyPep8Naming
 def robustCrawl(func):
@@ -70,7 +71,7 @@ def getHtmlTree(url, **kwargs):
               'Accept-Encoding': 'gzip, deflate, sdch',
               'Accept-Language': 'zh-CN,zh;q=0.8',
               }
-    #取代理服务器用代理服务器访问
+    # TODO 取代理服务器用代理服务器访问
     html = requests.get(url=url, headers=header, timeout=30).content
     return etree.HTML(html)
 
@@ -83,7 +84,7 @@ def validUsefulProxy(proxy):
     """
     proxies = {"https": "https://{proxy}".format(proxy=proxy)}
     try:
-        # 超过30秒的代理就不要了
+        # 超过20秒的代理就不要了
         r = requests.get('https://www.baidu.com/', proxies=proxies, timeout=20, verify=False)
         if r.status_code == 200:
             logger.debug('%s is ok' % proxy)

@@ -23,6 +23,7 @@ from Manager.ProxyManager import ProxyManager
 
 app = Flask(__name__)
 
+
 api_list = {
     'get': u'get an usable proxy',
     'refresh': u'refresh proxy pool',
@@ -44,14 +45,16 @@ def get():
 
 @app.route('/refresh/')
 def refresh():
-    ProxyManager().refresh()
+    # TODO refresh会有守护程序定时执行，由api直接调用性能较差，暂不使用
+    # ProxyManager().refresh()
+    pass
     return 'success'
 
 
 @app.route('/get_all/')
 def getAll():
-    proxys = ProxyManager().getAll()
-    return jsonify(list(proxys))
+    proxies = ProxyManager().getAll()
+    return jsonify(list(proxies))
 
 
 @app.route('/delete/', methods=['GET'])
@@ -71,4 +74,4 @@ def run():
     app.run(host='0.0.0.0', port=5000)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    run()
