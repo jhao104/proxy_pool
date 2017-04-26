@@ -9,6 +9,7 @@
 -------------------------------------------------
    Change Activity:
                    2016/12/2: 
+                   2017/04/26: 添加get_status方法获取hash长度
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -25,7 +26,7 @@ class SsdbClient(object):
 
     SSDB中代理存放的容器为hash：
         原始代理存放在name为raw_proxy的hash中，key为代理的ip:port，value为None,以后扩展可能会加入代理属性；
-        验证后供flask使用的代理存放在name为useful_proxy_queue的hash中，key为代理的ip:port，value为None,以后扩展可能会加入代理属性；
+        验证后供flask使用的代理存放在name为useful_proxy的hash中，key为代理的ip:port，value为None,以后扩展可能会加入代理属性；
 
     """
 
@@ -75,7 +76,7 @@ class SsdbClient(object):
 
     def delete(self, key):
         """
-        delete an item
+        Remove the ``key`` from hash ``name``
         :param key:
         :return:
         """
@@ -83,6 +84,13 @@ class SsdbClient(object):
 
     def getAll(self):
         return self.__conn.hgetall(self.name).keys()
+
+    def get_status(self):
+        """
+        Return the number of elements in hash ``name``
+        :return:
+        """
+        return self.__conn.hsize(self.name)
 
     def changeTable(self, name):
         self.name = name
