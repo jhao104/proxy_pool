@@ -52,8 +52,8 @@ class GetConfig(object):
 
 if __name__ == '__main__':
     gg = GetConfig()
-    print gg.db_type
-    print gg.db_name
-    print gg.db_host
-    print gg.db_port
-    print gg.proxy_getter_functions
+    print(gg.db_type)
+    print(gg.db_name)
+    print(gg.db_host)
+    print(gg.db_port)
+    print(gg.proxy_getter_functions)

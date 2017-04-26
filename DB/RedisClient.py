@@ -32,7 +32,7 @@ class RedisClient(object):
         get random result
         :return:
         """
-        return self.__conn.srandmember(name=self.name)
+        return self.__conn.srandmember(name=self.name).decode('utf-8')         #redis return bytes
 
     def put(self, value):
         """
@@ -40,7 +40,7 @@ class RedisClient(object):
         :param value:
         :return:
         """
-        value = json.dump(value, ensure_ascii=False).encode('utf-8') if isinstance(value, (dict, list)) else value
+        value = json.dumps(value) if isinstance(value, (dict, list)) else value
         return self.__conn.sadd(self.name, value)
 
     def pop(self):
@@ -48,7 +48,7 @@ class RedisClient(object):
         pop an item
         :return:
         """
-        return self.__conn.spop(self.name)
+        return self.__conn.spop(self.name).decode('utf-8')                    #redis return bytes
 
     def delete(self, value):
         """
@@ -73,14 +73,16 @@ if __name__ == '__main__':
     # redis_con.put('abc')
     # redis_con.put('123')
     # redis_con.put('123.115.235.221:8800')
-    # print redis_con.getAll()
+    # redis_con.put(['123', '115', '235.221:8800'])
+    # print(redis_con.getAll())
     # redis_con.delete('abc')
-    # print redis_con.getAll()
-    # redis_con.pop()
-    # print redis_con.getAll()
-    redis_con.changeTable('raw_proxy')
+    # print(redis_con.getAll())
 
-    redis_con.put('132.112.43.221:8888')
+    # print(redis_con.getAll())
+    redis_con.changeTable('raw_proxy')
+    redis_con.pop()
+
+    # redis_con.put('132.112.43.221:8888')
     # redis_con.changeTable('proxy')
-    print redis_con.get_status()
-    print redis_con.getAll()
+    print(redis_con.get_status())
+    print(redis_con.getAll())

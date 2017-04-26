@@ -39,6 +39,7 @@ class DbClient(object):
 
         所有方法需要相应类去具体实现：
             SSDB：SsdbClient.py
+            REDIS:RedisClient.py    只是对redis set的操作，不一定好复用
 
     """
 
@@ -93,7 +94,7 @@ class DbClient(object):
 
 if __name__ == "__main__":
     account = DbClient()
-    print account.get()
+    print(account.get())
     account.changeTable('use')
     account.put('ac')
-    print(account)
+    print(account.get())
