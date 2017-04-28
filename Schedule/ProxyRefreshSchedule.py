@@ -16,6 +16,7 @@
 
 import sys
 import time
+import logging
 from threading import Thread
 from apscheduler.schedulers.blocking import BlockingScheduler
 
@@ -26,6 +27,8 @@ from Manager.ProxyManager import ProxyManager
 from Util.LogHandler import LogHandler
 
 __author__ = 'JHao'
+
+logging.basicConfig()
 
 
 class ProxyRefreshSchedule(ProxyManager):
