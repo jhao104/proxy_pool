@@ -2,13 +2,13 @@
 # !/usr/bin/env python
 """
 -------------------------------------------------
-   File Name：     DbClient.py  
+   File Name：     DbClient.py
    Description :  DB工厂类
    Author :       JHao
    date：          2016/12/2
 -------------------------------------------------
    Change Activity:
-                   2016/12/2: 
+                   2016/12/2:
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -33,13 +33,15 @@ class DbClient(object):
     抽象方法定义：
         get: 随机返回一个代理；
         put: 放回一个代理；
+        getvalue: 返回代理属性（一个计数器）；
+        inckey: 修改代理属性计数器的值;
         delete: 删除指定代理；
         getAll: 返回所有代理；
-        changeTable: 切换 table or collection or hash
+        changeTable: 切换 table or collection or hash;
 
         所有方法需要相应类去具体实现：
             SSDB：SsdbClient.py
-            REDIS:RedisClient.py    只是对redis set的操作，不一定好复用
+            REDIS:RedisClient.py
 
     """
 
@@ -73,14 +75,20 @@ class DbClient(object):
     def get(self, **kwargs):
         return self.client.get(**kwargs)
 
-    def put(self, value, **kwargs):
-        return self.client.put(value, **kwargs)
+    def put(self, key, **kwargs):
+        return self.client.put(key, **kwargs)
+
+    def getvalue(self, key, **kwargs):
+        return self.client.getvalue(key, **kwargs)
 
     def pop(self, **kwargs):
         return self.client.pop(**kwargs)
 
-    def delete(self, value, **kwargs):
-        return self.client.delete(value, **kwargs)
+    def inckey(self, key, value, **kwargs):
+        return self.client.inckey(key, value, **kwargs)
+
+    def delete(self, key, **kwargs):
+        return self.client.delete(key, **kwargs)
 
     def getAll(self):
         return self.client.getAll()

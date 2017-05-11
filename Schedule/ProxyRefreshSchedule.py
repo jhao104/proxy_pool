@@ -2,7 +2,7 @@
 # !/usr/bin/env python
 """
 -------------------------------------------------
-   File Name：     ProxyRefreshSchedule.py  
+   File Name：     ProxyRefreshSchedule.py
    Description :  代理定时刷新
    Author :       JHao
    date：          2016/12/4
@@ -88,7 +88,7 @@ def main(process_num=30):
 def run():
     # main()
     sched = BlockingScheduler()
-    sched.add_job(main, 'interval', minutes=10)
+    sched.add_job(main, 'interval', minutes=5)
     sched.start()
 
 

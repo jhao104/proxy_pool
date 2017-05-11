@@ -2,13 +2,13 @@
 # !/usr/bin/env python
 """
 -------------------------------------------------
-   File Name：     SsdbClient.py  
+   File Name：     SsdbClient.py
    Description :  封装SSDB操作
    Author :       JHao
    date：          2016/12/2
 -------------------------------------------------
    Change Activity:
-                   2016/12/2: 
+                   2016/12/2:
                    2017/04/26: 添加get_status方法获取hash长度
 -------------------------------------------------
 """
@@ -51,16 +51,21 @@ class SsdbClient(object):
         values = self.__conn.hgetall(name=self.name)
         return random.choice(values.keys()) if values else None
 
-    def put(self, value):
+    def put(self, key):
         """
         put an  item
 
         将代理放入hash, 使用changeTable指定hash name
-        :param value:
+        :param key:
         :return:
         """
-        value = json.dump(value, ensure_ascii=False).encode('utf-8') if isinstance(value, (dict, list)) else value
-        return self.__conn.hset(self.name, value, None)
+        key = json.dump(key, ensure_ascii=False).encode('utf-8') if isinstance(key, (dict, list)) else key
+        return self.__conn.hincr(self.name, key, 1)
+        # return self.__conn.hset(self.name, value, None)
+
+    def getvalue(self, key):
+        value = self.__conn.hget(self.name, key)
+        return value if value else None
 
     def pop(self):
         """
@@ -81,6 +86,9 @@ class SsdbClient(object):
         :return:
         """
         self.__conn.hdel(self.name, key)
+
+    def inckey(self, key, value):
+        self.__conn.hincr(self.name, key, value)
 
     def getAll(self):
         return self.__conn.hgetall(self.name).keys()

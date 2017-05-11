@@ -2,7 +2,7 @@
 # !/usr/bin/env python
 """
 -------------------------------------------------
-   File Name：     utilFunction.py  
+   File Name：     utilFunction.py
    Description :  tool function
    Author :       JHao
    date：          2016/11/25
@@ -85,7 +85,7 @@ def validUsefulProxy(proxy):
     proxies = {"https": "https://{proxy}".format(proxy=proxy)}
     try:
         # 超过20秒的代理就不要了
-        r = requests.get('https://www.baidu.com/', proxies=proxies, timeout=20, verify=False)
+        r = requests.get('https://www.baidu.com', proxies=proxies, timeout=40, verify=False)
         if r.status_code == 200:
             logger.debug('%s is ok' % proxy)
             return True
