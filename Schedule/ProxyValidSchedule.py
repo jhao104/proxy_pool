@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 -------------------------------------------------
-   File Name：     ProxyValidSchedule.py  
+   File Name：     ProxyValidSchedule.py
    Description :  验证useful_proxy_queue中的代理,将不可用的移出
    Author :       JHao
    date：          2017/3/31
@@ -38,10 +38,18 @@ class ProxyValidSchedule(ProxyManager):
                     each_proxy = each_proxy.decode('utf-8')
 
                 if validUsefulProxy(each_proxy):
+                    # 成功计数器加1
+                    self.db.inckey(each_proxy, 1)
                     self.log.debug('validProxy_b: {} validation pass'.format(each_proxy))
                 else:
-                    self.db.delete(each_proxy)
+                    # 失败计数器减一
+                    self.db.inckey(each_proxy, -1)
+                    # self.db.delete(each_proxy)
                     self.log.info('validProxy_b: {} validation fail'.format(each_proxy))
+                value = self.db.getvalue(each_proxy)
+                if value and value < -5:
+                    # 计数器小于-5删除该代理
+                    self.db.delete(each_proxy)
         self.log.info('validProxy_a running normal')
 
     def main(self):

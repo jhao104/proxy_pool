@@ -7,7 +7,7 @@ self.name为Redis中的一个key
 '''
 
 import json
-
+import random
 import redis
 
 
@@ -32,37 +32,54 @@ class RedisClient(object):
         get random result
         :return:
         """
-        return self.__conn.srandmember(name=self.name).decode('utf-8')         #redis return bytes
+        key = self.__conn.hgetall(name=self.name)
+        return random.choice(key.keys()) if key else None
+        # return self.__conn.srandmember(name=self.name)
 
-    def put(self, value):
+    def put(self, key):
         """
         put an  item
         :param value:
         :return:
         """
-        value = json.dumps(value) if isinstance(value, (dict, list)) else value
-        return self.__conn.sadd(self.name, value)
+        key = json.dumps(key) if isinstance(key, (dict, list)) else key
+        return self.__conn.hincrby(self.name, key, 1)
+        # return self.__conn.sadd(self.name, value)
+
+    def getvalue(self, key):
+        value = self.__conn.hget(self.name, key)
+        return value if value else None
 
     def pop(self):
         """
         pop an item
         :return:
         """
-        return self.__conn.spop(self.name).decode('utf-8')                    #redis return bytes
+        key = self.get()
+        if key:
+            self.__conn.hdel(self.name, key)
+        return key
+        # return self.__conn.spop(self.name)
 
-    def delete(self, value):
+    def delete(self, key):
         """
         delete an item
         :param key:
         :return:
         """
-        self.__conn.srem(self.name, value)
+        self.__conn.hdel(self.name, key)
+        # self.__conn.srem(self.name, value)
+
+    def inckey(self, key, value):
+        self.__conn.hincrby(self.name, key, value)
 
     def getAll(self):
-        return self.__conn.smembers(self.name)
+        return self.__conn.hgetall(self.name).keys()
+        # return self.__conn.smembers(self.name)
 
     def get_status(self):
-        return self.__conn.scard(self.name)
+        return self.__conn.hlen(self.name)
+        # return self.__conn.scard(self.name)
 
     def changeTable(self, name):
         self.name = name
