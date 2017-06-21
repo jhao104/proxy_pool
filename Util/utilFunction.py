@@ -28,7 +28,8 @@ def getHTMLText(url, headers={'user': 'Mozilla/5.0'}):
         response.encoding = response.apparent_encoding
         return response.text
     except:
-        return response.status_code
+        return
+        # return response.status_code
 
 
 # noinspection PyPep8Naming
