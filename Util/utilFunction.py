@@ -12,11 +12,10 @@
 -------------------------------------------------
 """
 import requests
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
-
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+from lxml import etree
 
 from Util.LogHandler import LogHandler
+from Util.WebRequest import WebRequest
 
 logger = LogHandler(__name__)
 
@@ -44,7 +43,8 @@ def robustCrawl(func):
     return decorate
 
 
-def verifyProxy(proxy):
+# noinspection PyPep8Naming
+def verifyProxyFormat(proxy):
     """
     检查代理格式
     :param proxy:
@@ -55,6 +55,7 @@ def verifyProxy(proxy):
     return True if re.findall(verify_regex, proxy) else False
 
 
+# noinspection PyPep8Naming
 def getHtmlTree(url, **kwargs):
     """
     获取html树
@@ -62,8 +63,7 @@ def getHtmlTree(url, **kwargs):
     :param kwargs:
     :return:
     """
-    import requests
-    from lxml import etree
+
     header = {'Connection': 'keep-alive',
               'Cache-Control': 'max-age=0',
               'Upgrade-Insecure-Requests': '1',
@@ -73,19 +73,21 @@ def getHtmlTree(url, **kwargs):
               'Accept-Language': 'zh-CN,zh;q=0.8',
               }
     # TODO 取代理服务器用代理服务器访问
-    html = requests.get(url=url, headers=header, timeout=30).content
+    wr = WebRequest()
+    html = wr.get(url=url, header=header).content
     return etree.HTML(html)
 
 
+# noinspection PyPep8Naming
 def validUsefulProxy(proxy):
     """
-    检验代理可以性
+    检验代理是否可用
     :param proxy:
     :return:
     """
     proxies = {"https": "https://{proxy}".format(proxy=proxy)}
     try:
-        # 超过20秒的代理就不要了
+        # 超过40秒的代理就不要了
         r = requests.get('https://www.baidu.com', proxies=proxies, timeout=40, verify=False)
         if r.status_code == 200:
             logger.debug('%s is ok' % proxy)
