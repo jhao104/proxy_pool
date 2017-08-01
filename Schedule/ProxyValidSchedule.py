@@ -47,7 +47,7 @@ class ProxyValidSchedule(ProxyManager):
                     # self.db.delete(each_proxy)
                     self.log.info('validProxy_b: {} validation fail'.format(each_proxy))
                 value = self.db.getvalue(each_proxy)
-                if value and value < -5:
+                if value and int(value) < -5:
                     # 计数器小于-5删除该代理
                     self.db.delete(each_proxy)
         self.log.info('validProxy_a running normal')
