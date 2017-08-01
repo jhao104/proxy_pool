@@ -8,36 +8,25 @@
    date：          2016/11/25
 -------------------------------------------------
    Change Activity:
-                   2016/11/25: 
-                   这一部分考虑用scrapy框架代替
+                   2016/11/25:
 -------------------------------------------------
 """
 import re
 import requests
 
 try:
-    from importlib import reload   #py3 实际不会实用，只是为了不显示语法错误
+    from importlib import reload  # py3 实际不会实用，只是为了不显示语法错误
 except:
-    import sys     # py2
+    import sys  # py2
+
     reload(sys)
     sys.setdefaultencoding('utf-8')
 
-
-
-
-from Util.utilFunction import robustCrawl, getHtmlTree, getHTMLText
+from Util.utilFunction import robustCrawl, getHtmlTree
+from Util.WebRequest import WebRequest
 
 # for debug to disable insecureWarning
 requests.packages.urllib3.disable_warnings()
-
-HEADER = {'Connection': 'keep-alive',
-          'Cache-Control': 'max-age=0',
-          'Upgrade-Insecure-Requests': '1',
-          'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_3) AppleWebKit/537.36 (KHTML, like Gecko)',
-          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
-          'Accept-Encoding': 'gzip, deflate, sdch',
-          'Accept-Language': 'zh-CN,zh;q=0.8',
-          }
 
 
 class GetFreeProxy(object):
@@ -49,21 +38,22 @@ class GetFreeProxy(object):
         pass
 
     @staticmethod
-    @robustCrawl    #decoration print error if exception happen
+    @robustCrawl  # decoration print error if exception happen
     def freeProxyFirst(page=10):
         """
-        抓取快代理IP http://www.kuaidaili.com/
-        :param page: 翻页数
+        抓取无忧代理 http://www.data5u.com/
+        :param page: 页数
         :return:
         """
-        url_list = ('http://www.kuaidaili.com/proxylist/{page}/'.format(page=page) for page in range(1, page + 1))
-        # 页数不用太多， 后面的全是历史IP， 可用性不高
-
+        url_list = ['http://www.data5u.com/',
+                    'http://www.data5u.com/free/',
+                    'http://www.data5u.com/free/gngn/index.shtml',
+                    'http://www.data5u.com/free/gnpt/index.shtml']
         for url in url_list:
-            tree = getHtmlTree(url)
-            proxy_list = tree.xpath('.//div[@id="index_free_list"]//tbody/tr')
-            for proxy in proxy_list:
-                yield ':'.join(proxy.xpath('./td/text()')[0:2])
+            html_tree = getHtmlTree(url)
+            ul_list = html_tree.xpath('//ul[@class="l2"]')
+            for ul in ul_list:
+                yield ':'.join(ul.xpath('.//li/text()')[0:2])
 
     @staticmethod
     @robustCrawl
@@ -73,10 +63,10 @@ class GetFreeProxy(object):
         :param proxy_number: 代理数量
         :return:
         """
-        url = "http://m.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
-            proxy_number)
-
-        html = getHTMLText(url, headers=HEADER)
+        url = "http://www.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
+                proxy_number)
+        request = WebRequest()
+        html = request.get(url).content
         for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html):
             yield proxy
 
@@ -84,19 +74,15 @@ class GetFreeProxy(object):
     @robustCrawl
     def freeProxyThird(days=1):
         """
-        抓取有代理 http://www.youdaili.net/Daili/http/
+        抓取ip181 http://www.ip181.com/
         :param days:
         :return:
         """
-        url = "http://www.youdaili.net/Daili/http/"
-        tree = getHtmlTree(url)
-        page_url_list = tree.xpath('.//div[@class="chunlist"]/ul/li/p/a/@href')[0:days]
-        for page_url in page_url_list:
-            html = requests.get(page_url, headers=HEADER).content
-            # print html
-            proxy_list = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html)
-            for proxy in proxy_list:
-                yield proxy
+        url = 'http://www.ip181.com/'
+        html_tree = getHtmlTree(url)
+        tr_list = html_tree.xpath('//tr')[1:]
+        for tr in tr_list:
+            yield ':'.join(tr.xpath('./td/text()')[0:2])
 
     @staticmethod
     @robustCrawl
@@ -129,6 +115,7 @@ class GetFreeProxy(object):
             for each_proxy in proxy_list:
                 yield ''.join(each_proxy.xpath('.//text()'))
 
+
 if __name__ == '__main__':
     gg = GetFreeProxy()
     # for e in gg.freeProxyFirst():
@@ -139,9 +126,9 @@ if __name__ == '__main__':
 
     # for e in gg.freeProxyThird():
     #     print e
-    #
-    # for e in gg.freeProxyFourth():
-    #     print e
 
-    for e in gg.freeProxyFifth():
-        print(e)
+    for e in gg.freeProxyFourth():
+        print e
+
+        # for e in gg.freeProxyFifth():
+        #     print(e)

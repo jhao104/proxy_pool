@@ -20,17 +20,6 @@ from Util.WebRequest import WebRequest
 logger = LogHandler(__name__)
 
 
-def getHTMLText(url, headers={'user': 'Mozilla/5.0'}):
-    try:
-        response = requests.get(url, headers=headers, timeout=10)
-        response.raise_for_status()
-        response.encoding = response.apparent_encoding
-        return response.text
-    except:
-        return
-        # return response.status_code
-
-
 # noinspection PyPep8Naming
 def robustCrawl(func):
     def decorate(*args, **kwargs):
