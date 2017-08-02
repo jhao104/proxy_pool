@@ -62,6 +62,7 @@ class LogHandler(logging.Logger):
         formatter = logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s')
 
         file_handler.setFormatter(formatter)
+        self.file_handler = file_handler
         self.addHandler(file_handler)
 
     def __setStreamHandler__(self, level=None):
@@ -79,8 +80,17 @@ class LogHandler(logging.Logger):
             stream_handler.setLevel(level)
         self.addHandler(stream_handler)
 
+    def resetName(self, name):
+        """
+        reset name
+        :param name:
+        :return:
+        """
+        self.name = name
+        self.removeHandler(self.file_handler)
+        self.__setFileHandler__()
+
 
 if __name__ == '__main__':
-    log = LogHandler(__name__)
+    log = LogHandler('test')
     log.info('this is a test msg')
-    pass
