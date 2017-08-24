@@ -79,6 +79,7 @@ class WebRequest(object):
                         raise Exception
                 return html
             except Exception as e:
+                print(e)
                 retry_time -= 1
                 if retry_time <= 0:
                     return
