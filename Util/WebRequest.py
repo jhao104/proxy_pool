@@ -70,10 +70,14 @@ class WebRequest(object):
         while True:
             try:
                 html = requests.get(url, headers=headers, timeout=timeout)
-                if filter(lambda key: key in html.content, retry_flag):
-                    raise Exception
-                else:
-                    return html
+                # if filter(lambda key: key in html.content, retry_flag):
+                # 原filter语句执行if判断所有情况均为True情况，python3与python2的区别？
+                # python3中filter返回filter对象，即使为空，if会判断为True
+                # python2中filter返回list对象，为空，if判断为False
+                for f in retry_flag:
+                    if f in html.content:
+                        raise Exception
+                return html
             except Exception as e:
                 print(e)
                 retry_time -= 1
