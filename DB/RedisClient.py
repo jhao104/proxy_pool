@@ -9,7 +9,7 @@ self.name为Redis中的一个key
 import json
 import random
 import redis
-
+import sys
 
 class RedisClient(object):
     """
@@ -33,7 +33,14 @@ class RedisClient(object):
         :return:
         """
         key = self.__conn.hgetall(name=self.name)
-        return random.choice(key.keys()) if key else None
+        # return random.choice(key.keys()) if key else None
+        # key.keys()在python3中返回dict_keys，不支持index，不能直接使用random.choice
+        # 另：python3中，redis返回为bytes,需要解码
+        rkey = random.choice(list(key.keys())) if key else None
+        if isinstance(rkey, bytes):
+            return rkey.decode('utf-8')
+        else:
+            return rkey
         # return self.__conn.srandmember(name=self.name)
 
     def put(self, key):
@@ -74,7 +81,12 @@ class RedisClient(object):
         self.__conn.hincrby(self.name, key, value)
 
     def getAll(self):
-        return self.__conn.hgetall(self.name).keys()
+        # return self.__conn.hgetall(self.name).keys()
+        # python3 redis返回bytes类型,需要解码
+        if sys.version_info.major == 3:
+            return [key.decode('utf-8') for key in self.__conn.hgetall(self.name).keys()]
+        else:
+            return self.__conn.hgetall(self.name).keys()
         # return self.__conn.smembers(self.name)
 
     def get_status(self):
