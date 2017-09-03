@@ -48,7 +48,7 @@ class ProxyRefreshSchedule(ProxyManager):
         self.db.changeTable(self.raw_proxy_queue)
         raw_proxy = self.db.pop()
         self.log.info('%s start validProxy_a' % time.ctime())
-        # 计算剩余代理，用来
+        # 计算剩余代理，用来减少重复计算
         remaining_proxies = self.db.getAll()
         while raw_proxy:
             if (raw_proxy not in remaining_proxies) and validUsefulProxy(raw_proxy):
