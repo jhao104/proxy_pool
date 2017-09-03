@@ -48,9 +48,10 @@ class ProxyRefreshSchedule(ProxyManager):
         self.db.changeTable(self.raw_proxy_queue)
         raw_proxy = self.db.pop()
         self.log.info('%s start validProxy_a' % time.ctime())
-        exist_proxy = self.db.getAll()
+        # 计算剩余代理，用来
+        remaining_proxies = self.db.getAll()
         while raw_proxy:
-            if validUsefulProxy(raw_proxy) and (raw_proxy not in exist_proxy):
+            if (raw_proxy not in remaining_proxies) and validUsefulProxy(raw_proxy):
                 self.db.changeTable(self.useful_proxy_queue)
                 self.db.put(raw_proxy)
                 self.log.info('validProxy_a: %s validation pass' % raw_proxy)
@@ -58,6 +59,7 @@ class ProxyRefreshSchedule(ProxyManager):
                 self.log.debug('validProxy_a: %s validation fail' % raw_proxy)
             self.db.changeTable(self.raw_proxy_queue)
             raw_proxy = self.db.pop()
+            remaining_proxies = self.db.getAll()
         self.log.info('%s validProxy_a complete' % time.ctime())
 
 
