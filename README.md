@@ -113,6 +113,23 @@ pip install -r requirements.txt
 你也可以分别运行他们,依次到Api下启动ProxyApi.py,Schedule下启动ProxyRefreshSchedule.py和ProxyValidSchedule.py即可
 ```
 
+docker:
+```
+git clone git@github.com:jhao104/proxy_pool.git
+
+cd proxy_pool
+
+docker build -t proxy:latest -f Dockerfile .
+
+docker run -p 5000:5000 -d proxy:latest
+
+# Wait a few minutes
+curl localhost:5000/get/
+# result: xxx.xxx.xxx.xxx:xxxx
+
+curl localhost:5000/get_all/
+```
+
 ### 5、使用
 　　定时任务启动后，会通过代理获取方法fetch所有代理放入数据库并验证。此后默认每20分钟会重复执行一次。定时任务启动大概一两分钟后，便可在[SSDB](https://github.com/jhao104/SSDBAdmin)中看到刷新出来的可用的代理：
     
