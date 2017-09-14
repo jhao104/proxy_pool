@@ -64,7 +64,7 @@ class GetFreeProxy(object):
         :return:
         """
         url = "http://www.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
-                proxy_number)
+            proxy_number)
         request = WebRequest()
         # html = request.get(url).content
         # content为未解码，text为解码后的字符串
@@ -124,8 +124,34 @@ class GetFreeProxy(object):
             for each_proxy in proxy_list:
                 # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
                 ip_addr = ''.join(each_proxy.xpath(xpath_str))
-                port = each_proxy.xpath(".//span[contains(@class, 'port')]/text()")[0]
+                port = each_proxy.xpath(
+                    ".//span[contains(@class, 'port')]/text()")[0]
                 yield '{}:{}'.format(ip_addr, port)
+
+    @staticmethod
+    @robustCrawl
+    def taiyangProxySix():
+        """
+        太阳🌞代理 http://www.taiyangruanjian.com/        
+        """
+        url = "http://http-api.taiyangruanjian.com/getip?num=5000&type=2&pro=0&city=0&yys=0&port=11&pack=2664&ts=1&ys=1&cs=1&lb=1&sb=1&pb=5&mr=3"
+        headers = {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+            'Connection': 'keep-alive',
+            'Accept-Language': 'zh-CN,zh;q=0.8',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3212.0 Safari/537.36',
+        }
+        response = requests.get(url, headers=headers, timeout=30)
+        if response.status_code is 200:
+            jsonBody = response.json()
+            if "data" in jsonBody and "code" in jsonBody and "success" in jsonBody:
+                code = jsonBody["code"]
+                if code is 0 and jsonBody["success"]:
+                    data = jsonBody["data"]
+                    for item in data:
+                        yield "{}:{}".format(item["ip"], item["port"])
+                else:
+                    print jsonBody["msg"]
 
 
 if __name__ == '__main__':
@@ -143,4 +169,7 @@ if __name__ == '__main__':
     #     print(e)
 
     for e in gg.freeProxyFifth():
-         print(e)
+        print(e)
+
+    # for e in gg.taiyangProxySix():
+    #     print(e)
