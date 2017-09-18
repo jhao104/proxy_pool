@@ -14,14 +14,14 @@ __author__ = 'JHao'
 
 import sys
 from multiprocessing import Process
-from Util.GetConfig import GetConfig
+
 
 sys.path.append('../')
 
 from Api.ProxyApi import run as ProxyApiRun
 from Schedule.ProxyValidSchedule import run as ValidRun
 from Schedule.ProxyRefreshSchedule import run as RefreshRun
-
+from Util.GetConfig import GetConfig
 
 def run(host,port):
     p_list = list()
