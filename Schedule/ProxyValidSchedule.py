@@ -52,7 +52,7 @@ class ProxyValidSchedule(ProxyManager):
                     # 计数器小于-5删除该代理
                     self.db.delete(each_proxy)
             self.log.info('validProxy_a running normal')
-            sleep(60 * 5)
+            sleep(60 * 1)
 
     def main(self):
         self.__validProxy()

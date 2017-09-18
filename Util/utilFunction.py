@@ -74,6 +74,8 @@ def validUsefulProxy(proxy):
     :param proxy:
     :return:
     """
+    if isinstance(proxy, bytes):
+        proxy = proxy.decode('utf8')
     proxies = {"https": "https://{proxy}".format(proxy=proxy)}
     try:
         # 超过40秒的代理就不要了
