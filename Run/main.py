@@ -23,7 +23,7 @@ from Schedule.ProxyValidSchedule import run as ValidRun
 from Schedule.ProxyRefreshSchedule import run as RefreshRun
 from Util.GetConfig import GetConfig
 
-def run(host,port):
+def run():
     p_list = list()
     p1 = Process(target=ProxyApiRun, name='ProxyApiRun')
     p_list.append(p1)
