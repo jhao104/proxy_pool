@@ -14,6 +14,7 @@ __author__ = 'JHao'
 
 import sys
 from multiprocessing import Process
+from Util.GetConfig import GetConfig
 
 sys.path.append('../')
 
@@ -22,7 +23,7 @@ from Schedule.ProxyValidSchedule import run as ValidRun
 from Schedule.ProxyRefreshSchedule import run as RefreshRun
 
 
-def run():
+def run(host,port):
     p_list = list()
     p1 = Process(target=ProxyApiRun, name='ProxyApiRun')
     p_list.append(p1)
@@ -30,10 +31,11 @@ def run():
     p_list.append(p2)
     p3 = Process(target=RefreshRun, name='RefreshRun')
     p_list.append(p3)
+
     for p in p_list:
         p.start()
     for p in p_list:
         p.join()
 
 if __name__ == '__main__':
-    run()
+   run()
