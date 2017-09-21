@@ -17,7 +17,7 @@
 * 代理IP从何而来？
 
 　　刚自学爬虫的时候没有代理IP就去西刺、快代理之类有免费代理的网站去爬，还是有个别代理能用。当然，如果你有更好的代理接口也可以自己接入。
-　　
+
 　　免费代理的采集也很简单，无非就是：访问页面页面 —> 正则/xpath提取 —> 保存
 
 * 如何保证代理质量？
@@ -155,10 +155,10 @@ curl localhost:5000/get_all/
 import requests
 
 def get_proxy():
-    return requests.get("http://127.0.0.1:5000/get/").content
+    return requests.get("http://127.0.0.1:5010/get/").content
 
 def delete_proxy(proxy):
-    requests.get("http://127.0.0.1:5000/delete/?proxy={}".format(proxy))
+    requests.get("http://127.0.0.1:5010/delete/?proxy={}".format(proxy))
 
 # your spider code
 
@@ -169,7 +169,7 @@ def spider():
 
 ```
 
-　　测试地址：http://123.207.35.36:5000 单机勿压测。谢谢
+　　测试地址：http://123.207.35.36:5010 单机勿压测。谢谢
 
 ### 6、最后
 　　时间仓促，功能和代码都比较简陋，以后有时间再改进。喜欢的在github上给个star。感谢！
