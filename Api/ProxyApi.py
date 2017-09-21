@@ -16,6 +16,7 @@ __author__ = 'JHao'
 import sys
 
 from flask import Flask, jsonify, request
+from Util.GetConfig import GetConfig
 
 sys.path.append('../')
 
@@ -71,7 +72,8 @@ def get_status():
 
 
 def run():
-    app.run(host='0.0.0.0', port=5000)
+    config = GetConfig()
+    app.run(host=config.host_ip, port=config.host_port)
 
 if __name__ == '__main__':
     run()
