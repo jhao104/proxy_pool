@@ -21,7 +21,7 @@ sys.path.append('../')
 from Api.ProxyApi import run as ProxyApiRun
 from Schedule.ProxyValidSchedule import run as ValidRun
 from Schedule.ProxyRefreshSchedule import run as RefreshRun
-from Util.GetConfig import GetConfig
+
 
 def run():
     p_list = list()

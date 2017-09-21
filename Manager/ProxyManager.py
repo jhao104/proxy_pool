@@ -40,7 +40,7 @@ class ProxyManager(object):
             proxy_set = set()
             # fetch raw proxy
             for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
-                if proxy.strip():
+                if proxy:
                     self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
                     proxy_set.add(proxy.strip())
 
@@ -76,6 +76,7 @@ class ProxyManager(object):
         return self.db.getAll()
 
     def get_status(self):
+        # TODO rename get_count..
         self.db.changeTable(self.raw_proxy_queue)
         total_raw_proxy = self.db.get_status()
         self.db.changeTable(self.useful_proxy_queue)
