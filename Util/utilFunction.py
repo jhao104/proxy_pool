@@ -17,7 +17,7 @@ from lxml import etree
 from Util.LogHandler import LogHandler
 from Util.WebRequest import WebRequest
 
-logger = LogHandler(__name__)
+logger = LogHandler(__name__, stream=False)
 
 
 # noinspection PyPep8Naming
@@ -81,8 +81,8 @@ def validUsefulProxy(proxy):
         # 超过40秒的代理就不要了
         r = requests.get('https://www.baidu.com', proxies=proxies, timeout=40, verify=False)
         if r.status_code == 200:
-            logger.debug('%s is ok' % proxy)
+            logger.info('%s is ok' % proxy)
             return True
     except Exception as e:
-        logger.info(e)
+        logger.debug(e)
         return False
