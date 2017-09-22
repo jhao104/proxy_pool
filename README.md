@@ -10,7 +10,7 @@
 
 ##### [介绍文档](https://github.com/jhao104/proxy_pool/blob/master/doc/introduce.md)
 
-* 支持版本 ![](https://img.shields.io/badge/Python-2.x.svg) ![](https://img.shields.io/badge/Python-3.x.svg)
+* 支持版本 ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
 * 测试地址: http://123.207.35.36:5010 单机勿压测。谢谢
 
@@ -67,9 +67,12 @@ port = 5010          # 监听端口
 
 ### 使用
 
-启动过几分钟后就能看到抓取到的代理IP，你可以直接到数据库中查看，推荐一个[SSDB可视化工具](https://github.com/jhao104/SSDBAdmin),也可以通过api访问http://127.0.0.1:5010 查看。
+启动过几分钟后就能看到抓取到的代理IP，你可以直接到数据库中查看，推荐一个[SSDB可视化工具](https://github.com/jhao104/SSDBAdmin)。
+
+也可以通过api访问http://127.0.0.1:5010 查看。
 
 * Api
+
 | api | method | Description | arg|
 | ----| ---- | ---- | ----|
 | / | GET | api介绍 | None |
@@ -114,3 +117,17 @@ def getHtml():
 任何问题欢迎在[Issues](https://github.com/jhao104/proxy_pool/issues) 中反馈，如果没有账号可以去 我的[博客](http://www.spiderpy.cn/blog/message)中留言。
 
 你的反馈会让此项目变得更加完美。
+
+### 贡献代码
+
+本项目仅作为基本的通用的代理池架构，不接收特有功能(当然,不限于特别好的idea)。
+
+本项目依然不够完善，如果发现bug或有新的功能添加，请在[Issues](https://github.com/jhao104/proxy_pool/issues)中提交bug(或新功能)描述，在确认后提交你的代码。
+
+这里感谢以下contributor的无私奉献：
+
+　　[@kangnwh](https://github.com/kangnwh)| [@bobobo80](https://github.com/bobobo80)| [@halleywj](https://github.com/halleywj)| [@newlyedward](https://github.com/newlyedward)| [@wang-ye](https://github.com/wang-ye)| [@gladmo](https://github.com/gladmo)| [@bernieyangmh](https://github.com/bernieyangmh)| [@PythonYXY](https://github.com/PythonYXY)| [@zuijiawoniu](https://github.com/zuijiawoniu)
+
+
+
+
