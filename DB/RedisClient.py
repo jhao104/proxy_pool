@@ -6,10 +6,16 @@ self.name为Redis中的一个key
 2017/4/17 修改pop
 '''
 
+# ############################
+# 已弃用，
+# SsdbClient.py 支持redis
+##############################
+
 import json
 import random
 import redis
 import sys
+
 
 class RedisClient(object):
     """
@@ -41,7 +47,7 @@ class RedisClient(object):
             return rkey.decode('utf-8')
         else:
             return rkey
-        # return self.__conn.srandmember(name=self.name)
+            # return self.__conn.srandmember(name=self.name)
 
     def put(self, key):
         """
@@ -87,7 +93,7 @@ class RedisClient(object):
             return [key.decode('utf-8') for key in self.__conn.hgetall(self.name).keys()]
         else:
             return self.__conn.hgetall(self.name).keys()
-        # return self.__conn.smembers(self.name)
+            # return self.__conn.smembers(self.name)
 
     def get_status(self):
         return self.__conn.hlen(self.name)

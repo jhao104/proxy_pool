@@ -27,9 +27,10 @@ app = Flask(__name__)
 
 api_list = {
     'get': u'get an usable proxy',
-    'refresh': u'refresh proxy pool',
+    # 'refresh': u'refresh proxy pool',
     'get_all': u'get all proxy from proxy pool',
     'delete?proxy=127.0.0.1:8080': u'delete an unable proxy',
+    'get_status': u'proxy statistics'
 }
 
 
@@ -55,7 +56,7 @@ def refresh():
 @app.route('/get_all/')
 def getAll():
     proxies = ProxyManager().getAll()
-    return jsonify([proxy.decode('utf8') for proxy in proxies])
+    return jsonify(proxies)
 
 
 @app.route('/delete/', methods=['GET'])
@@ -66,8 +67,8 @@ def delete():
 
 
 @app.route('/get_status/')
-def get_status():
-    status = ProxyManager().get_status()
+def getStatus():
+    status = ProxyManager().getNumber()
     return jsonify(status)
 
 

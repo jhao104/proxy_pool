@@ -39,11 +39,11 @@ class ProxyValidSchedule(ProxyManager):
                     # 兼容PY3
                     each_proxy = each_proxy.decode('utf-8')
 
-                value = self.db.getvalue(each_proxy)
+                value = self.db.get(each_proxy)
                 if validUsefulProxy(each_proxy):
                     # 成功计数器加1
                     if value and int(value) < 1:
-                        self.db.inckey(each_proxy, 1)
+                        self.db.update(each_proxy, 1)
                     self.log.info('ProxyValidSchedule: {} validation pass'.format(each_proxy))
                 else:
                     # 失败计数器减一
@@ -51,7 +51,7 @@ class ProxyValidSchedule(ProxyManager):
                         # 计数器小于-5删除该代理
                         self.db.delete(each_proxy)
                     else:
-                        self.db.inckey(each_proxy, -1)
+                        self.db.update(each_proxy, -1)
                     self.log.info('ProxyValidSchedule: {} validation fail'.format(each_proxy))
 
             self.log.info('ProxyValidSchedule running normal')

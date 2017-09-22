@@ -49,7 +49,7 @@ class ProxyRefreshSchedule(ProxyManager):
         raw_proxy = self.db.pop()
         self.log.info('ProxyRefreshSchedule: %s start validProxy' % time.ctime())
         # 计算剩余代理，用来减少重复计算
-        remaining_proxies = self.db.getAll()
+        remaining_proxies = self.getAll()
         while raw_proxy:
             if isinstance(raw_proxy, bytes):
                 # 兼容Py3
@@ -63,7 +63,7 @@ class ProxyRefreshSchedule(ProxyManager):
                 self.log.info('ProxyRefreshSchedule: %s validation fail' % raw_proxy)
             self.db.changeTable(self.raw_proxy_queue)
             raw_proxy = self.db.pop()
-            remaining_proxies = self.db.getAll()
+            remaining_proxies = self.getAll()
         self.log.info('ProxyRefreshSchedule: %s validProxy complete' % time.ctime())
 
 
