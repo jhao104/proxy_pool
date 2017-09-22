@@ -143,12 +143,15 @@ class GetFreeProxy(object):
 　　在`Config.ini`的`[ProxyGetter]`下添加自定义的方法的名字:
 
 ```shell
+
 [ProxyGetter]
 ;register the proxy getter function
 freeProxyFirst  = 0  # 如果要取消某个方法，将其删除或赋为0即可
 ....
 freeProxyCustom  = 1  # 确保名字和你添加方法名字一致
-```　　
+
+```
+
 
 　　`ProxyRefreshSchedule`会每隔一段时间抓取一次代理，下次抓取时会自动识别调用你定义的方法。
 
