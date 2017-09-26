@@ -67,6 +67,19 @@ def getHtmlTree(url, **kwargs):
     return etree.HTML(html)
 
 
+def tcpConnect(proxy):
+    """
+    TCP 三次握手
+    :param proxy:
+    :return:
+    """
+    from socket import socket, AF_INET, SOCK_STREAM
+    s = socket(AF_INET, SOCK_STREAM)
+    ip, port = proxy.split(':')
+    result = s.connect_ex((ip, int(port)))
+    return True if result == 0 else False
+
+
 # noinspection PyPep8Naming
 def validUsefulProxy(proxy):
     """
@@ -76,10 +89,10 @@ def validUsefulProxy(proxy):
     """
     if isinstance(proxy, bytes):
         proxy = proxy.decode('utf8')
-    proxies = {"https": "https://{proxy}".format(proxy=proxy)}
+    proxies = {"http": "http://{proxy}".format(proxy=proxy)}
     try:
         # 超过20秒的代理就不要了
-        r = requests.get('https://www.baidu.com', proxies=proxies, timeout=20, verify=False)
+        r = requests.get('http://httpbin.org/ip', proxies=proxies, timeout=20, verify=False)
         if r.status_code == 200:
             logger.info('%s is ok' % proxy)
             return True

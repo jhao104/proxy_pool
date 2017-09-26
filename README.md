@@ -8,6 +8,15 @@
 [![GitHub contributors](https://img.shields.io/github/contributors/jhao104/proxy_pool.svg)](https://github.com/jhao104/proxy_pool/graphs/contributors)
 [![](https://img.shields.io/badge/language-Python-green.svg)](https://github.com/jhao104/proxy_pool)
 
+    ______                        ______             _
+    | ___ \_                      | ___ \           | |
+    | |_/ / \__ __   __  _ __   _ | |_/ /___   ___  | |
+    |  __/|  _// _ \ \ \/ /| | | ||  __// _ \ / _ \ | |
+    | |   | | | (_) | >  < \ |_| || |  | (_) | (_) || |___
+    \_|   |_|  \___/ /_/\_\ \__  |\_|   \___/ \___/ \_____\
+                           __ / /
+                          /___ /
+
 ##### [介绍文档](https://github.com/jhao104/proxy_pool/blob/master/doc/introduce.md)
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
