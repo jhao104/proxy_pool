@@ -15,10 +15,12 @@ __author__ = 'JHao'
 
 import sys
 
+sys.path.append('../')
+
 from flask import Flask, jsonify, request
 from Util.GetConfig import GetConfig
 
-sys.path.append('../')
+
 
 from Manager.ProxyManager import ProxyManager
 
