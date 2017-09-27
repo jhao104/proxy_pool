@@ -57,7 +57,7 @@ class MongodbClient(object):
         self.db[self.name].update({'proxy': key}, {'$inc': {'num': value}})
 
     def exists(self, key):
-        return True if self.db[self.name].find({'proxy': key}) == None else False
+        return True if self.db[self.name].find({'proxy': key}) != None else False
 
     def getNumber(self):
         return self.db[self.name].count()
