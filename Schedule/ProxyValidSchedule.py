@@ -13,49 +13,31 @@
 __author__ = 'JHao'
 
 import sys
-from time import sleep
 
 sys.path.append('../')
 
-from Util.utilFunction import validUsefulProxy
-from Manager.ProxyManager import ProxyManager
-from Util.LogHandler import LogHandler
+from Schedule.ProxyCheck import ProxyCheck
 
 
-class ProxyValidSchedule(ProxyManager):
+class ProxyValidSchedule(object):
     def __init__(self):
-        ProxyManager.__init__(self)
-        self.log = LogHandler('valid_schedule')
+        pass
 
-    def __validProxy(self):
+    def __validProxy(self, threads=5):
         """
-        验证代理
+        验证useful_proxy代理
+        :param threads: 线程数
         :return:
         """
-        while True:
-            self.db.changeTable(self.useful_proxy_queue)
-            for each_proxy in self.db.getAll():
-                if isinstance(each_proxy, bytes):
-                    # 兼容PY3
-                    each_proxy = each_proxy.decode('utf-8')
+        thread_list = list()
+        for index in range(threads):
+            thread_list.append(ProxyCheck())
 
-                value = self.db.get(each_proxy)
-                if validUsefulProxy(each_proxy):
-                    # 成功计数器加1
-                    if value and int(value) < 1:
-                        self.db.update(each_proxy, 1)
-                    self.log.info('ProxyValidSchedule: {} validation pass'.format(each_proxy))
-                else:
-                    # 失败计数器减一
-                    if value and int(value) < -5:
-                        # 计数器小于-5删除该代理
-                        self.db.delete(each_proxy)
-                    else:
-                        self.db.update(each_proxy, -1)
-                    self.log.info('ProxyValidSchedule: {} validation fail'.format(each_proxy))
+        for thread in thread_list:
+            thread.start()
 
-            self.log.info('ProxyValidSchedule running normal')
-            sleep(60 * 1)
+        for thread in thread_list:
+            thread.join()
 
     def main(self):
         self.__validProxy()
