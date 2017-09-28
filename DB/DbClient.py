@@ -68,6 +68,8 @@ class DbClient(object):
             __type = "SsdbClient"
         elif "REDIS" == self.config.db_type:
             __type = "RedisClient"
+        elif "MONGODB" == self.config.db_type:
+            __type = "MongodbClient"
         else:
             pass
         assert __type, 'type error, Not support DB type: {}'.format(self.config.db_type)
