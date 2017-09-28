@@ -36,10 +36,13 @@ class MongodbClient(object):
             self.db[self.name].insert({'proxy': proxy, 'num': num})
 
     def pop(self):
-        value = list(self.db[self.name].aggregate([{'$sample': {'size': 1}}]))[0]['proxy']
-        if value:
+        data = list(self.db[self.name].aggregate([{'$sample': {'size': 1}}]))
+        if data:
+            data = data[0]
+            value = data['proxy']
             self.delete(value)
-        return value
+            return {'proxy': value, 'value': data['num']}
+        return None
 
     def delete(self, value):
         self.db[self.name].remove({'proxy': value})
@@ -57,7 +60,7 @@ class MongodbClient(object):
         self.db[self.name].update({'proxy': key}, {'$inc': {'num': value}})
 
     def exists(self, key):
-        return True if self.db[self.name].find({'proxy': key}) != None else False
+        return True if self.db[self.name].find_one({'proxy': key}) != None else False
 
     def getNumber(self):
         return self.db[self.name].count()
@@ -65,7 +68,7 @@ class MongodbClient(object):
 
 if __name__ == "__main__":
     db = MongodbClient('first', 'localhost', 27017)
-    db.put('127.0.0.1:1')
-    db2 = MongodbClient('second', 'localhost', 27017)
-    db2.put('127.0.0.1:2')
-    db.clean()
+    # db.put('127.0.0.1:1')
+    # db2 = MongodbClient('second', 'localhost', 27017)
+    # db2.put('127.0.0.1:2')
+    print(db.pop())
