@@ -10,6 +10,7 @@
    Change Activity:
                    2016/12/2:
                    2017/09/22: PY3中 redis-py返回的数据是bytes型
+                   2017/09/27: 修改pop()方法 返回{proxy:value}字典
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -77,11 +78,17 @@ class SsdbClient(object):
         self.__conn.hincrby(self.name, key, value)
 
     def pop(self):
+        """
+        弹出一个代理
+        :return: dict {proxy: value}
+        """
         proxies = self.__conn.hkeys(self.name)
         if proxies:
             proxy = random.choice(proxies)
+            value = self.__conn.hget(self.name, proxy)
             self.delete(proxy)
-            return proxy
+            return {'proxy': proxy.decode('utf-8') if EnvUtil.PY3 else proxy,
+                    'value': value.decode('utf-8') if EnvUtil.PY3 and value else value}
         return None
 
     def exists(self, key):
