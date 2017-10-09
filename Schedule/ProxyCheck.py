@@ -22,9 +22,10 @@ from Util.utilFunction import validUsefulProxy
 from Manager.ProxyManager import ProxyManager
 from Util.LogHandler import LogHandler
 
+FAIL_COUNT = 2
+
 
 class ProxyCheck(ProxyManager, Thread):
-
     def __init__(self):
         ProxyManager.__init__(self)
         Thread.__init__(self)
@@ -47,7 +48,7 @@ class ProxyCheck(ProxyManager, Thread):
                 else:
                     self.log.info('ProxyCheck: {} validation fail'.format(proxy))
                     # 验证失败，计数器减1
-                    if counter and int(counter) < -5:
+                    if counter and int(counter) < -FAIL_COUNT:
                         self.log.info('ProxyCheck: {} fail too many, delete!'.format(proxy))
                         self.db.delete(proxy)
                     else:
