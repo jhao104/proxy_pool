@@ -39,7 +39,7 @@ class ProxyCheck(ProxyManager, Thread):
                 proxy = proxy_item.get('proxy')
                 counter = proxy_item.get('value')
                 if validUsefulProxy(proxy):
-                    # 验证通过计数器加1, 计数在-5到1之间
+                    # 验证通过计数器加1
                     if counter and int(counter) < 1:
                         self.db.put(proxy, num=int(counter) + 1)
                     else:
@@ -48,7 +48,7 @@ class ProxyCheck(ProxyManager, Thread):
                 else:
                     self.log.info('ProxyCheck: {} validation fail'.format(proxy))
                     # 验证失败，计数器减1
-                    if counter and int(counter) < -FAIL_COUNT:
+                    if counter and int(counter) <= -FAIL_COUNT:
                         self.log.info('ProxyCheck: {} fail too many, delete!'.format(proxy))
                         self.db.delete(proxy)
                     else:
