@@ -3,12 +3,13 @@
 -------------------------------------------------
    File Name：    MongodbClient.py
    Description :  封装mongodb操作
-   Author :       JHao netAir
+   Author :       Maps netAir
    date：          2017/3/3
 -------------------------------------------------
    Change Activity:
                    2017/3/3:
                    2017/9/26:完成对mongodb的支持
+                   2017/10/13:添加mongodb对用户名密码的支持
 -------------------------------------------------
 """
 __author__ = 'Maps netAir'
@@ -17,10 +18,14 @@ from pymongo import MongoClient
 
 
 class MongodbClient(object):
-    def __init__(self, name, host, port):
-        self.name = name
-        self.client = MongoClient(host, port)
+    def __init__(self, config):
+        self.name = config.db_name
+        self.client = MongoClient(host=config.db_host, port=config.db_port)
         self.db = self.client.proxy
+        try:
+            self.db.authenticate(config.db_username, config.db_password)
+        except:
+            pass
 
     def changeTable(self, name):
         self.name = name
@@ -64,11 +69,3 @@ class MongodbClient(object):
 
     def getNumber(self):
         return self.db[self.name].count()
-
-
-if __name__ == "__main__":
-    db = MongodbClient('first', 'localhost', 27017)
-    # db.put('127.0.0.1:1')
-    # db2 = MongodbClient('second', 'localhost', 27017)
-    # db2.put('127.0.0.1:2')
-    print(db.pop())
