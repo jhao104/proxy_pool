@@ -46,16 +46,25 @@ class GetConfig(object):
         return int(self.config_file.get('DB', 'port'))
 
     @LazyProperty
+    def db_username(self):
+        return self.config_file.get('DB', 'username')
+
+    @LazyProperty
+    def db_password(self):
+        return self.config_file.get('DB', 'password')
+
+    @LazyProperty
     def proxy_getter_functions(self):
         return self.config_file.options('ProxyGetter')
 
     @LazyProperty
     def host_ip(self):
-        return self.config_file.get('HOST','ip')
+        return self.config_file.get('HOST', 'ip')
 
     @LazyProperty
     def host_port(self):
         return self.config_file.get('HOST', 'port')
+
 
 if __name__ == '__main__':
     gg = GetConfig()
@@ -66,3 +75,5 @@ if __name__ == '__main__':
     print(gg.proxy_getter_functions)
     print(gg.host_ip)
     print(gg.host_port)
+    print(gg.db_username)
+    print(gg.db_password)
