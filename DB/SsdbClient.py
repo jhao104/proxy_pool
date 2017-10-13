@@ -35,7 +35,7 @@ class SsdbClient(object):
     def __init__(self, config):
         """
         init
-        :param config: instance of config
+        :param config: instance of GetConfig
         :return:
         """
         self.name = config.db_name
