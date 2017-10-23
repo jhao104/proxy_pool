@@ -119,13 +119,13 @@ cd proxy_pool
 
 docker build -t proxy:latest -f Dockerfile .
 
-docker run -p 5000:5000 -d proxy:latest
+docker run -p 5010:5010 -d proxy:latest
 
 # Wait a few minutes
-curl localhost:5000/get/
+curl localhost:5010/get/
 # result: xxx.xxx.xxx.xxx:xxxx
 
-curl localhost:5000/get_all/
+curl localhost:5010/get_all/
 ```
 
 ### 5、使用
