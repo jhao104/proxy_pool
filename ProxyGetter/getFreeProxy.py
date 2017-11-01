@@ -13,8 +13,6 @@
 """
 import re
 import requests
-import sys
-sys.path.append('../')
 
 try:
     from importlib import reload  # py3 实际不会实用，只是为了不显示语法错误
@@ -157,8 +155,8 @@ if __name__ == '__main__':
     # for e in gg.freeProxyThird():
     #     print e
 
-    for e in gg.freeProxySixth():
-        print(e)
+    # for e in gg.freeProxySixth():
+    #     print(e)
 
         # for e in gg.freeProxyFifth():
         #     print(e)
