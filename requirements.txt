@@ -3,7 +3,6 @@ Flask==0.11.1
 requests==2.11.0
 lxml==3.7.1
 
-ssdb==0.0.3
 pymongo==3.2.2
 redis==2.10.5
 

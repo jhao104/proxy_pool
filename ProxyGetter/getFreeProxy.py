@@ -68,7 +68,9 @@ class GetFreeProxy(object):
         url = "http://www.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
                 proxy_number)
         request = WebRequest()
-        html = request.get(url).content
+        # html = request.get(url).content
+        # content为未解码，text为解码后的字符串
+        html = request.get(url).text
         for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html):
             yield proxy
 
@@ -114,8 +116,18 @@ class GetFreeProxy(object):
             page_url = url.format(page=page)
             tree = getHtmlTree(page_url)
             proxy_list = tree.xpath('//td[@class="ip"]')
+            # 此网站有隐藏的数字干扰，或抓取到多余的数字或.符号
+            # 需要过滤掉<p style="display:none;">的内容
+            xpath_str = """.//*[not(contains(@style, 'display: none'))
+                                and not(contains(@style, 'display:none'))
+                                and not(contains(@class, 'port'))
+                                ]/text()
+                        """
             for each_proxy in proxy_list:
-                yield ''.join(each_proxy.xpath('.//text()'))
+                # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
+                ip_addr = ''.join(each_proxy.xpath(xpath_str))
+                port = each_proxy.xpath(".//span[contains(@class, 'port')]/text()")[0]
+                yield '{}:{}'.format(ip_addr, port)
 
     @staticmethod
     @robustCrawl

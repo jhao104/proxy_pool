@@ -15,9 +15,12 @@ __author__ = 'JHao'
 
 import sys
 
-from flask import Flask, jsonify, request
-
 sys.path.append('../')
+
+from flask import Flask, jsonify, request
+from Util.GetConfig import GetConfig
+
+
 
 from Manager.ProxyManager import ProxyManager
 
@@ -26,9 +29,10 @@ app = Flask(__name__)
 
 api_list = {
     'get': u'get an usable proxy',
-    'refresh': u'refresh proxy pool',
+    # 'refresh': u'refresh proxy pool',
     'get_all': u'get all proxy from proxy pool',
     'delete?proxy=127.0.0.1:8080': u'delete an unable proxy',
+    'get_status': u'proxy statistics'
 }
 
 
@@ -54,7 +58,7 @@ def refresh():
 @app.route('/get_all/')
 def getAll():
     proxies = ProxyManager().getAll()
-    return jsonify(list(proxies))
+    return jsonify(proxies)
 
 
 @app.route('/delete/', methods=['GET'])
@@ -65,13 +69,14 @@ def delete():
 
 
 @app.route('/get_status/')
-def get_status():
-    status = ProxyManager().get_status()
+def getStatus():
+    status = ProxyManager().getNumber()
     return jsonify(status)
 
 
 def run():
-    app.run(host='0.0.0.0', port=5000)
+    config = GetConfig()
+    app.run(host=config.host_ip, port=config.host_port)
 
 if __name__ == '__main__':
     run()

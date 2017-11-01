@@ -13,6 +13,9 @@
 """
 __author__ = 'JHao'
 
+import random
+
+from Util import EnvUtil
 from DB.DbClient import DbClient
 from Util.GetConfig import GetConfig
 from Util.LogHandler import LogHandler
@@ -40,13 +43,16 @@ class ProxyManager(object):
             proxy_set = set()
             # fetch raw proxy
             for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
-                if proxy.strip():
+                if proxy:
                     self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
                     proxy_set.add(proxy.strip())
 
             # store raw proxy
-            self.db.changeTable(self.raw_proxy_queue)
             for proxy in proxy_set:
+                self.db.changeTable(self.useful_proxy_queue)
+                if self.db.exists(proxy):
+                    continue
+                self.db.changeTable(self.raw_proxy_queue)
                 self.db.put(proxy)
 
     def get(self):
@@ -55,7 +61,13 @@ class ProxyManager(object):
         :return:
         """
         self.db.changeTable(self.useful_proxy_queue)
-        return self.db.get()
+        item_dict = self.db.getAll()
+        if item_dict:
+            if EnvUtil.PY3:
+                return random.choice(list(item_dict.keys()))
+            else:
+                return random.choice(item_dict.keys())
+        return None
         # return self.db.pop()
 
     def delete(self, proxy):
@@ -69,20 +81,22 @@ class ProxyManager(object):
 
     def getAll(self):
         """
-        get all proxy from pool
+        get all proxy from pool as list
         :return:
         """
         self.db.changeTable(self.useful_proxy_queue)
-        return self.db.getAll()
+        item_dict = self.db.getAll()
+        if EnvUtil.PY3:
+            return list(item_dict.keys()) if item_dict else list()
+        return item_dict.keys() if item_dict else list()
 
-    def get_status(self):
+    def getNumber(self):
         self.db.changeTable(self.raw_proxy_queue)
-        total_raw_proxy = self.db.get_status()
+        total_raw_proxy = self.db.getNumber()
         self.db.changeTable(self.useful_proxy_queue)
-        total_useful_queue = self.db.get_status()
+        total_useful_queue = self.db.getNumber()
         return {'raw_proxy': total_raw_proxy, 'useful_proxy': total_useful_queue}
 
 if __name__ == '__main__':
     pp = ProxyManager()
     pp.refresh()
-    print(pp.get_status())

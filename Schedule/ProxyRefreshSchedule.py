@@ -46,19 +46,26 @@ class ProxyRefreshSchedule(ProxyManager):
         :return:
         """
         self.db.changeTable(self.raw_proxy_queue)
-        raw_proxy = self.db.pop()
-        self.log.info('%s start validProxy_a' % time.ctime())
-        exist_proxy = self.db.getAll()
-        while raw_proxy:
-            if validUsefulProxy(raw_proxy) and (raw_proxy not in exist_proxy):
+        raw_proxy_item = self.db.pop()
+        self.log.info('ProxyRefreshSchedule: %s start validProxy' % time.ctime())
+        # 计算剩余代理，用来减少重复计算
+        remaining_proxies = self.getAll()
+        while raw_proxy_item:
+            raw_proxy = raw_proxy_item.get('proxy')
+            if isinstance(raw_proxy, bytes):
+                # 兼容Py3
+                raw_proxy = raw_proxy.decode('utf8')
+
+            if (raw_proxy not in remaining_proxies) and validUsefulProxy(raw_proxy):
                 self.db.changeTable(self.useful_proxy_queue)
                 self.db.put(raw_proxy)
-                self.log.info('validProxy_a: %s validation pass' % raw_proxy)
+                self.log.info('ProxyRefreshSchedule: %s validation pass' % raw_proxy)
             else:
-                self.log.debug('validProxy_a: %s validation fail' % raw_proxy)
+                self.log.info('ProxyRefreshSchedule: %s validation fail' % raw_proxy)
             self.db.changeTable(self.raw_proxy_queue)
-            raw_proxy = self.db.pop()
-        self.log.info('%s validProxy_a complete' % time.ctime())
+            raw_proxy_item = self.db.pop()
+            remaining_proxies = self.getAll()
+        self.log.info('ProxyRefreshSchedule: %s validProxy complete' % time.ctime())
 
 
 def refreshPool():
@@ -86,9 +93,9 @@ def main(process_num=30):
 
 
 def run():
-    # main()
+    main()
     sched = BlockingScheduler()
-    sched.add_job(main, 'interval', minutes=5)
+    sched.add_job(main, 'interval', minutes=10)  # 每10分钟抓取一次
     sched.start()
 
 

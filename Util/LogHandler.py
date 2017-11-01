@@ -2,12 +2,13 @@
 """
 -------------------------------------------------
    File Name：     LogHandler.py
-   Description :
+   Description :  日志操作模块
    Author :       JHao
    date：          2017/3/6
 -------------------------------------------------
    Change Activity:
                    2017/3/6: log handler
+                   2017/9/21: 屏幕输出/文件输出 可选(默认屏幕和文件均输出)
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -38,12 +39,14 @@ class LogHandler(logging.Logger):
     LogHandler
     """
 
-    def __init__(self, name, level=DEBUG):
+    def __init__(self, name, level=DEBUG, stream=True, file=True):
         self.name = name
         self.level = level
         logging.Logger.__init__(self, self.name, level=level)
-        self.__setFileHandler__()
-        self.__setStreamHandler__()
+        if stream:
+            self.__setStreamHandler__()
+        if file:
+            self.__setFileHandler__()
 
     def __setFileHandler__(self, level=None):
         """
