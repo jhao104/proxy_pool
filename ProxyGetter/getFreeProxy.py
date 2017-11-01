@@ -13,6 +13,8 @@
 """
 import re
 import requests
+import sys
+sys.path.append('../')
 
 try:
     from importlib import reload  # py3 实际不会实用，只是为了不显示语法错误
@@ -115,6 +117,22 @@ class GetFreeProxy(object):
             for each_proxy in proxy_list:
                 yield ''.join(each_proxy.xpath('.//text()'))
 
+    @staticmethod
+    @robustCrawl
+    def freeProxySixth():
+        """
+        抓取讯代理免费proxy http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10
+        :return:
+        """
+        url = 'http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10'
+        request = WebRequest()
+        try:
+            res = request.get(url).json()
+            for row in res['RESULT']['rows']:
+                yield '{}:{}'.format(row['ip'], row['port'])
+        except Exception as e:
+            pass
+
 
 if __name__ == '__main__':
     gg = GetFreeProxy()
@@ -127,8 +145,8 @@ if __name__ == '__main__':
     # for e in gg.freeProxyThird():
     #     print e
 
-    for e in gg.freeProxyFourth():
-        print e
+    for e in gg.freeProxySixth():
+        print(e)
 
         # for e in gg.freeProxyFifth():
         #     print(e)
