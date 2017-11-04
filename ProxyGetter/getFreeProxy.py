@@ -127,6 +127,22 @@ class GetFreeProxy(object):
                 port = each_proxy.xpath(".//span[contains(@class, 'port')]/text()")[0]
                 yield '{}:{}'.format(ip_addr, port)
 
+    @staticmethod
+    @robustCrawl
+    def freeProxySixth():
+        """
+        抓取讯代理免费proxy http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10
+        :return:
+        """
+        url = 'http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10'
+        request = WebRequest()
+        try:
+            res = request.get(url).json()
+            for row in res['RESULT']['rows']:
+                yield '{}:{}'.format(row['ip'], row['port'])
+        except Exception as e:
+            pass
+
 
 if __name__ == '__main__':
     gg = GetFreeProxy()
@@ -139,8 +155,8 @@ if __name__ == '__main__':
     # for e in gg.freeProxyThird():
     #     print e
 
-    # for e in gg.freeProxyFourth():
+    # for e in gg.freeProxySixth():
     #     print(e)
 
-    for e in gg.freeProxyFifth():
-         print(e)
+        # for e in gg.freeProxyFifth():
+        #     print(e)
