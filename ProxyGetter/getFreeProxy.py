@@ -38,7 +38,6 @@ class GetFreeProxy(object):
         pass
 
     @staticmethod
-    @robustCrawl  # decoration print error if exception happen
     def freeProxyFirst(page=10):
         """
         抓取无忧代理 http://www.data5u.com/
@@ -53,10 +52,12 @@ class GetFreeProxy(object):
             html_tree = getHtmlTree(url)
             ul_list = html_tree.xpath('//ul[@class="l2"]')
             for ul in ul_list:
-                yield ':'.join(ul.xpath('.//li/text()')[0:2])
+                try:
+                    yield ':'.join(ul.xpath('.//li/text()')[0:2])
+                except Exception as e:
+                    pass
 
     @staticmethod
-    @robustCrawl
     def freeProxySecond(proxy_number=100):
         """
         抓取代理66 http://www.66ip.cn/
@@ -73,7 +74,6 @@ class GetFreeProxy(object):
             yield proxy
 
     @staticmethod
-    @robustCrawl
     def freeProxyThird(days=1):
         """
         抓取ip181 http://www.ip181.com/
@@ -82,12 +82,14 @@ class GetFreeProxy(object):
         """
         url = 'http://www.ip181.com/'
         html_tree = getHtmlTree(url)
-        tr_list = html_tree.xpath('//tr')[1:]
-        for tr in tr_list:
-            yield ':'.join(tr.xpath('./td/text()')[0:2])
+        try:
+            tr_list = html_tree.xpath('//tr')[1:]
+            for tr in tr_list:
+                yield ':'.join(tr.xpath('./td/text()')[0:2])
+        except Exception as e:
+            pass
 
     @staticmethod
-    @robustCrawl
     def freeProxyFourth():
         """
         抓取西刺代理 http://api.xicidaili.com/free2016.txt
@@ -100,10 +102,12 @@ class GetFreeProxy(object):
             tree = getHtmlTree(each_url)
             proxy_list = tree.xpath('.//table[@id="ip_list"]//tr')
             for proxy in proxy_list:
-                yield ':'.join(proxy.xpath('./td/text()')[0:2])
+                try:
+                    yield ':'.join(proxy.xpath('./td/text()')[0:2])
+                except Exception as e:
+                    pass
 
     @staticmethod
-    @robustCrawl
     def freeProxyFifth():
         """
         抓取guobanjia http://www.goubanjia.com/free/gngn/index.shtml
@@ -122,13 +126,15 @@ class GetFreeProxy(object):
                                 ]/text()
                         """
             for each_proxy in proxy_list:
-                # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
-                ip_addr = ''.join(each_proxy.xpath(xpath_str))
-                port = each_proxy.xpath(".//span[contains(@class, 'port')]/text()")[0]
-                yield '{}:{}'.format(ip_addr, port)
+                try:
+                    # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
+                    ip_addr = ''.join(each_proxy.xpath(xpath_str))
+                    port = each_proxy.xpath(".//span[contains(@class, 'port')]/text()")[0]
+                    yield '{}:{}'.format(ip_addr, port)
+                except Exception as e:
+                    pass
 
     @staticmethod
-    @robustCrawl
     def freeProxySixth():
         """
         抓取讯代理免费proxy http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10
@@ -147,16 +153,19 @@ class GetFreeProxy(object):
 if __name__ == '__main__':
     gg = GetFreeProxy()
     # for e in gg.freeProxyFirst():
-    #     print e
-
+    #     print(e)
+    #
     # for e in gg.freeProxySecond():
-    #     print e
-
+    #     print(e)
+    #
     # for e in gg.freeProxyThird():
-    #     print e
+        # print(e)
+
+    # for e in gg.freeProxyFourth():
+    #     print(e)
+
+    for e in gg.freeProxyFifth():
+        print(e)
 
     # for e in gg.freeProxySixth():
     #     print(e)
-
-        # for e in gg.freeProxyFifth():
-        #     print(e)

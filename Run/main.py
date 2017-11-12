@@ -33,6 +33,7 @@ def run():
     p_list.append(p3)
 
     for p in p_list:
+        p.daemon = True
         p.start()
     for p in p_list:
         p.join()

@@ -86,6 +86,7 @@ def main(process_num=30):
         pl.append(proc)
 
     for num in range(process_num):
+        pl[num].daemon = True
         pl[num].start()
 
     for num in range(process_num):

@@ -44,7 +44,7 @@ def index():
 @app.route('/get/')
 def get():
     proxy = ProxyManager().get()
-    return proxy
+    return proxy if proxy else 'no proxy!'
 
 
 @app.route('/refresh/')

@@ -82,5 +82,6 @@ class WebRequest(object):
                 print(e)
                 retry_time -= 1
                 if retry_time <= 0:
-                    return
+                    # 多次请求失败时，返回百度页面
+                    return requests.get("https://www.baidu.com/")
                 time.sleep(retry_interval)
