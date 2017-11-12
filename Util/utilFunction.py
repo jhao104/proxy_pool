@@ -12,6 +12,7 @@
 -------------------------------------------------
 """
 import requests
+import time
 from lxml import etree
 
 from Util.LogHandler import LogHandler
@@ -63,6 +64,10 @@ def getHtmlTree(url, **kwargs):
               }
     # TODO 取代理服务器用代理服务器访问
     wr = WebRequest()
+
+    # delay 2s for per request
+    time.sleep(2)
+
     html = wr.get(url=url, header=header).content
     return etree.HTML(html)
 
