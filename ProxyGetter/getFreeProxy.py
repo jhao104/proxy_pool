@@ -150,6 +150,46 @@ class GetFreeProxy(object):
             pass
 
 
+    @staticmethod
+    def freeProxySeventh():
+        """
+        抓取ip3366 http://www.ip3366.net/free/
+        :return:
+        """
+        url_list = ['http://www.ip3366.net/free/?stype=1&page=1',  # 国内高匿
+                    'http://www.ip3366.net/free/?stype=2&page=1',  # 国内透明
+                    'http://www.ip3366.net/free/?stype=3&page=1',  # 国外高匿
+                    'http://www.ip3366.net/free/?stype=4&page=1',  # 国外透明
+                    ]
+        for each_url in url_list:
+            tree = getHtmlTree(each_url)
+            proxy_list = tree.xpath('//tr[td]')
+            for proxy in proxy_list:
+                try:
+                    yield ':'.join(proxy.xpath('./td/text()')[0:2])
+                except Exception as e:
+                    pass
+
+                  
+    @staticmethod
+    def freeProxyEighth():
+        """
+        抓取kuaidaili 'http://www.kuaidaili.com/
+        :return:
+        """
+        url_list = ['http://www.kuaidaili.com/free/inha/1/',  # 国内高匿
+                    'http://www.kuaidaili.com/free/intr/1/',  # 国内透明
+                    ]
+        for each_url in url_list:
+            tree = getHtmlTree(each_url)
+            proxy_list = tree.xpath('//tr[td]')
+            for proxy in proxy_list:
+                try:
+                    yield ':'.join(proxy.xpath('./td/text()')[0:2])
+                except Exception as e:
+                    pass 
+         
+ 
 if __name__ == '__main__':
     gg = GetFreeProxy()
     # for e in gg.freeProxyFirst():
