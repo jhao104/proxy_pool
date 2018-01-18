@@ -20,12 +20,9 @@ sys.path.append('../')
 from flask import Flask, jsonify, request
 from Util.GetConfig import GetConfig
 
-
-
 from Manager.ProxyManager import ProxyManager
 
 app = Flask(__name__)
-
 
 api_list = {
     'get': u'get an usable proxy',
@@ -77,6 +74,7 @@ def getStatus():
 def run():
     config = GetConfig()
     app.run(host=config.host_ip, port=config.host_port)
+
 
 if __name__ == '__main__':
     run()

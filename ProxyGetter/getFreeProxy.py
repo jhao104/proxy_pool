@@ -65,7 +65,7 @@ class GetFreeProxy(object):
         :return:
         """
         url = "http://www.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
-                proxy_number)
+            proxy_number)
         request = WebRequest()
         # html = request.get(url).content
         # content为未解码，text为解码后的字符串
@@ -162,6 +162,7 @@ class GetFreeProxy(object):
             for tr in proxy_list[1:]:
                 yield ':'.join(tr.xpath('./td/text()')[0:2])
 
+
 if __name__ == '__main__':
     gg = GetFreeProxy()
     # for e in gg.freeProxyFirst():
@@ -171,12 +172,12 @@ if __name__ == '__main__':
     #     print(e)
     #
     # for e in gg.freeProxyThird():
-        # print(e)
+    # print(e)
 
     # for e in gg.freeProxyFourth():
     #     print(e)
 
-    #for e in gg.freeProxyFifth():
+    # for e in gg.freeProxyFifth():
     #    print(e)
 
     # for e in gg.freeProxySixth():
