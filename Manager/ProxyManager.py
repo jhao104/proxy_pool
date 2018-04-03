@@ -19,6 +19,7 @@ from Util import EnvUtil
 from DB.DbClient import DbClient
 from Util.GetConfig import GetConfig
 from Util.LogHandler import LogHandler
+from Util.utilFunction import verifyProxyFormat
 from ProxyGetter.getFreeProxy import GetFreeProxy
 
 
@@ -40,14 +41,23 @@ class ProxyManager(object):
         :return:
         """
         for proxyGetter in self.config.proxy_getter_functions:
+            # fetch
             proxy_set = set()
-            # fetch raw proxy
-            for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
-                if proxy:
+            try:
+                self.log.info("{func}: fetch proxy start".format(func=proxyGetter))
+                proxy_iter = [_ for _ in getattr(GetFreeProxy, proxyGetter.strip())()]
+            except Exception as e:
+                self.log.error("{func}: fetch proxy fail".format(func=proxyGetter))
+                continue
+            for proxy in proxy_iter:
+                proxy = proxy.strip()
+                if proxy and verifyProxyFormat(proxy):
                     self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
-                    proxy_set.add(proxy.strip())
+                    proxy_set.add(proxy)
+                else:
+                    self.log.error('{func}: fetch proxy {proxy} error'.format(func=proxyGetter, proxy=proxy))
 
-            # store raw proxy
+            # store
             for proxy in proxy_set:
                 self.db.changeTable(self.useful_proxy_queue)
                 if self.db.exists(proxy):
@@ -96,6 +106,7 @@ class ProxyManager(object):
         self.db.changeTable(self.useful_proxy_queue)
         total_useful_queue = self.db.getNumber()
         return {'raw_proxy': total_raw_proxy, 'useful_proxy': total_useful_queue}
+
 
 if __name__ == '__main__':
     pp = ProxyManager()
