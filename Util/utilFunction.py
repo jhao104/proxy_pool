@@ -42,7 +42,8 @@ def verifyProxyFormat(proxy):
     """
     import re
     verify_regex = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}"
-    return True if re.findall(verify_regex, proxy) else False
+    _proxy = re.findall(verify_regex, proxy)
+    return True if len(_proxy) == 1 and _proxy[0] == proxy else False
 
 
 # noinspection PyPep8Naming
