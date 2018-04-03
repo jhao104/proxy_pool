@@ -120,34 +120,59 @@ class GetFreeProxy(object):
                     yield ':'.join(proxy.xpath('./td/text()')[0:2])
                 except Exception as e:
                     pass
+    # 网站改版
+    # @staticmethod
+    # def freeProxyFifth():
+    #     """
+    #     抓取guobanjia http://www.goubanjia.com/free/gngn/index.shtml
+    #     :return:
+    #     """
+    #     url = "http://www.goubanjia.com/free/gngn/index{page}.shtml"
+    #     for page in range(1, 10):
+    #         page_url = url.format(page=page)
+    #         tree = getHtmlTree(page_url)
+    #         proxy_list = tree.xpath('//td[@class="ip"]')
+    #         # 此网站有隐藏的数字干扰，或抓取到多余的数字或.符号
+    #         # 需要过滤掉<p style="display:none;">的内容
+    #         xpath_str = """.//*[not(contains(@style, 'display: none'))
+    #                             and not(contains(@style, 'display:none'))
+    #                             and not(contains(@class, 'port'))
+    #                             ]/text()
+    #                     """
+    #         for each_proxy in proxy_list:
+    #             try:
+    #                 # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
+    #                 ip_addr = ''.join(each_proxy.xpath(xpath_str))
+    #                 port = each_proxy.xpath(
+    #                     ".//span[contains(@class, 'port')]/text()")[0]
+    #                 yield '{}:{}'.format(ip_addr, port)
+    #             except Exception as e:
+    #                 pass
 
     @staticmethod
     def freeProxyFifth():
         """
-        抓取guobanjia http://www.goubanjia.com/free/gngn/index.shtml
+        抓取guobanjia http://www.goubanjia.com/
         :return:
         """
-        url = "http://www.goubanjia.com/free/gngn/index{page}.shtml"
-        for page in range(1, 10):
-            page_url = url.format(page=page)
-            tree = getHtmlTree(page_url)
-            proxy_list = tree.xpath('//td[@class="ip"]')
-            # 此网站有隐藏的数字干扰，或抓取到多余的数字或.符号
-            # 需要过滤掉<p style="display:none;">的内容
-            xpath_str = """.//*[not(contains(@style, 'display: none'))
-                                and not(contains(@style, 'display:none'))
-                                and not(contains(@class, 'port'))
-                                ]/text()
-                        """
-            for each_proxy in proxy_list:
-                try:
-                    # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
-                    ip_addr = ''.join(each_proxy.xpath(xpath_str))
-                    port = each_proxy.xpath(
-                        ".//span[contains(@class, 'port')]/text()")[0]
-                    yield '{}:{}'.format(ip_addr, port)
-                except Exception as e:
-                    pass
+        url = "http://www.goubanjia.com/"
+        tree = getHtmlTree(url)
+        proxy_list = tree.xpath('//td[@class="ip"]')
+        # 此网站有隐藏的数字干扰，或抓取到多余的数字或.符号
+        # 需要过滤掉<p style="display:none;">的内容
+        xpath_str = """.//*[not(contains(@style, 'display: none'))
+                                        and not(contains(@style, 'display:none'))
+                                        and not(contains(@class, 'port'))
+                                        ]/text()
+                                """
+        for each_proxy in proxy_list:
+            try:
+                # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
+                ip_addr = ''.join(each_proxy.xpath(xpath_str))
+                port = each_proxy.xpath(".//span[contains(@class, 'port')]/text()")[0]
+                yield '{}:{}'.format(ip_addr, port)
+            except Exception as e:
+                pass
 
     @staticmethod
     def freeProxySixth():
@@ -219,19 +244,17 @@ if __name__ == '__main__':
     # for e in gg.freeProxyFourth():
     #     print(e)
     #
-    # for e in gg.freeProxyFifth():
-    #     print(e)
+    for e in gg.freeProxyFifth():
+        print(e)
     #
     # for e in gg.freeProxySixth():
     #     print(e)
     #
     # for e in gg.freeProxySeventh():
     #     print(e)
-
-    #
     #
     # for e in gg.freeProxyWallFirst():
     #     print(e)
     #
-    for e in gg.freeProxyWallSecond():
-        print(e)
+    # for e in gg.freeProxyWallSecond():
+    #     print(e)
