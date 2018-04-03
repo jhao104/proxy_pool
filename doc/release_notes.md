@@ -6,6 +6,8 @@
 
   2.增加代理源;
 
+  3. fix bug [#122](https://github.com/jhao104/proxy_pool/issues/122)
+
 * 1.11(2017.8)
 
 　　1.使用多线程验证useful_pool;
