@@ -12,15 +12,16 @@
 -------------------------------------------------
 """
 import re
+import sys
 import requests
 
 try:
     from importlib import reload  # py3 实际不会实用，只是为了不显示语法错误
 except:
-    import sys  # py2
-
     reload(sys)
     sys.setdefaultencoding('utf-8')
+
+sys.path.append('../')
 
 from Util.utilFunction import robustCrawl, getHtmlTree
 from Util.WebRequest import WebRequest
@@ -82,8 +83,6 @@ class GetFreeProxy(object):
         url = "http://www.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
             proxy_number)
         request = WebRequest()
-        # html = request.get(url).content
-        # content为未解码，text为解码后的字符串
         html = request.get(url).text
         for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html):
             yield proxy
@@ -179,61 +178,31 @@ class GetFreeProxy(object):
                 yield ':'.join(tr.xpath('./td/text()')[0:2])
 
     @staticmethod
-    def freeProxyEight():
+    def freeProxyWallFirst():
+        """
+        墙外网站 cn-proxy
+        :return:
+        """
         urls = ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218']
         request = WebRequest()
         for url in urls:
-            r = requests.get(url)
+            r = request.get(url)
             proxies = re.findall(
-                '<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.content)
+                r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
 
     @staticmethod
-    def freeProxyNight():
-        urls = ['http://www.mimiip.com/gngao/%s' % n for n in range(1, 10)]
-        request = WebRequest()
-        for url in urls:
-            r = requests.get(url)
-            proxies = re.findall(
-                '<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W].*<td>(\d+)</td>', r.content)
-            for proxy in proxies:
-                yield ':'.join(proxy)
-
-    @staticmethod
-    def freeProxyTenth():
+    def freeProxyWallSecond():
         urls = ['https://proxy-list.org/english/index.php?p=%s' %
                 n for n in range(1, 10)]
         request = WebRequest()
         import base64
         for url in urls:
-            r = requests.get(url)
-            proxies = re.findall("Proxy\('(.*?)'\)", r.content)
+            r = request.get(url)
+            proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
             for proxy in proxies:
-                yield base64.b64decode(proxy)
-
-    @staticmethod
-    def freeProxyEleventh():
-        urls = ['http://www.cz88.net/proxy/%s' % m for m in
-                ['index.shtml'] + ['http_%s.shtml' % n for n in range(2, 11)]]
-        request = WebRequest()
-        for url in urls:
-            r = requests.get(url)
-            proxies = re.findall(
-                '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</div><div class="port">(\d+)</div>', r.content)
-            for proxy in proxies:
-                yield ':'.join(proxy)
-
-    @staticmethod
-    def freeProxy12th():
-        urls = ['http://www.ip181.com/daili/%s.html' % n for n in range(1, 11)]
-        request = WebRequest()
-        for url in urls:
-            r = requests.get(url)
-            proxies = re.findall(
-                '<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]*?<td>(\d+)</td>', r.content)
-            for proxy in proxies:
-                yield ':'.join(proxy)
+                yield base64.b64decode(proxy).decode()
 
 
 if __name__ == '__main__':
@@ -245,15 +214,24 @@ if __name__ == '__main__':
     #     print(e)
     #
     # for e in gg.freeProxyThird():
-    # print(e)
-
+    #     print(e)
+    #
     # for e in gg.freeProxyFourth():
     #     print(e)
-
+    #
     # for e in gg.freeProxyFifth():
-    #    print(e)
-
+    #     print(e)
+    #
     # for e in gg.freeProxySixth():
     #     print(e)
-    for e in gg.freeProxySeventh():
+    #
+    # for e in gg.freeProxySeventh():
+    #     print(e)
+
+    #
+    #
+    # for e in gg.freeProxyWallFirst():
+    #     print(e)
+    #
+    for e in gg.freeProxyWallSecond():
         print(e)
