@@ -22,7 +22,7 @@ from Util.utilFunction import validUsefulProxy
 from Manager.ProxyManager import ProxyManager
 from Util.LogHandler import LogHandler
 
-FAIL_COUNT = 1  # 校验失败次数， 超过次数删除代理
+FAIL_COUNT = 2  # 校验失败次数， 超过次数删除代理
 
 
 class ProxyCheck(ProxyManager, Thread):
@@ -34,27 +34,21 @@ class ProxyCheck(ProxyManager, Thread):
     def run(self):
         self.db.changeTable(self.useful_proxy_queue)
         while True:
-            proxy_item = self.db.pop()
-            while proxy_item:
-                proxy = proxy_item.get('proxy')
-                counter = proxy_item.get('value', 1)
+            for proxy, count in self.db.getAll().items():
                 if validUsefulProxy(proxy):
-                    # 验证通过计数器加1
-                    if counter and int(counter) < 1:
-                        self.db.put(proxy, num=int(counter) + 1)
+                    # 验证通过计数器减1
+                    if count and int(count) > 0:
+                        self.db.put(proxy, num=int(count) - 1)
                     else:
-                        self.db.put(proxy)
+                        pass
                     self.log.info('ProxyCheck: {} validation pass'.format(proxy))
                 else:
                     self.log.info('ProxyCheck: {} validation fail'.format(proxy))
-                    # 验证失败，计数器减1
-                    if counter and int(counter) <= FAIL_COUNT:
+                    if count and int(count) > FAIL_COUNT:
                         self.log.info('ProxyCheck: {} fail too many, delete!'.format(proxy))
                         self.db.delete(proxy)
                     else:
-                        self.db.put(proxy, num=int(counter) - 1)
-
-                proxy_item = self.db.pop()
+                        self.db.put(proxy, num=int(count) + 1)
             sleep(60 * 5)
 
 

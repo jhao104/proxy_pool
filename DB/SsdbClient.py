@@ -63,7 +63,7 @@ class SsdbClient(object):
         :param num:
         :return:
         """
-        data = self.__conn.hincrby(self.name, proxy, num)
+        data = self.__conn.hset(self.name, proxy, num)
         return data
 
     def delete(self, key):

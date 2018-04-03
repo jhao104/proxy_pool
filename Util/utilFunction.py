@@ -18,7 +18,7 @@ from lxml import etree
 from Util.LogHandler import LogHandler
 from Util.WebRequest import WebRequest
 
-logger = LogHandler(__name__, stream=False)
+# logger = LogHandler(__name__, stream=False)
 
 
 # noinspection PyPep8Naming
@@ -27,8 +27,9 @@ def robustCrawl(func):
         try:
             return func(*args, **kwargs)
         except Exception as e:
-            logger.info(u"sorry, 抓取出错。错误原因:")
-            logger.info(e)
+            pass
+            # logger.info(u"sorry, 抓取出错。错误原因:")
+            # logger.info(e)
 
     return decorate
 
@@ -98,10 +99,10 @@ def validUsefulProxy(proxy):
     proxies = {"http": "http://{proxy}".format(proxy=proxy)}
     try:
         # 超过20秒的代理就不要了
-        r = requests.get('http://httpbin.org/ip', proxies=proxies, timeout=20, verify=False)
+        r = requests.get('http://httpbin.org/ip', proxies=proxies, timeout=10, verify=False)
         if r.status_code == 200:
-            logger.info('%s is ok' % proxy)
+            # logger.info('%s is ok' % proxy)
             return True
     except Exception as e:
-        logger.debug(e)
+        # logger.error(str(e))
         return False
