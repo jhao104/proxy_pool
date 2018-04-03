@@ -28,6 +28,21 @@ from Util.WebRequest import WebRequest
 # for debug to disable insecureWarning
 requests.packages.urllib3.disable_warnings()
 
+"""
+66ip.cn
+data5u.com
+ip181.com
+xicidaili.com
+goubanjia.com
+xdaili.cn
+kuaidaili.com
+cn-proxy.com
+www.mimiip.com
+proxy-list.org
+cz88.net
+ip181.com
+"""
+
 
 class GetFreeProxy(object):
     """
@@ -129,7 +144,8 @@ class GetFreeProxy(object):
                 try:
                     # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
                     ip_addr = ''.join(each_proxy.xpath(xpath_str))
-                    port = each_proxy.xpath(".//span[contains(@class, 'port')]/text()")[0]
+                    port = each_proxy.xpath(
+                        ".//span[contains(@class, 'port')]/text()")[0]
                     yield '{}:{}'.format(ip_addr, port)
                 except Exception as e:
                     pass
@@ -161,6 +177,63 @@ class GetFreeProxy(object):
             proxy_list = tree.xpath('.//table//tr')
             for tr in proxy_list[1:]:
                 yield ':'.join(tr.xpath('./td/text()')[0:2])
+
+    @staticmethod
+    def freeProxyEight():
+        urls = ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218']
+        request = WebRequest()
+        for url in urls:
+            r = requests.get(url)
+            proxies = re.findall(
+                '<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.content)
+            for proxy in proxies:
+                yield ':'.join(proxy)
+
+    @staticmethod
+    def freeProxyNight():
+        urls = ['http://www.mimiip.com/gngao/%s' % n for n in range(1, 10)]
+        request = WebRequest()
+        for url in urls:
+            r = requests.get(url)
+            proxies = re.findall(
+                '<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W].*<td>(\d+)</td>', r.content)
+            for proxy in proxies:
+                yield ':'.join(proxy)
+
+    @staticmethod
+    def freeProxyTenth():
+        urls = ['https://proxy-list.org/english/index.php?p=%s' %
+                n for n in range(1, 10)]
+        request = WebRequest()
+        import base64
+        for url in urls:
+            r = requests.get(url)
+            proxies = re.findall("Proxy\('(.*?)'\)", r.content)
+            for proxy in proxies:
+                yield base64.b64decode(proxy)
+
+    @staticmethod
+    def freeProxyEleventh():
+        urls = ['http://www.cz88.net/proxy/%s' % m for m in
+                ['index.shtml'] + ['http_%s.shtml' % n for n in range(2, 11)]]
+        request = WebRequest()
+        for url in urls:
+            r = requests.get(url)
+            proxies = re.findall(
+                '(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</div><div class="port">(\d+)</div>', r.content)
+            for proxy in proxies:
+                yield ':'.join(proxy)
+
+    @staticmethod
+    def freeProxy12th():
+        urls = ['http://www.ip181.com/daili/%s.html' % n for n in range(1, 11)]
+        request = WebRequest()
+        for url in urls:
+            r = requests.get(url)
+            proxies = re.findall(
+                '<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]*?<td>(\d+)</td>', r.content)
+            for proxy in proxies:
+                yield ':'.join(proxy)
 
 
 if __name__ == '__main__':
