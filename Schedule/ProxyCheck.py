@@ -35,7 +35,6 @@ class ProxyCheck(ProxyManager, Thread):
 
     def run(self):
         while self.queue.qsize():
-            print('%s active threads, %s queue size' % (threading.active_count(), self.queue.qsize()))
             proxy = self.queue.get()
             count = self.item_dict[proxy]
             if validUsefulProxy(proxy):

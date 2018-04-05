@@ -27,7 +27,7 @@ class ProxyValidSchedule(ProxyManager, object):
         ProxyManager.__init__(self)
         self.queue = Queue()
 
-    def __validProxy(self, threads=50):
+    def __validProxy(self, threads=10):
         """
         验证useful_proxy代理
         :param threads: 线程数
