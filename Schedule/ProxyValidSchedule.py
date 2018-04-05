@@ -27,7 +27,7 @@ class ProxyValidSchedule(ProxyManager, object):
         ProxyManager.__init__(self)
         self.queue = Queue()
 
-    def __validProxy(self, threads=5):
+    def __validProxy(self, threads=50):
         """
         验证useful_proxy代理
         :param threads: 线程数
@@ -51,7 +51,7 @@ class ProxyValidSchedule(ProxyManager, object):
                 self.__validProxy()
             else:
                 print('Time sleep 5 minutes.')
-                time.sleep(60 * 5)
+                time.sleep(60 * 1)
                 self.put_queue()
 
     def put_queue(self):

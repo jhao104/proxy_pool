@@ -13,7 +13,7 @@
 __author__ = 'J_hao'
 
 import sys
-from time import sleep
+import threading
 from threading import Thread
 
 sys.path.append('../')
@@ -34,7 +34,8 @@ class ProxyCheck(ProxyManager, Thread):
         self.item_dict = item_dict
 
     def run(self):
-        if self.queue.qsize():
+        while self.queue.qsize():
+            print('%s active threads, %s queue size' % (threading.active_count(), self.queue.qsize()))
             proxy = self.queue.get()
             count = self.item_dict[proxy]
             if validUsefulProxy(proxy):
@@ -43,11 +44,11 @@ class ProxyCheck(ProxyManager, Thread):
                     self.db.put(proxy, num=int(count) - 1)
                 else:
                     pass
-                self.log.info('ProxyCheck: {} validation pass'.format(proxy))
+                print('ProxyCheck: {} validation pass'.format(proxy))
             else:
-                self.log.info('ProxyCheck: {} validation fail'.format(proxy))
+                print('ProxyCheck: {} validation fail'.format(proxy))
                 if count and int(count) > FAIL_COUNT:
-                    self.log.info('ProxyCheck: {} fail too many, delete!'.format(proxy))
+                    print('ProxyCheck: {} fail too many, delete!'.format(proxy))
                     self.db.delete(proxy)
                 else:
                     self.db.put(proxy, num=int(count) + 1)
