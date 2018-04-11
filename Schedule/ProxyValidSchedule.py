@@ -17,13 +17,17 @@ import sys
 sys.path.append('../')
 
 from Schedule.ProxyCheck import ProxyCheck
+from Manager.ProxyManager import ProxyManager
+from queue import Queue
+import time
 
 
-class ProxyValidSchedule(object):
+class ProxyValidSchedule(ProxyManager, object):
     def __init__(self):
-        pass
+        ProxyManager.__init__(self)
+        self.queue = Queue()
 
-    def __validProxy(self, threads=5):
+    def __validProxy(self, threads=10):
         """
         验证useful_proxy代理
         :param threads: 线程数
@@ -31,7 +35,7 @@ class ProxyValidSchedule(object):
         """
         thread_list = list()
         for index in range(threads):
-            thread_list.append(ProxyCheck())
+            thread_list.append(ProxyCheck(self.queue, self.item_dict))
 
         for thread in thread_list:
             thread.daemon = True
@@ -41,7 +45,20 @@ class ProxyValidSchedule(object):
             thread.join()
 
     def main(self):
-        self.__validProxy()
+        self.put_queue()
+        while True:
+            if self.queue.qsize():
+                self.__validProxy()
+            else:
+                print('Time sleep 5 minutes.')
+                time.sleep(60 * 1)
+                self.put_queue()
+
+    def put_queue(self):
+        self.db.changeTable(self.useful_proxy_queue)
+        self.item_dict = self.db.getAll()
+        for item in self.item_dict:
+            self.queue.put(item)
 
 
 def run():
