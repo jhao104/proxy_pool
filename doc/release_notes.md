@@ -6,7 +6,7 @@
 
   2.增加代理源;
 
-  3. fix bug [#122](https://github.com/jhao104/proxy_pool/issues/122)
+  3.fix bug [#122](https://github.com/jhao104/proxy_pool/issues/122) [#126](https://github.com/jhao104/proxy_pool/issues/126)
 
 * 1.11(2017.8)
 
