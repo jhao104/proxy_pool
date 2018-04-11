@@ -177,14 +177,14 @@ class GetFreeProxy(object):
         """
         秘密代理IP网站http://www.mimiip.com
         """
-        url_gngao = ['http://www.mimiip.com/gngao/%s'%n for n in range(1, 10)]     #国内高匿
-        url_gnpu =  ['http://www.mimiip.com/gnpu/%s' %n for n in range(1, 10)]     #国内普匿
-        url_gntou = ['http://www.mimiip.com/gntou/%s' % n for n in range(1, 10)]   #国内透明
+        url_gngao = ['http://www.mimiip.com/gngao/%s' % n for n in range(1, 10)]  # 国内高匿
+        url_gnpu = ['http://www.mimiip.com/gnpu/%s' % n for n in range(1, 10)]  # 国内普匿
+        url_gntou = ['http://www.mimiip.com/gntou/%s' % n for n in range(1, 10)]  # 国内透明
         url_list = url_gngao + url_gnpu + url_gntou
 
         request = WebRequest()
         for url in url_list:
-            r = requests.get(url)
+            r = request.get(url)
             proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W].*<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
@@ -205,7 +205,7 @@ class GetFreeProxy(object):
 
     @staticmethod
     def freeProxyWallSecond():
-        urls = ['https://proxy-list.org/english/index.php?p=%s'%n for n in range(1, 10)]
+        urls = ['https://proxy-list.org/english/index.php?p=%s' % n for n in range(1, 10)]
         request = WebRequest()
         import base64
         for url in urls:
@@ -237,9 +237,12 @@ if __name__ == '__main__':
     #
     # for e in gg.freeProxySeventh():
     #     print(e)
+    #
     # for e in gg.freeProxyEight():
     #     print(e)
+    #
     # for e in gg.freeProxyWallFirst():
     #     print(e)
+    #
     # for e in gg.freeProxyWallSecond():
     #     print(e)
