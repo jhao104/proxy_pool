@@ -250,6 +250,22 @@ class GetFreeProxy(object):
 
 
     @staticmethod
+    def freeProxyEleven():
+        urls = [
+            'http://www.iphai.com/free/ng',
+            'http://www.iphai.com/free/np',
+            'http://www.iphai.com/free/wg',
+            'http://www.iphai.com/free/wp'
+        ]
+        request = WebRequest()
+        for url in urls:
+            r = request.get(url)
+            proxies = re.findall(r'<td>\s*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s*?</td>[\s\S]*?<td>\s*?(\d+)\s*?</td>', r.text)
+            for proxy in proxies:
+                yield ":".join(proxy)
+
+
+    @staticmethod
     def freeProxyWallFirst():
         """
         墙外网站 cn-proxy
@@ -372,6 +388,8 @@ if __name__ == '__main__':
     # test_batch(gg.freeProxyNinth())
 
     # test_batch(gg.freeProxyTen())
+
+    # test_batch(gg.freeProxyEleven())
 
     # test_batch(gg.freeProxyWallFirst())
 
