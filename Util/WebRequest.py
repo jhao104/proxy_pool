@@ -12,10 +12,10 @@
 """
 __author__ = 'J_hao'
 
+from requests.models import Response
 import requests
 import random
 import time
-from requests.models import Response
 
 
 class WebRequest(object):
@@ -37,7 +37,7 @@ class WebRequest(object):
             'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; QQDownload 732; .NET4.0C; .NET4.0E)',
             'Mozilla/5.0 (Windows NT 5.1; U; en; rv:1.8.1) Gecko/20061208 Firefox/2.0.0 Opera 9.50',
             'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
-            ]
+        ]
         return random.choice(ua_list)
 
     @property
@@ -52,7 +52,7 @@ class WebRequest(object):
                 'Accept-Language': 'zh-CN,zh;q=0.8'}
 
     def get(self, url, header=None, retry_time=5, timeout=30,
-            retry_flag=list(), retry_interval=5, use_proxy=False, *args, **kwargs):
+            retry_flag=list(), retry_interval=5, *args, **kwargs):
         """
         get method
         :param url: target url
@@ -61,7 +61,6 @@ class WebRequest(object):
         :param timeout: network timeout
         :param retry_flag: if retry_flag in content. do retry
         :param retry_interval: retry interval(second)
-        :param use_proxy: 是否使用代理
         :param args:
         :param kwargs:
         :return:
@@ -71,16 +70,7 @@ class WebRequest(object):
             headers.update(header)
         while True:
             try:
-                if use_proxy:
-                    proxy_url = "http://127.0.0.1:5010/get"
-                    ip_proxy = requests.get(proxy_url).text
-                    proxies = {
-                        "http": "http://" + ip_proxy,
-                        "https": "https://" + ip_proxy
-                    }
-                    html = requests.get(url, headers=headers, timeout=timeout, proxies=proxies)
-                else:
-                    html = requests.get(url, headers=headers, timeout=timeout)
+                html = requests.get(url, headers=headers, timeout=timeout)
                 if any(f in html.content for f in retry_flag):
                     raise Exception
                 return html
@@ -88,9 +78,8 @@ class WebRequest(object):
                 print(e)
                 retry_time -= 1
                 if retry_time <= 0:
-                    # 多次请求失败时，返回百度页面
+                    # 多次请求失败
                     resp = Response()
                     resp.status_code = 200
                     return resp
                 time.sleep(retry_interval)
-

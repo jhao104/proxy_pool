@@ -53,7 +53,7 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxyFirst(page=10):
         """
-        抓取无忧代理 http://www.data5u.com/
+        无忧代理 http://www.data5u.com/
         几乎没有能用的
         :param page: 页数
         :return:
@@ -73,31 +73,16 @@ class GetFreeProxy(object):
                     print(e)
 
     @staticmethod
-    def deprecatedFreeProxySecond(proxy_number=100):
+    def freeProxySecond(area=33, page=1):
         """
-        抓取代理66 http://www.66ip.cn/
-        :param proxy_number: 代理数量
+        代理66 http://www.66ip.cn/
+        :param area: 抓取代理页数，page=1北京代理页，page=2上海代理页......
+        :param page: 翻页
         :return:
         """
-        url = "http://www.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=".format(
-            proxy_number)
-        request = WebRequest()
-        html = request.get(url).text
-        for proxy in re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}', html):
-            yield proxy
-
-    @staticmethod
-    def freeProxySecond(area=33):
-        """
-        修改抓取代理66 http://www.66ip.cn/
-        :param page:抓取代理页数，page=1北京代理页，page=2上海代理页......
-        :return:
-        """
-        if area > 33:
-            page = 33
+        area = 33 if area > 33 else area
         for area_index in range(1, area + 1):
-            page_count = 5
-            for i in range(1, page_count + 1):
+            for i in range(1, page + 1):
                 url = "http://www.66ip.cn/areaindex_{}/{}.html".format(area_index, i)
                 html_tree = getHtmlTree(url)
                 tr_list = html_tree.xpath("//*[@id='footer']/div/table/tr[position()>1]")
@@ -107,12 +92,10 @@ class GetFreeProxy(object):
                     yield tr.xpath("./td[1]/text()")[0] + ":" + tr.xpath("./td[2]/text()")[0]
                 break
 
-    '''
-    不能用了
     @staticmethod
     def freeProxyThird(days=1):
         """
-        抓取ip181 http://www.ip181.com/
+        ip181 http://www.ip181.com/  不能用了
         :param days:
         :return:
         """
@@ -124,12 +107,11 @@ class GetFreeProxy(object):
                 yield ':'.join(tr.xpath('./td/text()')[0:2])
         except Exception as e:
             pass
-    '''
 
     @staticmethod
     def freeProxyFourth(page_count=2):
         """
-        抓取西刺代理 http://api.xicidaili.com/free2016.txt
+        西刺代理 http://www.xicidaili.com
         :return:
         """
         url_list = [
@@ -150,7 +132,7 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxyFifth():
         """
-        抓取guobanjia http://www.goubanjia.com/
+        guobanjia http://www.goubanjia.com/
         :return:
         """
         url = "http://www.goubanjia.com/"
@@ -175,7 +157,7 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxySixth():
         """
-        抓取讯代理免费proxy http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10
+        讯代理 http://www.xdaili.cn/
         :return:
         """
         url = 'http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10'
@@ -190,7 +172,7 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxySeventh():
         """
-        快代理免费https://www.kuaidaili.com/free/inha/1/
+        快代理 https://www.kuaidaili.com
         """
         url_list = [
             'https://www.kuaidaili.com/free/inha/{page}/',
@@ -207,7 +189,7 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxyEight():
         """
-        秘密代理IP网站http://www.mimiip.com
+        秘密代理 http://www.mimiip.com
         """
         url_gngao = ['http://www.mimiip.com/gngao/%s' % n for n in range(1, 10)]  # 国内高匿
         url_gnpu = ['http://www.mimiip.com/gnpu/%s' % n for n in range(1, 10)]  # 国内普匿
@@ -221,12 +203,10 @@ class GetFreeProxy(object):
             for proxy in proxies:
                 yield ':'.join(proxy)
 
-
     @staticmethod
     def freeProxyNinth():
         """
-        coderBusy
-        https://proxy.coderbusy.com/
+        码农代理 https://proxy.coderbusy.com/
         :return:
         """
         urls = ['https://proxy.coderbusy.com/classical/country/cn.aspx?page=1']
@@ -237,9 +217,12 @@ class GetFreeProxy(object):
             for proxy in proxies:
                 yield ':'.join(proxy)
 
-
     @staticmethod
     def freeProxyTen():
+        """
+        云代理 http://www.ip3366.net/free/
+        :return:
+        """
         urls = ['http://www.ip3366.net/free/']
         request = WebRequest()
         for url in urls:
@@ -248,9 +231,12 @@ class GetFreeProxy(object):
             for proxy in proxies:
                 yield ":".join(proxy)
 
-
     @staticmethod
     def freeProxyEleven():
+        """
+        IP海 http://www.iphai.com/free/ng
+        :return:
+        """
         urls = [
             'http://www.iphai.com/free/ng',
             'http://www.iphai.com/free/np',
@@ -260,16 +246,15 @@ class GetFreeProxy(object):
         request = WebRequest()
         for url in urls:
             r = request.get(url)
-            proxies = re.findall(r'<td>\s*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s*?</td>[\s\S]*?<td>\s*?(\d+)\s*?</td>', r.text)
+            proxies = re.findall(r'<td>\s*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s*?</td>[\s\S]*?<td>\s*?(\d+)\s*?</td>',
+                                 r.text)
             for proxy in proxies:
                 yield ":".join(proxy)
-
 
     @staticmethod
     def freeProxyWallFirst():
         """
         墙外网站 cn-proxy
-        并没有被墙
         :return:
         """
         urls = ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218']
@@ -282,10 +267,10 @@ class GetFreeProxy(object):
 
     @staticmethod
     def freeProxyWallSecond():
-        '''
-        并没有被墙
+        """
+        https://proxy-list.org/english/index.php
         :return:
-        '''
+        """
         urls = ['https://proxy-list.org/english/index.php?p=%s' % n for n in range(1, 10)]
         request = WebRequest()
         import base64
@@ -294,7 +279,6 @@ class GetFreeProxy(object):
             proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
             for proxy in proxies:
                 yield base64.b64decode(proxy).decode()
-
 
     @staticmethod
     def freeProxyWallThird():
@@ -305,67 +289,6 @@ class GetFreeProxy(object):
             proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
-
-
-import threading
-
-lock = threading.Lock()
-success = 0
-total = 0
-
-
-def test_once(proxy):
-    ip_port = proxy.split(":")
-    ip = ip_port[0]
-    port = ip_port[1]
-    import requests
-
-    req_url = "http://www.baidu.com"
-    proxies = {
-        "http": "http://%s:%s" % (ip, port),
-        "https": "https://%s:%s" % (ip, port)
-    }
-
-    global total
-
-    try:
-        response = requests.get(req_url, proxies=proxies, timeout=4)
-        if response.status_code != 200:
-            print("unknow error, status code:" + str(response.status_code))
-            lock.acquire()
-            total += 1
-            lock.release()
-            return 0
-        print("success")
-        global success
-        lock.acquire()
-        success += 1
-        total += 1
-        lock.release()
-        return 1
-    except requests.exceptions.Timeout:
-        print("timeout")
-    except requests.exceptions.ConnectionError:
-        print("poxy unusable")
-    except Exception:
-        print("request error")
-
-    lock.acquire()
-    total += 1
-    lock.release()
-    return 0
-
-
-def test_batch(iterator):
-    global success
-    global total
-
-    for proxy in iterator:
-        t = threading.Thread(target=test_once, args=(proxy,))
-        t.start()
-        t.join()
-
-    print("success:" + str(success) + "\ttotal:" + str(total))
 
 
 if __name__ == '__main__':
