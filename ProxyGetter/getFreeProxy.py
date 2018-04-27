@@ -239,6 +239,17 @@ class GetFreeProxy(object):
 
 
     @staticmethod
+    def freeProxyTen():
+        urls = ['http://www.ip3366.net/free/']
+        request = WebRequest()
+        for url in urls:
+            r = request.get(url)
+            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
+            for proxy in proxies:
+                yield ":".join(proxy)
+
+
+    @staticmethod
     def freeProxyWallFirst():
         """
         墙外网站 cn-proxy
@@ -356,11 +367,11 @@ if __name__ == '__main__':
 
     # test_batch(gg.freeProxySeventh())
 
-    # to do
-    test_batch(gg.freeProxyEight())
-    # gg.freeProxyEight()
+    # test_batch(gg.freeProxyEight())
 
     # test_batch(gg.freeProxyNinth())
+
+    # test_batch(gg.freeProxyTen())
 
     # test_batch(gg.freeProxyWallFirst())
 
