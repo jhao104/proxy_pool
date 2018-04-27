@@ -183,5 +183,5 @@ freeProxyCustom  = 1  # 确保名字和你添加方法名字一致
 
 ### Release Notes
 
-   [release notes](https://github.com/jhao104/proxy_pool/blob/master/doc/release_notes.md)
+   [release notes](https://github.com/jhao104/proxy_pool/blob/master/doc/release_notes.md) [@luocaodan](https://github.com/luocaodan)
 
