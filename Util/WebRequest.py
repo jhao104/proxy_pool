@@ -15,6 +15,7 @@ __author__ = 'J_hao'
 import requests
 import random
 import time
+from requests.models import Response
 
 
 class WebRequest(object):
@@ -51,7 +52,7 @@ class WebRequest(object):
                 'Accept-Language': 'zh-CN,zh;q=0.8'}
 
     def get(self, url, header=None, retry_time=5, timeout=30,
-            retry_flag=list(), retry_interval=5, *args, **kwargs):
+            retry_flag=list(), retry_interval=5, use_proxy=False, *args, **kwargs):
         """
         get method
         :param url: target url
@@ -60,6 +61,7 @@ class WebRequest(object):
         :param timeout: network timeout
         :param retry_flag: if retry_flag in content. do retry
         :param retry_interval: retry interval(second)
+        :param use_proxy: 是否使用代理
         :param args:
         :param kwargs:
         :return:
@@ -69,7 +71,16 @@ class WebRequest(object):
             headers.update(header)
         while True:
             try:
-                html = requests.get(url, headers=headers, timeout=timeout)
+                if use_proxy:
+                    proxy_url = "http://127.0.0.1:5010/get"
+                    ip_proxy = requests.get(proxy_url).text
+                    proxies = {
+                        "http": "http://" + ip_proxy,
+                        "https": "https://" + ip_proxy
+                    }
+                    html = requests.get(url, headers=headers, timeout=timeout, proxies=proxies)
+                else:
+                    html = requests.get(url, headers=headers, timeout=timeout)
                 if any(f in html.content for f in retry_flag):
                     raise Exception
                 return html
@@ -78,5 +89,8 @@ class WebRequest(object):
                 retry_time -= 1
                 if retry_time <= 0:
                     # 多次请求失败时，返回百度页面
-                    return requests.get("https://www.baidu.com/")
+                    resp = Response()
+                    resp.status_code = 200
+                    return resp
                 time.sleep(retry_interval)
+
