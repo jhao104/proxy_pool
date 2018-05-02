@@ -14,6 +14,8 @@
 import re
 import sys
 import requests
+import base64
+import time
 
 try:
     from importlib import reload  # py3 实际不会实用，只是为了不显示语法错误
@@ -266,6 +268,37 @@ class GetFreeProxy(object):
 
 
     @staticmethod
+    def freeProxyTwelve():
+        """
+        质量很高的代理网站
+        :return:
+        """
+        offset = 15
+        urls = [
+            'http://proxydb.net/?protocol=http&protocol=https&country=&offset=%s' % (n * 15)
+            for n in range(0, 50)
+        ]
+        request = WebRequest()
+        for url in urls:
+            html = request.get(url).text
+            proxies = re.findall(r'=\s*?\'([\.\d]+)\'\.split\(\'\'\)[\s\S]+?'
+                                 r'atob\(\'(.+)\'[\s\S]+?pp\s*=\s*\((\d+)\s*-', html)
+            magic_nums = re.findall(r'<div\s*?style="display:none"\s*?data-.+?="(\d+)"', html)
+
+            for proxy in proxies:
+                prefix = proxy[0][::-1]
+                suffix = eval("'%s'" % proxy[1])
+                suffix = base64.b64decode(suffix)
+                ip = prefix + suffix
+                raw_port = proxy[2]
+                magic_num = magic_nums[0]
+                port = int(raw_port) + int(magic_num)
+                yield "%s:%s" % (ip, port)
+
+            time.sleep(2)
+
+
+    @staticmethod
     def freeProxyWallFirst():
         """
         墙外网站 cn-proxy
@@ -391,8 +424,12 @@ if __name__ == '__main__':
 
     # test_batch(gg.freeProxyEleven())
 
+    # test_batch(gg.freeProxyTwelve())
+
     # test_batch(gg.freeProxyWallFirst())
 
     # test_batch(gg.freeProxyWallSecond())
 
     # test_batch(gg.freeProxyWallThird())
+
+    # to do http://www.gatherproxy.com
