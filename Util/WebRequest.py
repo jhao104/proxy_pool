@@ -70,7 +70,7 @@ class WebRequest(object):
             headers.update(header)
         while True:
             try:
-                html = requests.get(url, headers=headers, timeout=timeout)
+                html = requests.get(url, headers=headers, timeout=timeout, **kwargs)
                 if any(f in html.content for f in retry_flag):
                     raise Exception
                 return html
