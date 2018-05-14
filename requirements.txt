@@ -1,9 +1,10 @@
 APScheduler==3.2.0
-Flask==0.11.1
-requests==2.11.0
-lxml==3.7.1
+werkzeug==0.11.15
+Flask==0.12
+requests==2.12.4
+lxml==3.7.2
 
-pymongo==3.2.2
-redis==2.10.5
+pymongo
+redis
 
 

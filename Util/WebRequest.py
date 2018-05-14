@@ -12,6 +12,7 @@
 """
 __author__ = 'J_hao'
 
+from requests.models import Response
 import requests
 import random
 import time
@@ -36,7 +37,7 @@ class WebRequest(object):
             'Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; QQDownload 732; .NET4.0C; .NET4.0E)',
             'Mozilla/5.0 (Windows NT 5.1; U; en; rv:1.8.1) Gecko/20061208 Firefox/2.0.0 Opera 9.50',
             'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
-            ]
+        ]
         return random.choice(ua_list)
 
     @property
@@ -77,6 +78,8 @@ class WebRequest(object):
                 print(e)
                 retry_time -= 1
                 if retry_time <= 0:
-                    # 多次请求失败时，返回百度页面
-                    return requests.get("https://www.baidu.com/")
+                    # 多次请求失败
+                    resp = Response()
+                    resp.status_code = 200
+                    return resp
                 time.sleep(retry_interval)

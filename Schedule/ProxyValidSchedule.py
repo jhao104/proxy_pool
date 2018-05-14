@@ -13,17 +13,26 @@
 __author__ = 'JHao'
 
 import sys
+import time
+
+try:
+    from Queue import Queue  # py3
+except:
+    from queue import Queue  # py2
 
 sys.path.append('../')
 
 from Schedule.ProxyCheck import ProxyCheck
+from Manager.ProxyManager import ProxyManager
 
 
-class ProxyValidSchedule(object):
+class ProxyValidSchedule(ProxyManager, object):
     def __init__(self):
-        pass
+        ProxyManager.__init__(self)
+        self.queue = Queue()
+        self.proxy_item = dict()
 
-    def __validProxy(self, threads=5):
+    def __validProxy(self, threads=10):
         """
         验证useful_proxy代理
         :param threads: 线程数
@@ -31,7 +40,7 @@ class ProxyValidSchedule(object):
         """
         thread_list = list()
         for index in range(threads):
-            thread_list.append(ProxyCheck())
+            thread_list.append(ProxyCheck(self.queue, self.proxy_item))
 
         for thread in thread_list:
             thread.daemon = True
@@ -41,7 +50,21 @@ class ProxyValidSchedule(object):
             thread.join()
 
     def main(self):
-        self.__validProxy()
+        self.putQueue()
+        while True:
+            if not self.queue.empty():
+                self.log.info("Start valid useful proxy")
+                self.__validProxy()
+            else:
+                self.log.info('Valid Complete! sleep 5 minutes.')
+                time.sleep(60 * 5)
+                self.putQueue()
+
+    def putQueue(self):
+        self.db.changeTable(self.useful_proxy_queue)
+        self.proxy_item = self.db.getAll()
+        for item in self.proxy_item:
+            self.queue.put(item)
 
 
 def run():

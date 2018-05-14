@@ -14,15 +14,28 @@
 __author__ = 'JHao'
 
 import sys
+from werkzeug.wrappers import Response
+from flask import Flask, jsonify, request
 
 sys.path.append('../')
 
-from flask import Flask, jsonify, request
 from Util.GetConfig import GetConfig
-
 from Manager.ProxyManager import ProxyManager
 
 app = Flask(__name__)
+
+
+class JsonResponse(Response):
+
+    @classmethod
+    def force_type(cls, response, environ=None):
+        if isinstance(response, (dict, list)):
+            response = jsonify(response)
+
+        return super(JsonResponse, cls).force_type(response, environ)
+
+
+app.response_class = JsonResponse
 
 api_list = {
     'get': u'get an usable proxy',
@@ -35,7 +48,7 @@ api_list = {
 
 @app.route('/')
 def index():
-    return jsonify(api_list)
+    return api_list
 
 
 @app.route('/get/')
@@ -55,7 +68,7 @@ def refresh():
 @app.route('/get_all/')
 def getAll():
     proxies = ProxyManager().getAll()
-    return jsonify(proxies)
+    return proxies
 
 
 @app.route('/delete/', methods=['GET'])
@@ -68,7 +81,7 @@ def delete():
 @app.route('/get_status/')
 def getStatus():
     status = ProxyManager().getNumber()
-    return jsonify(status)
+    return status
 
 
 def run():
