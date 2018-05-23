@@ -15,6 +15,7 @@ import re
 import sys
 import requests
 
+
 try:
     from importlib import reload  # py3 实际不会实用，只是为了不显示语法错误
 except:
@@ -25,6 +26,7 @@ sys.path.append('..')
 
 from Util.utilFunction import robustCrawl, getHtmlTree
 from Util.WebRequest import WebRequest
+from Util.utilFunction import verifyProxyFormat
 
 # for debug to disable insecureWarning
 requests.packages.urllib3.disable_warnings()
@@ -252,6 +254,24 @@ class GetFreeProxy(object):
                 yield ":".join(proxy)
 
     @staticmethod
+    def freeProxyTwelve(page_count=8):
+        """
+        guobanjia http://ip.jiangxianli.com/?page=
+        免费代理库
+        超多量
+        :return:
+        """
+        for i in range(1, page_count + 1):
+            url = 'http://ip.jiangxianli.com/?page={}'.format(i)
+            # print(url)
+            html_tree = getHtmlTree(url)
+            tr_list = html_tree.xpath("/html/body/div[1]/div/div[1]/div[2]/table/tbody/tr")
+            if len(tr_list) == 0:
+                continue
+            for tr in tr_list:
+                yield tr.xpath("./td[2]/text()")[0] + ":" + tr.xpath("./td[3]/text()")[0]
+
+    @staticmethod
     def freeProxyWallFirst():
         """
         墙外网站 cn-proxy
@@ -313,6 +333,23 @@ if __name__ == '__main__':
     # test_batch(gg.freeProxyTen())
 
     # test_batch(gg.freeProxyEleven())
+
+    proxy_iter = gg.freeProxyTwelve()
+    proxy_set = set()
+    for proxy in proxy_iter:
+        proxy = proxy.strip()
+        if proxy and verifyProxyFormat(proxy):
+            #self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
+            proxy_set.add(proxy)
+        #else:
+            #self.log.error('{func}: fetch proxy {proxy} error'.format(func=proxyGetter, proxy=proxy))
+
+        # store
+    for proxy in proxy_set:
+        print(proxy)
+
+
+    # test_batch(gg.freeProxyTwelve())
 
     # test_batch(gg.freeProxyWallFirst())
 
