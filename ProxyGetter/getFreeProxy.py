@@ -14,13 +14,6 @@
 import re
 import sys
 import requests
-import os
-
-try:
-    from configparser import ConfigParser  # py3
-except:
-    from ConfigParser import ConfigParser  # py2
-
 
 try:
     from importlib import reload  # py3 实际不会实用，只是为了不显示语法错误
@@ -30,8 +23,8 @@ except:
 
 sys.path.append('..')
 
-from Util.utilFunction import robustCrawl, getHtmlTree
 from Util.WebRequest import WebRequest
+from Util.utilFunction import getHtmlTree
 from Util.utilFunction import verifyProxyFormat
 
 # for debug to disable insecureWarning
@@ -54,15 +47,6 @@ class GetFreeProxy(object):
     """
     proxy getter
     """
-    pwd = os.path.split(os.path.realpath(__file__))[0]
-    config_path = os.path.join(os.path.split(pwd)[0], 'Config.ini')
-    config_file = ConfigParser()
-    config_file.read(config_path)
-    if config_file.has_option('WallProxy', 'proxy'):
-        WallProxy = config_file.get('WallProxy', 'proxy')
-        wall_proxies = {"http": "http://{}".format(WallProxy), "https": "https://{}".format(WallProxy)}
-    else:
-        wall_proxies = None   
 
     def __init__(self):
         pass
@@ -215,7 +199,7 @@ class GetFreeProxy(object):
 
         request = WebRequest()
         for url in url_list:
-            r = request.get(url, use_proxy=True)
+            r = request.get(url)
             proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W].*<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
@@ -278,7 +262,6 @@ class GetFreeProxy(object):
         """
         for i in range(1, page_count + 1):
             url = 'http://ip.jiangxianli.com/?page={}'.format(i)
-            # print(url)
             html_tree = getHtmlTree(url)
             tr_list = html_tree.xpath("/html/body/div[1]/div/div[1]/div[2]/table/tbody/tr")
             if len(tr_list) == 0:
@@ -292,17 +275,10 @@ class GetFreeProxy(object):
         墙外网站 cn-proxy
         :return:
         """
-        kwargs = {}
-        if GetFreeProxy.wall_proxies:
-            kwargs['proxies'] = GetFreeProxy.wall_proxies
-        else:
-            return
-
         urls = ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218']
         request = WebRequest()
         for url in urls:
-            kwargs['url'] = url
-            r = request.get(**kwargs)
+            r = request.get(url)
             proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
@@ -313,84 +289,30 @@ class GetFreeProxy(object):
         https://proxy-list.org/english/index.php
         :return:
         """
-        kwargs = {}
-        if GetFreeProxy.wall_proxies:
-            kwargs['proxies'] = GetFreeProxy.wall_proxies
-        else:
-            return
         urls = ['https://proxy-list.org/english/index.php?p=%s' % n for n in range(1, 10)]
         request = WebRequest()
         import base64
         for url in urls:
-            kwargs['url'] = url
-            r = request.get(**kwargs)
+            r = request.get(url)
             proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
             for proxy in proxies:
                 yield base64.b64decode(proxy).decode()
 
     @staticmethod
     def freeProxyWallThird():
-    
-        kwargs = {}
-        if GetFreeProxy.wall_proxies:
-            kwargs['proxies'] = GetFreeProxy.wall_proxies
-        else:
-            return
-    
         urls = ['https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1']
         request = WebRequest()
         for url in urls:
-            kwargs['url'] = url
-            r = request.get(**kwargs)
+            r = request.get(url)
             proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
 
 
 if __name__ == '__main__':
-    gg = GetFreeProxy()
+    from CheckProxy import CheckProxy
 
-    # test_batch(gg.freeProxyFirst())
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFifth)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySecond)
 
-    # test_batch(gg.freeProxySecond())
-
-    # test_batch(gg.freeProxyFourth())
-
-    # test_batch(gg.freeProxyFifth())
-
-    # test_batch(gg.freeProxySixth())
-
-    # test_batch(gg.freeProxySeventh())
-
-    # test_batch(gg.freeProxyEight())
-
-    # test_batch(gg.freeProxyNinth())
-
-    # test_batch(gg.freeProxyTen())
-
-    # test_batch(gg.freeProxyEleven())
-
-    proxy_iter = gg.freeProxyTwelve()
-    proxy_set = set()
-    for proxy in proxy_iter:
-        proxy = proxy.strip()
-        if proxy and verifyProxyFormat(proxy):
-            #self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
-            proxy_set.add(proxy)
-        #else:
-            #self.log.error('{func}: fetch proxy {proxy} error'.format(func=proxyGetter, proxy=proxy))
-
-        # store
-    for proxy in proxy_set:
-        print(proxy)
-
-
-    # test_batch(gg.freeProxyTwelve())
-
-    # test_batch(gg.freeProxyWallFirst())
-
-    # test_batch(gg.freeProxyWallSecond())
-
-    # test_batch(gg.freeProxyWallThird())
-    for e in gg.freeProxyWallThird():
-        print(e)
+    CheckProxy.checkAllGetProxyFunc()
