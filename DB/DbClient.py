@@ -45,6 +45,7 @@ class DbClient(object):
         所有方法需要相应类去具体实现：
             SSDB：SsdbClient.py
             REDIS:RedisClient.py
+            MySQL:MySQLClient.py
 
     """
 
@@ -70,6 +71,8 @@ class DbClient(object):
             __type = "RedisClient"
         elif "MONGODB" == self.config.db_type:
             __type = "MongodbClient"
+        elif "MYSQL" == self.config.db_type:
+            __type = "MySQLClient"
         else:
             pass
         assert __type, 'type error, Not support DB type: {}'.format(self.config.db_type)
