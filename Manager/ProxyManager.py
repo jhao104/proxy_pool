@@ -2,13 +2,13 @@
 # !/usr/bin/env python
 """
 -------------------------------------------------
-   File Name：     ProxyManager.py  
-   Description :  
+   File Name：     ProxyManager.py
+   Description :
    Author :       JHao
    date：          2016/12/3
 -------------------------------------------------
    Change Activity:
-                   2016/12/3: 
+                   2016/12/3:
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -40,30 +40,22 @@ class ProxyManager(object):
         fetch proxy into Db by ProxyGetter
         :return:
         """
+        self.db.changeTable(self.raw_proxy_queue)
         for proxyGetter in self.config.proxy_getter_functions:
             # fetch
-            proxy_set = set()
             try:
                 self.log.info("{func}: fetch proxy start".format(func=proxyGetter))
-                proxy_iter = [_ for _ in getattr(GetFreeProxy, proxyGetter.strip())()]
+                for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
+                    # 挨个存储 proxy，优化raw 队列的 push 速度，进而加快 check proxy 的速度
+                    proxy = proxy.strip()
+                    if proxy and verifyProxyFormat(proxy):
+                        self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
+                        self.db.put(proxy)
+                    else:
+                        self.log.error('{func}: fetch proxy {proxy} error'.format(func=proxyGetter, proxy=proxy))
             except Exception as e:
                 self.log.error("{func}: fetch proxy fail".format(func=proxyGetter))
                 continue
-            for proxy in proxy_iter:
-                proxy = proxy.strip()
-                if proxy and verifyProxyFormat(proxy):
-                    self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
-                    proxy_set.add(proxy)
-                else:
-                    self.log.error('{func}: fetch proxy {proxy} error'.format(func=proxyGetter, proxy=proxy))
-
-            # store
-            for proxy in proxy_set:
-                self.db.changeTable(self.useful_proxy_queue)
-                if self.db.exists(proxy):
-                    continue
-                self.db.changeTable(self.raw_proxy_queue)
-                self.db.put(proxy)
 
     def get(self):
         """
