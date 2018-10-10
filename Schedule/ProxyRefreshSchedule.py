@@ -18,7 +18,8 @@ import sys
 import time
 import logging
 from threading import Thread
-from apscheduler.schedulers.blocking import BlockingScheduler
+# 使用后台调度，不使用阻塞式~
+from apscheduler.schedulers.background import BackgroundScheduler as Sch
 
 sys.path.append('../')
 
@@ -73,12 +74,7 @@ def refreshPool():
     pp.validProxy()
 
 
-def main(process_num=30):
-    p = ProxyRefreshSchedule()
-
-    # 获取新代理
-    p.refresh()
-
+def batch_refresh(process_num=30):
     # 检验新代理
     pl = []
     for num in range(process_num):
@@ -93,11 +89,18 @@ def main(process_num=30):
         pl[num].join()
 
 
+def fetch_all():
+    p = ProxyRefreshSchedule()
+    # 获取新代理
+    p.refresh()
+
+
 def run():
-    main()
-    sch = BlockingScheduler()
-    sch.add_job(main, 'interval', minutes=10)  # 每10分钟抓取一次
+    sch = Sch()
+    sch.add_job(fetch_all, 'interval', minutes=5)  # 每5分钟抓取一次
+    sch.add_job(batch_refresh, "interval", minutes=1)  # 每分钟检查一次
     sch.start()
+    fetch_all()
 
 
 if __name__ == '__main__':

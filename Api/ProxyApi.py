@@ -2,13 +2,13 @@
 # !/usr/bin/env python
 """
 -------------------------------------------------
-   File Name：     ProxyApi.py  
-   Description :  
+   File Name：     ProxyApi.py
+   Description :
    Author :       JHao
    date：          2016/12/4
 -------------------------------------------------
    Change Activity:
-                   2016/12/4: 
+                   2016/12/4:
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -26,7 +26,6 @@ app = Flask(__name__)
 
 
 class JsonResponse(Response):
-
     @classmethod
     def force_type(cls, response, environ=None):
         if isinstance(response, (dict, list)):
@@ -86,7 +85,7 @@ def getStatus():
 
 def run():
     config = GetConfig()
-    app.run(host=config.host_ip, port=config.host_port)
+    app.run(host=config.host_ip, port=config.host_port, threaded=False, processes=config.processes)
 
 
 if __name__ == '__main__':
