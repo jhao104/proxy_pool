@@ -2,7 +2,7 @@
 # !/usr/bin/env python
 """
 -------------------------------------------------
-   File Name：     GetConfig.py  
+   File Name：     GetConfig.py
    Description :  fetch config from config.ini
    Author :       JHao
    date：          2016/12/3
@@ -51,11 +51,15 @@ class GetConfig(object):
 
     @LazyProperty
     def host_ip(self):
-        return self.config_file.get('HOST','ip')
+        return self.config_file.get('API','ip')
 
     @LazyProperty
     def host_port(self):
-        return int(self.config_file.get('HOST', 'port'))
+        return int(self.config_file.get('API', 'port'))
+
+    @LazyProperty
+    def processes(self):
+        return int(self.config_file.get('API', 'processes'))
 
 if __name__ == '__main__':
     gg = GetConfig()
@@ -66,3 +70,4 @@ if __name__ == '__main__':
     print(gg.proxy_getter_functions)
     print(gg.host_ip)
     print(gg.host_port)
+    print(gg.processes)
