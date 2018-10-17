@@ -85,7 +85,10 @@ def getStatus():
 
 def run():
     config = GetConfig()
-    app.run(host=config.host_ip, port=config.host_port, threaded=False, processes=config.processes)
+    if sys.platform.startswith("win"):
+        app.run(host=config.host_ip, port=config.host_port)
+    else:
+        app.run(host=config.host_ip, port=config.host_port, threaded=False, processes=config.processes)
 
 
 if __name__ == '__main__':
