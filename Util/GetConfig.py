@@ -46,6 +46,15 @@ class GetConfig(object):
         return int(self.config_file.get('DB', 'port'))
 
     @LazyProperty
+    def db_password(self):
+        try:
+            password = self.config_file.get('DB', 'password')
+        except Exception:
+            password = None
+        return password
+
+
+    @LazyProperty
     def proxy_getter_functions(self):
         return self.config_file.options('ProxyGetter')
 
