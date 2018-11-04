@@ -77,21 +77,23 @@ class GetFreeProxy(object):
     def freeProxySecond(area=33, page=1):
         """
         代理66 http://www.66ip.cn/
-        :param area: 抓取代理页数，page=1北京代理页，page=2上海代理页......
-        :param page: 翻页
-        :return:
         """
-        area = 33 if area > 33 else area
-        for area_index in range(1, area + 1):
-            for i in range(1, page + 1):
-                url = "http://www.66ip.cn/areaindex_{}/{}.html".format(area_index, i)
-                html_tree = getHtmlTree(url)
-                tr_list = html_tree.xpath("//*[@id='footer']/div/table/tr[position()>1]")
-                if len(tr_list) == 0:
-                    continue
-                for tr in tr_list:
-                    yield tr.xpath("./td[1]/text()")[0] + ":" + tr.xpath("./td[2]/text()")[0]
-                break
+        api_url = 'http://www.66ip.cn/nmtq.php?getnum=3000&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=0&proxytype=2&api=66ip'
+        result = []
+        zz = re.compile(r'\b(?:[0-9]{1,3}\.){3}[0-9]{1,3}\b.*?<', re.S)
+
+        headers = {
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.5,en;q=0.3',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_5) AppleWebKit/603.2.4 (KHTML, like Gecko) Version/10.1.1 Safari/603.2.4',
+        }
+
+        response = requests.get(api_url, headers=headers)
+        urllist = re.findall(zz, response.text)
+        for x in urllist:
+            result.append(x[:-1])
+        for ip in result:
+            yield ip
 
     @staticmethod
     def freeProxyThird(days=1):
