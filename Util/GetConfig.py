@@ -53,6 +53,13 @@ class GetConfig(object):
             password = None
         return password
 
+    @LazyProperty
+    def db_username(self):
+        try:
+            username = self.config_file.get('DB', 'username')
+        except Exception:
+            username = None
+        return username
 
     @LazyProperty
     def proxy_getter_functions(self):

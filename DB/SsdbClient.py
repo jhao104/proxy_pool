@@ -31,8 +31,11 @@ class SsdbClient(object):
         验证后的代理存放在name为useful_proxy的hash中，key为代理的ip:port，value为一个计数,初始为1，每校验失败一次减1；
 
     """
-
-    def __init__(self, name, **kwargs):
+    # 为了保持DbClient的标准
+    # 在SsdbClient里面接受username参数, 但不进行使用.
+    # 因为不能将username通过kwargs传进redis.Redis里面, 会报错:
+    # TypeError: __init__() got an unexpected keyword argument 'username'
+    def __init__(self, name, username, **kwargs):
         """
         init
         :param name: hash name
