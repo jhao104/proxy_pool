@@ -17,9 +17,9 @@ from pymongo import MongoClient
 
 
 class MongodbClient(object):
-    def __init__(self, name, host, port):
+    def __init__(self, name, host, port, **kwargs):
         self.name = name
-        self.client = MongoClient(host, port)
+        self.client = MongoClient(host, port, **kwargs)
         self.db = self.client.proxy
 
     def changeTable(self, name):
