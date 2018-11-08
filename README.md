@@ -74,6 +74,23 @@ port = 5010          # 监听端口
 # 依次到Api下启动ProxyApi.py,Schedule下启动ProxyRefreshSchedule.py和ProxyValidSchedule.py即可.
 ```
 
+* 生产环境 Docker/docker-compose
+
+```shell
+# Workdir proxy_pool
+docker build -t proxy_pool .
+pip install docker-compose
+docker-compose -f Docker/docker-compose.yml up -d
+```
+
+* 开发环境 Docker
+
+```shell
+# Workdir proxy_pool
+docker build -t proxy_pool .
+docker run -it --rm -v $(pwd):/usr/src/app -p 5010:5010 proxy_pool
+```
+
 ### 使用
 
 　　启动过几分钟后就能看到抓取到的代理IP，你可以直接到数据库中查看，推荐一个[SSDB可视化工具](https://github.com/jhao104/SSDBAdmin)。

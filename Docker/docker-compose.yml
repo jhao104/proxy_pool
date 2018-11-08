@@ -1,0 +1,14 @@
+version: '2'
+services:
+  proxy_pool:
+    volumes:
+     - ..:/usr/src/app
+    ports:
+     - "5010:5010"
+    links:
+     - proxy_redis
+    image: "proxy_pool"
+  proxy_redis:
+    ports:
+     - "6379:6379"
+    image: "redis"
