@@ -62,7 +62,7 @@ class CheckProxy(object):
         count = 0
         for proxy in func():
             if verifyProxyFormat(proxy):
-                log.info("fetch proxy: {}".format(proxy))
+                log.info("{} fetch proxy: {}".format(func_name, proxy))
                 count += 1
         log.info("{n} completed, fetch proxy number: {c}".format(n=func_name, c=count))
 
