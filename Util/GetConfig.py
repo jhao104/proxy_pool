@@ -70,6 +70,8 @@ class GetConfig(object):
     def processes(self):
         return int(self.config_file.get('API', 'processes'))
 
+config = GetConfig()
+
 if __name__ == '__main__':
     gg = GetConfig()
     print(gg.db_type)
