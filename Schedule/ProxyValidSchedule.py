@@ -20,8 +20,6 @@ try:
 except:
     from queue import Queue  # py2
 
-sys.path.append('../')
-
 from Schedule.ProxyCheck import ProxyCheck
 from Manager.ProxyManager import ProxyManager
 

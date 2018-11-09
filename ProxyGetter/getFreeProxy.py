@@ -21,8 +21,6 @@ except:
     reload(sys)
     sys.setdefaultencoding('utf-8')
 
-sys.path.append('..')
-
 from Util.WebRequest import WebRequest
 from Util.utilFunction import getHtmlTree
 from Util.utilFunction import verifyProxyFormat

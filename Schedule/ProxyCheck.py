@@ -15,8 +15,6 @@ __author__ = 'J_hao'
 import sys
 from threading import Thread
 
-sys.path.append('../')
-
 from Util.utilFunction import validUsefulProxy
 from Manager.ProxyManager import ProxyManager
 from Util.LogHandler import LogHandler

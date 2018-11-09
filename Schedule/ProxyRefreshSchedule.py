@@ -21,8 +21,6 @@ from threading import Thread
 # 使用后台调度，不使用阻塞式~
 from apscheduler.schedulers.background import BackgroundScheduler as Sch
 
-sys.path.append('../')
-
 from Util.utilFunction import validUsefulProxy
 from Manager.ProxyManager import ProxyManager
 from Util.LogHandler import LogHandler
