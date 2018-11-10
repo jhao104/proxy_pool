@@ -22,6 +22,7 @@ except:
 
 from Schedule.ProxyCheck import ProxyCheck
 from Manager.ProxyManager import ProxyManager
+from Log.LogManager import log
 
 
 class ProxyValidSchedule(ProxyManager, object):
@@ -51,10 +52,10 @@ class ProxyValidSchedule(ProxyManager, object):
         self.putQueue()
         while True:
             if not self.queue.empty():
-                self.log.info("Start valid useful proxy")
+                log.info("Start Valid useful_proxy proxy")
                 self.__validProxy()
             else:
-                self.log.info('Valid Complete! sleep 5 minutes.')
+                log.info('Valid Complete, Sleep 5 Min!')
                 time.sleep(60 * 5)
                 self.putQueue()
 

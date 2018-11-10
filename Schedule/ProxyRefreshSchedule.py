@@ -17,13 +17,13 @@
 import sys
 import time
 import logging
-from threading import Thread
+import threading
 # 使用后台调度，不使用阻塞式~
 from apscheduler.schedulers.background import BackgroundScheduler as Sch
 
 from Util.utilFunction import validUsefulProxy
 from Manager.ProxyManager import ProxyManager
-from Util.LogHandler import LogHandler
+from Log.LogManager import log
 
 __author__ = 'JHao'
 
@@ -37,7 +37,6 @@ class ProxyRefreshSchedule(ProxyManager):
 
     def __init__(self):
         ProxyManager.__init__(self)
-        self.log = LogHandler('refresh_schedule')
 
     def validProxy(self):
         """
@@ -46,7 +45,13 @@ class ProxyRefreshSchedule(ProxyManager):
         """
         self.db.changeTable(self.raw_proxy_queue)
         raw_proxy_item = self.db.pop()
-        self.log.info('ProxyRefreshSchedule: %s start validProxy' % time.ctime())
+
+        thread_id = threading.currentThread().ident
+        log.info("thread_id:{thread_id}, Start ValidProxy `raw_proxy_queue`".format(thread_id=thread_id))
+
+        total = 0
+        succ = 0
+        fail = 0
         # 计算剩余代理，用来减少重复计算
         remaining_proxies = self.getAll()
         while raw_proxy_item:
@@ -58,14 +63,17 @@ class ProxyRefreshSchedule(ProxyManager):
             if (raw_proxy not in remaining_proxies) and validUsefulProxy(raw_proxy):
                 self.db.changeTable(self.useful_proxy_queue)
                 self.db.put(raw_proxy)
-                self.log.info('ProxyRefreshSchedule: %s validation pass' % raw_proxy)
+                log.debug('ProxyRefreshSchedule: %s validation pass' % raw_proxy)
+                succ = succ + 1
             else:
-                self.log.info('ProxyRefreshSchedule: %s validation fail' % raw_proxy)
+                log.debug('ProxyRefreshSchedule: %s validation fail' % raw_proxy)
+                fail = fail + 1
+            total = total + 1
             self.db.changeTable(self.raw_proxy_queue)
             raw_proxy_item = self.db.pop()
             remaining_proxies = self.getAll()
-        self.log.info('ProxyRefreshSchedule: %s validProxy complete' % time.ctime())
 
+        log.info('thread_id:{thread_id}, ValidProxy Complete `raw_proxy_queue`, total:{total}, succ:{succ}, fail:{fail}'.format(thread_id=thread_id, total=total, succ=succ, fail=fail))
 
 def refreshPool():
     pp = ProxyRefreshSchedule()
@@ -76,7 +84,7 @@ def batch_refresh(process_num=30):
     # 检验新代理
     pl = []
     for num in range(process_num):
-        proc = Thread(target=refreshPool, args=())
+        proc = threading.Thread(target=refreshPool, args=())
         pl.append(proc)
 
     for num in range(process_num):

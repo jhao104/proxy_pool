@@ -18,31 +18,39 @@ import os
 import logging
 
 from logging.handlers import TimedRotatingFileHandler
+from Util.GetConfig import GetConfig
 
-# 日志级别
-CRITICAL = 50
-FATAL = CRITICAL
-ERROR = 40
-WARNING = 30
-WARN = WARNING
-INFO = 20
-DEBUG = 10
-NOTSET = 0
+LOG_LEVEL = {
+    "CRITICAL": 50,
+    "FATAL": 50,
+    "ERROR": 40,
+    "WARNING": 30,
+    "WARN": 30,
+    "INFO": 20,
+    "DEBUG": 10,
+    "NOTSET": 0,
+}
 
 CURRENT_PATH = os.path.dirname(os.path.abspath(__file__))
 ROOT_PATH = os.path.join(CURRENT_PATH, os.pardir)
-LOG_PATH = os.path.join(ROOT_PATH, 'log')
-
+LOG_PATH = os.path.join(ROOT_PATH, 'logs')
+if not os.path.exists(LOG_PATH):
+    os.mkdir(LOG_PATH)
 
 class LogHandler(logging.Logger):
     """
     LogHandler
     """
 
-    def __init__(self, name, level=DEBUG, stream=True, file=True):
-        self.name = name
-        self.level = level
-        logging.Logger.__init__(self, self.name, level=level)
+    def __init__(self, level=None, stream=True, file=True):
+        config = GetConfig()
+        self.name = "ProxyPool"
+        if level:
+            self.level = level
+        else:
+            self.level = LOG_LEVEL.get(config.log_level, LOG_LEVEL["INFO"])
+
+        logging.Logger.__init__(self, self.name, level=self.level)
         if stream:
             self.__setStreamHandler__()
         if file:

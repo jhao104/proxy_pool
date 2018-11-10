@@ -13,25 +13,30 @@
 __author__ = 'J_hao'
 
 import sys
-from threading import Thread
+import threading
 
 from Util.utilFunction import validUsefulProxy
 from Manager.ProxyManager import ProxyManager
-from Util.LogHandler import LogHandler
+from Log.LogManager import log
 
 FAIL_COUNT = 1  # 校验失败次数， 超过次数删除代理
 
 
-class ProxyCheck(ProxyManager, Thread):
+class ProxyCheck(ProxyManager, threading.Thread):
     def __init__(self, queue, item_dict):
         ProxyManager.__init__(self)
-        Thread.__init__(self)
-        self.log = LogHandler('proxy_check', file=False)  # 多线程同时写一个日志文件会有问题
+        threading.Thread.__init__(self)
         self.queue = queue
         self.item_dict = item_dict
 
     def run(self):
         self.db.changeTable(self.useful_proxy_queue)
+        thread_id = threading.currentThread().ident
+        log.info("thread_id:{thread_id} useful_proxy proxy check start".format(thread_id=thread_id))
+
+        total = 0
+        succ = 0
+        fail = 0
         while self.queue.qsize():
             proxy = self.queue.get()
             count = self.item_dict[proxy]
@@ -39,17 +44,17 @@ class ProxyCheck(ProxyManager, Thread):
                 # 验证通过计数器减1
                 if count and int(count) > 0:
                     self.db.put(proxy, num=int(count) - 1)
-                else:
-                    pass
-                self.log.info('ProxyCheck: {} validation pass'.format(proxy))
+                log.debug("ProxyCheck: {proxy} validation pass".format(proxy=proxy))
+                succ = succ + 1
             else:
-                self.log.info('ProxyCheck: {} validation fail'.format(proxy))
-                if count and int(count) + 1 >= FAIL_COUNT:
-                    self.log.info('ProxyCheck: {} fail too many, delete!'.format(proxy))
-                    self.db.delete(proxy)
-                else:
-                    self.db.put(proxy, num=int(count) + 1)
+                log.debug("ProxyCheck: {proxy} validation fail".format(proxy=proxy))
+                self.db.update(proxy, 1)
+                fail = fail + 1
+
             self.queue.task_done()
+            total = total + 1            
+        
+        log.info('thread_id:{thread_id} proxy check end, total:{total}, succ:{succ}, fail:{fail}'.format(thread_id=thread_id, total=total, succ=succ, fail=fail))
 
 
 if __name__ == '__main__':

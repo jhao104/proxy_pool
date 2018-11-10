@@ -15,11 +15,7 @@ import requests
 import time
 from lxml import etree
 
-from Util.LogHandler import LogHandler
 from Util.WebRequest import WebRequest
-
-# logger = LogHandler(__name__, stream=False)
-
 
 # noinspection PyPep8Naming
 def robustCrawl(func):

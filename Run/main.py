@@ -12,18 +12,29 @@
 """
 __author__ = 'JHao'
 
-import sys
-from multiprocessing import Process
 
+
+import sys
 sys.path.append('.')
 sys.path.append('..')
 
+import time
+from multiprocessing import Process
+
+from LogManager import Log
 from Api.ProxyApi import run as ProxyApiRun
 from Schedule.ProxyValidSchedule import run as ValidRun
 from Schedule.ProxyRefreshSchedule import run as RefreshRun
 
+def showTime():
+    date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    content = "{newline}{symbol} ProxyPool Start, date:{date} {symbol}{newline}".format(newline="\n", symbol="-"*50, date=date)
+    print(content)
 
-def run():
+def main():
+    showTime()
+    Log.Init()
+
     p_list = list()
     p1 = Process(target=ProxyApiRun, name='ProxyApiRun')
     p_list.append(p1)
@@ -40,4 +51,4 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    main()
