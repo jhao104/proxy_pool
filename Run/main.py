@@ -21,7 +21,7 @@ sys.path.append('..')
 import time
 from multiprocessing import Process
 
-from LogManager import Log
+from Log import LogManager
 from Api.ProxyApi import run as ProxyApiRun
 from Schedule.ProxyValidSchedule import run as ValidRun
 from Schedule.ProxyRefreshSchedule import run as RefreshRun
@@ -33,7 +33,7 @@ def showTime():
 
 def main():
     showTime()
-    Log.Init()
+    LogManager.Init()
 
     p_list = list()
     p1 = Process(target=ProxyApiRun, name='ProxyApiRun')

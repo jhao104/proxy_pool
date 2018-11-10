@@ -5,10 +5,8 @@ services:
      - ..:/usr/src/app
     ports:
      - "5010:5010"
-    links:
-     - proxy_redis
     image: "proxy_pool"
-  proxy_redis:
+  proxy_pool_db:
     ports:
      - "6379:6379"
     image: "redis"

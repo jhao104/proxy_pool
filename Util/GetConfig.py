@@ -25,7 +25,11 @@ class GetConfig(object):
 
     def __init__(self):
         self.pwd = os.path.split(os.path.realpath(__file__))[0]
-        self.config_path = os.path.join(os.path.split(self.pwd)[0], 'Config.ini')
+        config_dir = os.path.split(self.pwd)[0]
+        self.config_path = os.path.join(config_dir, 'Config.ini')
+        if not os.path.isfile(self.config_path):
+            self.config_path = os.path.join(config_dir, 'Config.ini.default')
+            
         self.config_file = ConfigParse()
         self.config_file.read(self.config_path)
 
