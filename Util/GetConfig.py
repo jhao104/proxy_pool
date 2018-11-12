@@ -53,14 +53,13 @@ class GetConfig(object):
             password = None
         return password
 
-
     @LazyProperty
     def proxy_getter_functions(self):
         return self.config_file.options('ProxyGetter')
 
     @LazyProperty
     def host_ip(self):
-        return self.config_file.get('API','ip')
+        return self.config_file.get('API', 'ip')
 
     @LazyProperty
     def host_port(self):
@@ -69,6 +68,7 @@ class GetConfig(object):
     @LazyProperty
     def processes(self):
         return int(self.config_file.get('API', 'processes'))
+
 
 config = GetConfig()
 
