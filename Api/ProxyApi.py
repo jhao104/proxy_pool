@@ -19,7 +19,7 @@ from flask import Flask, jsonify, request
 
 sys.path.append('../')
 
-from Util.GetConfig import GetConfig
+from Util.GetConfig import config
 from Manager.ProxyManager import ProxyManager
 
 app = Flask(__name__)
@@ -84,7 +84,6 @@ def getStatus():
 
 
 def run():
-    config = GetConfig()
     if sys.platform.startswith("win"):
         app.run(host=config.host_ip, port=config.host_port)
     else:

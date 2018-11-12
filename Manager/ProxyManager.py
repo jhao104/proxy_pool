@@ -17,7 +17,7 @@ import random
 
 from Util import EnvUtil
 from DB.DbClient import DbClient
-from Util.GetConfig import GetConfig
+from Util.GetConfig import config
 from Util.LogHandler import LogHandler
 from Util.utilFunction import verifyProxyFormat
 from ProxyGetter.getFreeProxy import GetFreeProxy
@@ -30,7 +30,6 @@ class ProxyManager(object):
 
     def __init__(self):
         self.db = DbClient()
-        self.config = GetConfig()
         self.raw_proxy_queue = 'raw_proxy'
         self.log = LogHandler('proxy_manager')
         self.useful_proxy_queue = 'useful_proxy'
@@ -41,7 +40,7 @@ class ProxyManager(object):
         :return:
         """
         self.db.changeTable(self.raw_proxy_queue)
-        for proxyGetter in self.config.proxy_getter_functions:
+        for proxyGetter in config.proxy_getter_functions:
             # fetch
             try:
                 self.log.info("{func}: fetch proxy start".format(func=proxyGetter))

@@ -22,7 +22,11 @@ class RedisClient(object):
     Reids client
     """
 
-    def __init__(self, name, host, port):
+    # 为了保持DbClient的标准
+    # 在RedisClient里面接受username参数, 但不进行使用.
+    # 因为不能将username通过kwargs传进redis.Redis里面, 会报错:
+    # TypeError: __init__() got an unexpected keyword argument 'username'
+    def __init__(self, name, host, port, username, **kwargs):
         """
         init
         :param name:
@@ -31,7 +35,7 @@ class RedisClient(object):
         :return:
         """
         self.name = name
-        self.__conn = redis.Redis(host=host, port=port, db=0)
+        self.__conn = redis.Redis(host=host, port=port, db=0, **kwargs)
 
     def get(self):
         """
