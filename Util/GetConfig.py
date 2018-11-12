@@ -47,11 +47,7 @@ class GetConfig(object):
 
     @LazyProperty
     def db_password(self):
-        try:
-            password = self.config_file.get('DB', 'password')
-        except Exception:
-            password = None
-        return password
+        return self.config_file.get('DB', 'password', fallback="default pwd")
 
     @LazyProperty
     def proxy_getter_functions(self):
@@ -82,3 +78,4 @@ if __name__ == '__main__':
     print(gg.host_ip)
     print(gg.host_port)
     print(gg.processes)
+    print(gg.db_password)
