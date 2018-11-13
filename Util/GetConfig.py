@@ -47,7 +47,7 @@ class GetConfig(object):
 
     @LazyProperty
     def db_password(self):
-        return self.config_file.get('DB', 'password', fallback="default pwd")
+        return self.config_file.get('DB', 'password', fallback=None)
 
     @LazyProperty
     def proxy_getter_functions(self):
