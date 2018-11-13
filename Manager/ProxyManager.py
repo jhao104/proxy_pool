@@ -36,7 +36,7 @@ class ProxyManager(object):
 
     def refresh(self):
         """
-        fetch proxy into Db by ProxyGetter
+        fetch proxy into Db by ProxyGetter/getFreeProxy.py
         :return:
         """
         self.db.changeTable(self.raw_proxy_queue)
@@ -45,7 +45,7 @@ class ProxyManager(object):
             try:
                 self.log.info("{func}: fetch proxy start".format(func=proxyGetter))
                 for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
-                    # 挨个存储 proxy，优化raw 队列的 push 速度，进而加快 check proxy 的速度
+                    # 直接存储代理, 不用在代码中排重, hash 结构本身具有排重功能
                     proxy = proxy.strip()
                     if proxy and verifyProxyFormat(proxy):
                         self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
