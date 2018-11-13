@@ -44,7 +44,7 @@ class DbClient(object):
 
         所有方法需要相应类去具体实现：
             SSDB：SsdbClient.py
-            REDIS:RedisClient.py
+            REDIS:RedisClient.py  停用 统一使用SsdbClient.py
 
     """
 
@@ -66,7 +66,7 @@ class DbClient(object):
         if "SSDB" == config.db_type:
             __type = "SsdbClient"
         elif "REDIS" == config.db_type:
-            __type = "RedisClient"
+            __type = "SsdbClient"
         elif "MONGODB" == config.db_type:
             __type = "MongodbClient"
         else:
@@ -107,7 +107,5 @@ class DbClient(object):
 
 if __name__ == "__main__":
     account = DbClient()
-    print(account.get())
-    account.changeTable('use')
-    account.put('ac')
-    print(account.get())
+    account.changeTable('useful_proxy')
+    print(account.pop())
