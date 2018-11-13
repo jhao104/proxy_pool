@@ -18,8 +18,7 @@ import sys
 import time
 import logging
 from threading import Thread
-# 使用后台调度，不使用阻塞式~
-from apscheduler.schedulers.background import BackgroundScheduler as Sch
+from apscheduler.schedulers.background import BackgroundScheduler
 
 sys.path.append('../')
 
@@ -74,7 +73,7 @@ def refreshPool():
     pp.validProxy()
 
 
-def batch_refresh(process_num=30):
+def batchRefresh(process_num=30):
     # 检验新代理
     pl = []
     for num in range(process_num):
@@ -89,21 +88,23 @@ def batch_refresh(process_num=30):
         pl[num].join()
 
 
-def fetch_all():
+def fetchAll():
     p = ProxyRefreshSchedule()
     # 获取新代理
     p.refresh()
 
 
 def run():
-    sch = Sch()
-    sch.add_job(fetch_all, 'interval', minutes=5)  # 每5分钟抓取一次
-    sch.add_job(batch_refresh, "interval", minutes=1)  # 每分钟检查一次
-    sch.start()
-    fetch_all()
+    scheduler = BackgroundScheduler()
+    # 不用太快, 网站更新速度比较慢, 太快会加大验证压力, 导致raw_proxy积压
+    scheduler.add_job(fetchAll,  'interval', minutes=10, id="fetch_proxy")
+    scheduler.add_job(batchRefresh, "interval", minutes=1)  # 每分钟检查一次
+    scheduler.start()
+
+    fetchAll()
 
     while True:
-        time.sleep(1)
+        time.sleep(3)
 
 
 if __name__ == '__main__':
