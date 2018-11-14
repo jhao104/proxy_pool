@@ -32,7 +32,7 @@ class ProxyValidSchedule(ProxyManager, object):
         self.queue = Queue()
         self.proxy_item = dict()
 
-    def __validProxy(self, threads=10):
+    def __validProxy(self, threads=20):
         """
         验证useful_proxy代理
         :param threads: 线程数
