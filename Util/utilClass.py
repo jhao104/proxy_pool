@@ -44,8 +44,8 @@ class ConfigParse(ConfigParser):
     rewrite ConfigParser, for support upper option
     """
 
-    def __init__(self):
-        ConfigParser.__init__(self)
+    def __init__(self, *args, **kwargs):
+        ConfigParser.__init__(self, *args, **kwargs)
 
     def optionxform(self, optionstr):
         return optionstr

@@ -26,7 +26,7 @@ class GetConfig(object):
     def __init__(self):
         self.pwd = os.path.split(os.path.realpath(__file__))[0]
         self.config_path = os.path.join(os.path.split(self.pwd)[0], 'Config.ini')
-        self.config_file = ConfigParse()
+        self.config_file = ConfigParse(defaults={"password": None})
         self.config_file.read(self.config_path)
 
     @LazyProperty
@@ -47,7 +47,7 @@ class GetConfig(object):
 
     @LazyProperty
     def db_password(self):
-        return self.config_file.get('DB', 'password', fallback=None)
+        return self.config_file.get('DB', 'password')
 
     @LazyProperty
     def proxy_getter_functions(self):
@@ -61,10 +61,6 @@ class GetConfig(object):
     def host_port(self):
         return int(self.config_file.get('API', 'port'))
 
-    @LazyProperty
-    def processes(self):
-        return int(self.config_file.get('API', 'processes'))
-
 
 config = GetConfig()
 
@@ -77,5 +73,4 @@ if __name__ == '__main__':
     print(gg.proxy_getter_functions)
     print(gg.host_ip)
     print(gg.host_port)
-    print(gg.processes)
     print(gg.db_password)
