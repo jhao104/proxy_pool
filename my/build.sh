@@ -1,0 +1,1 @@
+docker build -t registry.cn-beijing.aliyuncs.com/ryttech/proxy_pool:1.12.20181114 -f my/Dockerfile .
