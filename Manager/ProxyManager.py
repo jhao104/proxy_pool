@@ -91,6 +91,15 @@ class ProxyManager(object):
             return list(item_dict.keys()) if item_dict else list()
         return item_dict.keys() if item_dict else list()
 
+    def getAllbyDict(self):
+        """
+        get all proxy from pool as dict
+        :return:
+        """
+        self.db.changeTable(self.useful_proxy_queue)
+        item_dict = self.db.getAll()
+        return item_dict
+
     def getNumber(self):
         self.db.changeTable(self.raw_proxy_queue)
         total_raw_proxy = self.db.getNumber()
