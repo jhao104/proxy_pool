@@ -2,7 +2,7 @@
 """
 -------------------------------------------------
    File Name：     testGetConfig
-   Description :   test all function in GetConfig.py
+   Description :   testGetConfig
    Author :        J_hao
    date：          2017/7/31
 -------------------------------------------------
