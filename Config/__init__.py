@@ -1,13 +1,12 @@
 # -*- coding: utf-8 -*-
 """
 -------------------------------------------------
-   File Name：     __init__.py
-   Description :   
-   Author :        J_hao
-   date：          2017/7/31
+   File Name：     __init__
+   Description :
+   Author :        JHao
+   date：          2019/2/15
 -------------------------------------------------
    Change Activity:
-                   2017/7/31:
+                   2019/2/15:
 -------------------------------------------------
 """
-__author__ = 'J_hao'

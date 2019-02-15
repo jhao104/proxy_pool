@@ -12,22 +12,22 @@
 """
 __author__ = 'J_hao'
 
-from Util.GetConfig import GetConfig
+from Config.ConfigGetter import config
 
 
 # noinspection PyPep8Naming
-def testGetConfig():
+def testConfig():
     """
-    test class GetConfig in Util/GetConfig
     :return:
     """
-    gg = GetConfig()
-    print(gg.db_type)
-    print(gg.db_name)
-    print(gg.db_host)
-    print(gg.db_port)
-    assert isinstance(gg.proxy_getter_functions, list)
-    print(gg.proxy_getter_functions)
+    print(config.db_type)
+    print(config.db_name)
+    print(config.db_host)
+    print(config.db_port)
+    print(config.db_password)
+    assert isinstance(config.proxy_getter_functions, list)
+    print(config.proxy_getter_functions)
+
 
 if __name__ == '__main__':
-    testGetConfig()
+    testConfig()

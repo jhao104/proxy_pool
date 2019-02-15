@@ -19,7 +19,7 @@ from flask import Flask, jsonify, request
 
 sys.path.append('../')
 
-from Util.GetConfig import config
+from Config.ConfigGetter import config
 from Manager.ProxyManager import ProxyManager
 
 app = Flask(__name__)
