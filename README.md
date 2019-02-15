@@ -39,25 +39,41 @@ git clone git@github.com:jhao104/proxy_pool.git
 pip install -r requirements.txt
 ```
 
-* 配置Config.ini:
+* 配置Config/setting.py:
 
 ```shell
-# Config.ini 为项目配置文件
-# 配置DB
-type = SSDB       # 如果使用SSDB或redis数据库，均配置为SSDB
-host = localhost  # db host
-port = 8888       # db port
-name = proxy      # 默认配置
+# Config/setting.py 为项目配置文件
+
+# 配置DB     
+DATABASES = {
+    "default": {
+        "TYPE": "SSDB",        # 如果使用SSDB或redis数据库，均配置为SSDB
+        "HOST": "127.0.0.1",   # db host
+        "PORT": 8888,          # db port
+        "NAME": "proxy",       # 默认配置
+        "PASSWORD": ""         # db password
+
+    }
+}
+
 
 # 配置 ProxyGetter
-freeProxyFirst  = 1  # 这里是启动的抓取函数，可在ProxyGetter/getFreeProxy.py 扩展
-freeProxySecond = 1
-....
 
-# 配置 HOST (api服务)
-ip = 127.0.0.1       # 监听ip,0.0.0.0开启外网访问
-port = 5010          # 监听端口
-# 上面配置启动后，代理api地址为 http://127.0.0.1:5010
+PROXY_GETTER = [
+    "freeProxyFirst",      # 这里是启用的代理抓取函数名，可在ProxyGetter/getFreeProxy.py 扩展
+    "freeProxySecond",
+    ....
+]
+
+
+# 配置 API服务
+
+SERVER_API = {
+    "HOST": "0.0.0.0",  # 监听ip, 0.0.0.0 监听所有IP
+    "PORT": 5010        # 监听端口
+}
+       
+# 上面配置启动后，代理池访问地址为 http://127.0.0.1:5010
 
 ```
 
@@ -164,18 +180,17 @@ class GetFreeProxy(object):
         # 确保每个proxy都是 host:ip正确的格式就行
 ```
 
-* 2、添加好方法后，修改Config.ini文件中的`[ProxyGetter]`项：
+* 2、添加好方法后，修改Config/setting.py文件中的`PROXY_GETTER`项：
 
-　　在`Config.ini`的`[ProxyGetter]`下添加自定义的方法的名字:
+　　在`PROXY_GETTER`下添加自定义的方法的名字:
 
 ```shell
-
-[ProxyGetter]
-;register the proxy getter function
-freeProxyFirst  = 0  # 如果要取消某个方法，将其删除或赋为0即可
-....
-freeProxyCustom  = 1  # 确保名字和你添加方法名字一致
-
+PROXY_GETTER = [
+    "freeProxyFirst",    
+    "freeProxySecond",
+    ....
+    "freeProxyCustom"  #  # 确保名字和你添加方法名字一致
+]
 ```
 
 

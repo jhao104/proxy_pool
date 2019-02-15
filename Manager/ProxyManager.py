@@ -17,7 +17,7 @@ import random
 
 from Util import EnvUtil
 from DB.DbClient import DbClient
-from Util.GetConfig import config
+from Config.ConfigGetter import config
 from Util.LogHandler import LogHandler
 from Util.utilFunction import verifyProxyFormat
 from ProxyGetter.getFreeProxy import GetFreeProxy

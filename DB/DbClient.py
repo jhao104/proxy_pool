@@ -16,7 +16,7 @@ __author__ = 'JHao'
 import os
 import sys
 
-from Util.GetConfig import config
+from Config.ConfigGetter import config
 from Util.utilClass import Singleton
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))

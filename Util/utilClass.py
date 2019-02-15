@@ -9,7 +9,6 @@
 -------------------------------------------------
    Change Activity:
                    2016/12/3: Class LazyProperty
-                   2016/12/4: rewrite ConfigParser
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -31,24 +30,6 @@ class LazyProperty(object):
             value = self.func(instance)
             setattr(instance, self.func.__name__, value)
             return value
-
-
-try:
-    from configparser import ConfigParser  # py3
-except:
-    from ConfigParser import ConfigParser  # py2
-
-
-class ConfigParse(ConfigParser):
-    """
-    rewrite ConfigParser, for support upper option
-    """
-
-    def __init__(self, *args, **kwargs):
-        ConfigParser.__init__(self, *args, **kwargs)
-
-    def optionxform(self, optionstr):
-        return optionstr
 
 
 class Singleton(type):

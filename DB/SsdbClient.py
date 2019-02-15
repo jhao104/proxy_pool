@@ -3,7 +3,7 @@
 """
 -------------------------------------------------
    File Name：     SsdbClient.py
-   Description :  封装SSDB操作
+   Description :  封装SSDB/Redis操作
    Author :       JHao
    date：          2016/12/2
 -------------------------------------------------
@@ -27,7 +27,7 @@ class SsdbClient(object):
     SSDB client
 
     SSDB中代理存放的容器为hash：
-        原始代理存放在name为raw_proxy的hash中，key为代理的ip:port，value为为None,以后扩展可能会加入代理属性；
+        原始代理存放在name为raw_proxy的hash中，key为代理的ip:port，value为None,以后扩展可能会加入代理属性；
         验证后的代理存放在name为useful_proxy的hash中，key为代理的ip:port，value为一个计数,初始为1，每校验失败一次减1；
 
     """
