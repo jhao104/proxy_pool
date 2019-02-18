@@ -88,7 +88,7 @@ class GetFreeProxy(object):
             pass
 
     @staticmethod
-    def freeProxyFourth(page_count=2):
+    def freeProxyFourth(page_count=1):
         """
         西刺代理 http://www.xicidaili.com
         :return:
@@ -136,7 +136,7 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxySixth():
         """
-        讯代理 http://www.xdaili.cn/
+        讯代理 http://www.xdaili.cn/  已停用
         :return:
         """
         url = 'http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10'
@@ -154,21 +154,19 @@ class GetFreeProxy(object):
         快代理 https://www.kuaidaili.com
         """
         url_list = [
-            'https://www.kuaidaili.com/free/inha/{page}/',
-            'https://www.kuaidaili.com/free/intr/{page}/'
+            'https://www.kuaidaili.com/free/inha/',
+            'https://www.kuaidaili.com/free/intr/'
         ]
         for url in url_list:
-            for page in range(1, 2):
-                page_url = url.format(page=page)
-                tree = getHtmlTree(page_url)
-                proxy_list = tree.xpath('.//table//tr')
-                for tr in proxy_list[1:]:
-                    yield ':'.join(tr.xpath('./td/text()')[0:2])
+            tree = getHtmlTree(url)
+            proxy_list = tree.xpath('.//table//tr')
+            for tr in proxy_list[1:]:
+                yield ':'.join(tr.xpath('./td/text()')[0:2])
 
     @staticmethod
     def freeProxyEight():
         """
-        秘密代理 http://www.mimiip.com  不能用
+        秘密代理 http://www.mimiip.com  已停用
         """
         url_gngao = ['http://www.mimiip.com/gngao/%s' % n for n in range(1, 2)]  # 国内高匿
         url_gnpu = ['http://www.mimiip.com/gnpu/%s' % n for n in range(1, 2)]  # 国内普匿
@@ -185,7 +183,7 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxyNinth():
         """
-        码农代理 https://proxy.coderbusy.com/ 不能用
+        码农代理 https://proxy.coderbusy.com/ 已停用
         :return:
         """
         urls = ['https://proxy.coderbusy.com/classical/country/cn.aspx?page=1']
@@ -233,7 +231,7 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxyTwelve(page_count=2):
         """
-        guobanjia http://ip.jiangxianli.com/?page=
+        http://ip.jiangxianli.com/?page=
         免费代理库
         超多量
         :return:
@@ -291,7 +289,7 @@ if __name__ == '__main__':
     from CheckProxy import CheckProxy
 
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFirst)
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySecond)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySecond)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyThird)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFourth)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFifth)
@@ -300,7 +298,7 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEight)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyNinth)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTen)
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEleven)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEleven)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTwelve)
 
     # CheckProxy.checkAllGetProxyFunc()
