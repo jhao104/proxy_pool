@@ -23,18 +23,6 @@ from Util.utilFunction import getHtmlTree
 # for debug to disable insecureWarning
 requests.packages.urllib3.disable_warnings()
 
-"""
-    66ip.cn
-    data5u.com
-    xicidaili.com
-    goubanjia.com
-    xdaili.cn
-    kuaidaili.com
-    cn-proxy.com
-    proxy-list.org
-    www.mimiip.com to do
-"""
-
 
 class GetFreeProxy(object):
     """
@@ -64,24 +52,24 @@ class GetFreeProxy(object):
                     print(e)
 
     @staticmethod
-    def freeProxySecond(area=33, page=1):
+    def freeProxySecond(count=20):
         """
         代理66 http://www.66ip.cn/
-        :param area: 抓取代理页数，page=1北京代理页，page=2上海代理页......
-        :param page: 翻页
+        :param count: 提取数量
         :return:
         """
-        area = 33 if area > 33 else area
-        for area_index in range(1, area + 1):
-            for i in range(1, page + 1):
-                url = "http://www.66ip.cn/areaindex_{}/{}.html".format(area_index, i)
-                html_tree = getHtmlTree(url)
-                tr_list = html_tree.xpath("//*[@id='footer']/div/table/tr[position()>1]")
-                if len(tr_list) == 0:
-                    continue
-                for tr in tr_list:
-                    yield tr.xpath("./td[1]/text()")[0] + ":" + tr.xpath("./td[2]/text()")[0]
-                break
+        urls = [
+            "http://www.66ip.cn/mo.php?sxb=&tqsl={count}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=",
+            "http://www.66ip.cn/nmtq.php?getnum={count}"
+            "&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=1&proxytype=2&api=66ip",
+            ]
+        request = WebRequest()
+        for _ in urls:
+            url = _.format(count=count)
+            html = request.get(url).content
+            ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", html)
+            for ip in ips:
+                yield ip.strip()
 
     @staticmethod
     def freeProxyThird(days=1):
@@ -180,7 +168,7 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxyEight():
         """
-        秘密代理 http://www.mimiip.com
+        秘密代理 http://www.mimiip.com  不能用
         """
         url_gngao = ['http://www.mimiip.com/gngao/%s' % n for n in range(1, 2)]  # 国内高匿
         url_gnpu = ['http://www.mimiip.com/gnpu/%s' % n for n in range(1, 2)]  # 国内普匿
@@ -197,7 +185,7 @@ class GetFreeProxy(object):
     @staticmethod
     def freeProxyNinth():
         """
-        码农代理 https://proxy.coderbusy.com/
+        码农代理 https://proxy.coderbusy.com/ 不能用
         :return:
         """
         urls = ['https://proxy.coderbusy.com/classical/country/cn.aspx?page=1']
@@ -303,7 +291,7 @@ if __name__ == '__main__':
     from CheckProxy import CheckProxy
 
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFirst)
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySecond)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySecond)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyThird)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFourth)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFifth)
@@ -313,6 +301,6 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyNinth)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTen)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEleven)
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTwelve)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTwelve)
 
     # CheckProxy.checkAllGetProxyFunc()
