@@ -29,10 +29,10 @@ DATABASES = {
 PROXY_GETTER = [
     "freeProxyFirst",
     "freeProxySecond",
-    # "freeProxyThird",
+    # "freeProxyThird",  # 网站已不能访问
     "freeProxyFourth",
     "freeProxyFifth",
-    # "freeProxySixth"
+    # "freeProxySixth"   # 不再提供免费代理
     "freeProxySeventh",
     # "freeProxyEight",
     # "freeProxyNinth",
@@ -40,9 +40,9 @@ PROXY_GETTER = [
     "freeProxyEleven",
     "freeProxyTwelve",
     # foreign website, outside the wall
-    "freeProxyWallFirst",
-    "freeProxyWallSecond",
-    "freeProxyWallThird"
+    # "freeProxyWallFirst",
+    # "freeProxyWallSecond",
+    # "freeProxyWallThird"
 ]
 
 

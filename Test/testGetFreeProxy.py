@@ -12,22 +12,11 @@
 """
 __author__ = 'J_hao'
 
-import re
-import sys
-import requests
 
-try:
-    from importlib import reload  # py3 实际不会实用，只是为了不显示语法错误
-except:
-    reload(sys)
-    sys.setdefaultencoding('utf-8')
-
-sys.path.append('..')
 from ProxyGetter.getFreeProxy import GetFreeProxy
 from Config.ConfigGetter import config
 
 
-# noinspection PyPep8Naming
 def testGetFreeProxy():
     """
     test class GetFreeProxy in ProxyGetter/GetFreeProxy

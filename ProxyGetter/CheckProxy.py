@@ -12,11 +12,9 @@
 """
 __author__ = 'JHao'
 
-import sys
 from getFreeProxy import GetFreeProxy
 from Util.utilFunction import verifyProxyFormat
 
-sys.path.append('../')
 
 from Util.LogHandler import LogHandler
 
