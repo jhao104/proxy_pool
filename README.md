@@ -21,7 +21,7 @@
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
-* 测试地址: http://123.207.35.36:5010 (单机勿压。感谢)
+* 测试地址: http://118.24.52.95:5010 (单机勿压。感谢)
 
 ### 下载安装
 
