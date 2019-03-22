@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
+from Util.utilFunction import getHtmlTree
+from Util.WebRequest import WebRequest
 """
 -------------------------------------------------
    File Name：     GetFreeProxy.py
@@ -14,11 +16,10 @@
 import re
 import sys
 import requests
+import json
 
 sys.path.append('..')
 
-from Util.WebRequest import WebRequest
-from Util.utilFunction import getHtmlTree
 
 # for debug to disable insecureWarning
 requests.packages.urllib3.disable_warnings()
@@ -62,12 +63,13 @@ class GetFreeProxy(object):
             "http://www.66ip.cn/mo.php?sxb=&tqsl={count}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=",
             "http://www.66ip.cn/nmtq.php?getnum={count}"
             "&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=1&proxytype=2&api=66ip",
-            ]
+        ]
         request = WebRequest()
         for _ in urls:
             url = _.format(count=count)
             html = request.get(url).content
-            ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", html)
+            ips = re.findall(
+                r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", html)
             for ip in ips:
                 yield ip.strip()
 
@@ -101,7 +103,8 @@ class GetFreeProxy(object):
             for i in range(1, page_count + 1):
                 page_url = each_url + str(i)
                 tree = getHtmlTree(page_url)
-                proxy_list = tree.xpath('.//table[@id="ip_list"]//tr[position()>1]')
+                proxy_list = tree.xpath(
+                    './/table[@id="ip_list"]//tr[position()>1]')
                 for proxy in proxy_list:
                     try:
                         yield ':'.join(proxy.xpath('./td/text()')[0:2])
@@ -128,7 +131,8 @@ class GetFreeProxy(object):
             try:
                 # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
                 ip_addr = ''.join(each_proxy.xpath(xpath_str))
-                port = each_proxy.xpath(".//span[contains(@class, 'port')]/text()")[0]
+                port = each_proxy.xpath(
+                    ".//span[contains(@class, 'port')]/text()")[0]
                 yield '{}:{}'.format(ip_addr, port)
             except Exception as e:
                 pass
@@ -168,15 +172,19 @@ class GetFreeProxy(object):
         """
         秘密代理 http://www.mimiip.com  已停用
         """
-        url_gngao = ['http://www.mimiip.com/gngao/%s' % n for n in range(1, 2)]  # 国内高匿
-        url_gnpu = ['http://www.mimiip.com/gnpu/%s' % n for n in range(1, 2)]  # 国内普匿
-        url_gntou = ['http://www.mimiip.com/gntou/%s' % n for n in range(1, 2)]  # 国内透明
+        url_gngao = ['http://www.mimiip.com/gngao/%s' %
+                     n for n in range(1, 2)]  # 国内高匿
+        url_gnpu = ['http://www.mimiip.com/gnpu/%s' %
+                    n for n in range(1, 2)]  # 国内普匿
+        url_gntou = ['http://www.mimiip.com/gntou/%s' %
+                     n for n in range(1, 2)]  # 国内透明
         url_list = url_gngao + url_gnpu + url_gntou
 
         request = WebRequest()
         for url in url_list:
             r = request.get(url, timeout=10)
-            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W].*<td>(\d+)</td>', r.text)
+            proxies = re.findall(
+                r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W].*<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
 
@@ -190,7 +198,8 @@ class GetFreeProxy(object):
         request = WebRequest()
         for url in urls:
             r = request.get(url, timeout=10)
-            proxies = re.findall('data-ip="(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})".+?>(\d+)</td>', r.text)
+            proxies = re.findall(
+                'data-ip="(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})".+?>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
 
@@ -204,7 +213,8 @@ class GetFreeProxy(object):
         request = WebRequest()
         for url in urls:
             r = request.get(url, timeout=10)
-            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
+            proxies = re.findall(
+                r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ":".join(proxy)
 
@@ -239,11 +249,40 @@ class GetFreeProxy(object):
         for i in range(1, page_count + 1):
             url = 'http://ip.jiangxianli.com/?page={}'.format(i)
             html_tree = getHtmlTree(url)
-            tr_list = html_tree.xpath("/html/body/div[1]/div/div[1]/div[2]/table/tbody/tr")
+            tr_list = html_tree.xpath(
+                "/html/body/div[1]/div/div[1]/div[2]/table/tbody/tr")
             if len(tr_list) == 0:
                 continue
             for tr in tr_list:
                 yield tr.xpath("./td[2]/text()")[0] + ":" + tr.xpath("./td[3]/text()")[0]
+
+    @staticmethod
+    def freeProxyFourteen():
+        """
+        主要为国外代理
+        http://www.proxy-list.download
+        """
+        url = 'https://www.proxy-list.download/api/v0/get?l=en&t=http'
+        request = WebRequest()
+        r = request.get(url)
+        proxies = json.loads(r.text)[0]['LISTA']
+        for proxyDict in proxies:
+            yield proxyDict['IP'] + ":" + proxyDict['PORT']
+
+    @staticmethod
+    def freeProxyThirteen():
+        """
+        主要为国外代理
+        http://ip.yqie.com/proxyhttp
+        """
+        for i in range(1, 100):
+            url = 'http://ip.yqie.com/proxyhttp/index_{}.htm'.format(i)
+            requests = WebRequest()
+            r = requests.get(url, timeout=10)
+            proxies = re.findall(
+                r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
+            for proxy in proxies:
+                yield ':'.join(proxy)
 
     @staticmethod
     def freeProxyWallFirst():
@@ -255,7 +294,8 @@ class GetFreeProxy(object):
         request = WebRequest()
         for url in urls:
             r = request.get(url, timeout=10)
-            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.text)
+            proxies = re.findall(
+                r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
 
@@ -265,7 +305,8 @@ class GetFreeProxy(object):
         https://proxy-list.org/english/index.php
         :return:
         """
-        urls = ['https://proxy-list.org/english/index.php?p=%s' % n for n in range(1, 10)]
+        urls = ['https://proxy-list.org/english/index.php?p=%s' %
+                n for n in range(1, 10)]
         request = WebRequest()
         import base64
         for url in urls:
@@ -280,7 +321,8 @@ class GetFreeProxy(object):
         request = WebRequest()
         for url in urls:
             r = request.get(url, timeout=10)
-            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
+            proxies = re.findall(
+                r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ':'.join(proxy)
 
