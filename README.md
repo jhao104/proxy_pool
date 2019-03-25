@@ -69,7 +69,7 @@ PROXY_GETTER = [
 # 配置 API服务
 
 SERVER_API = {
-    "HOST": "0.0.0.0",  # 监听ip, 0.0.0.0 监听所有IP
+    "HOST": "127.0.0.1",  # 监听ip, 0.0.0.0 监听所有IP
     "PORT": 5010        # 监听端口
 }
        
