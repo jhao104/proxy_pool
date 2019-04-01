@@ -20,6 +20,7 @@ sys.path.append('../')
 from Util.utilFunction import validUsefulProxy
 from Manager.ProxyManager import ProxyManager
 from Util.LogHandler import LogHandler
+from queue import Empty
 
 FAIL_COUNT = 1  # 校验失败次数， 超过次数删除代理
 
@@ -34,8 +35,12 @@ class ProxyCheck(ProxyManager, Thread):
 
     def run(self):
         self.db.changeTable(self.useful_proxy_queue)
-        while self.queue.qsize():
-            proxy = self.queue.get()
+        while True:
+            try:
+                proxy = self.queue.get_nowait()
+            except Empty:
+                break
+
             count = self.item_dict[proxy]
             if validUsefulProxy(proxy):
                 # 验证通过计数器减1
