@@ -19,13 +19,14 @@ class ConfigError(BaseException):
     pass
 
 
+#DB_TYPE = getenv('db_type', 'SSDB')
 DB_TYPE = getenv('db_type', 'SSDB')
 
 if DB_TYPE == 'SSDB':
-    DB_HOST = getenv('ssdb_host', '127.0.0.1')
+    DB_HOST = getenv('ssdb_host', '172.17.0.2')
     DB_PORT = getenv('ssdb_port', '6379')
 elif DB_TYPE == 'MONGODB':
-    DB_HOST = getenv('mongodb_host', '127.0.0.1')
+    DB_HOST = getenv('mongodb_host', '172.17.0.3')
     DB_PORT = getenv('mongodb_host', '27017')
 else:
     raise ConfigError('Unknown database type, your environment variable `db_type` should be one of SSDB/MONGODB.')
@@ -67,4 +68,10 @@ PROXY_GETTER = [
 SERVER_API = {
     "HOST": "0.0.0.0",  # The ip specified which starting the web API
     "PORT": 5010  # port number to which the server listens to
+}
+
+
+AUTH_SETTING = {
+    "AUTH" : True,
+    "TOKEN": "xkou"
 }

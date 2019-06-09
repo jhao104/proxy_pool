@@ -20,6 +20,7 @@ from flask import Flask, jsonify, request
 sys.path.append('../')
 
 from Config.ConfigGetter import config
+from Config.setting import AUTH_SETTING
 from Manager.ProxyManager import ProxyManager
 
 app = Flask(__name__)
@@ -52,6 +53,9 @@ def index():
 
 @app.route('/get/')
 def get():
+    if(AUTH_SETTING.get('AUTH')):          
+        if request.args.get("token") != AUTH_SETTING.get('TOKEN'):
+            return 'authentication failed!'
     proxy = ProxyManager().get()
     return proxy if proxy else 'no proxy!'
 
@@ -63,15 +67,20 @@ def refresh():
     pass
     return 'success'
 
-
 @app.route('/get_all/')
 def getAll():
+    if(AUTH_SETTING.get('AUTH')):
+        if request.args.get("token") != AUTH_SETTING.get('TOKEN'):
+            return 'authentication failed!'
     proxies = ProxyManager().getAll()
     return proxies
 
 
 @app.route('/delete/', methods=['GET'])
 def delete():
+    if(AUTH_SETTING.get('AUTH')):
+        if request.args.get("token") != AUTH_SETTING.get('TOKEN'):
+            return 'authentication failed!'
     proxy = request.args.get('proxy')
     ProxyManager().delete(proxy)
     return 'success'
@@ -79,6 +88,9 @@ def delete():
 
 @app.route('/get_status/')
 def getStatus():
+    if(AUTH_SETTING.get('AUTH')):
+        if request.args.get("token") != AUTH_SETTING.get('TOKEN'):
+            return 'authentication failed!'
     status = ProxyManager().getNumber()
     return status
 
