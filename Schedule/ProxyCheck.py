@@ -15,6 +15,12 @@ __author__ = 'J_hao'
 import sys
 from threading import Thread
 
+
+try:
+    from Queue import Empty  # py3
+except:
+    from queue import Empty  # py2
+
 sys.path.append('../')
 
 from Util.utilFunction import validUsefulProxy
@@ -35,7 +41,10 @@ class ProxyCheck(ProxyManager, Thread):
     def run(self):
         self.db.changeTable(self.useful_proxy_queue)
         while self.queue.qsize():
-            proxy = self.queue.get()
+            try:
+                proxy = self.queue.get()
+            except Empty:
+                break
             count = self.item_dict[proxy]
             if validUsefulProxy(proxy):
                 # 验证通过计数器减1
@@ -53,8 +62,3 @@ class ProxyCheck(ProxyManager, Thread):
                     self.db.put(proxy, num=int(count) + 1)
             self.queue.task_done()
 
-
-if __name__ == '__main__':
-    # p = ProxyCheck()
-    # p.run()
-    pass
