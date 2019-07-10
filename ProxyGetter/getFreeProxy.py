@@ -128,8 +128,20 @@ class GetFreeProxy(object):
             try:
                 # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
                 ip_addr = ''.join(each_proxy.xpath(xpath_str))
-                port = each_proxy.xpath(".//span[contains(@class, 'port')]/text()")[0]
-                yield '{}:{}'.format(ip_addr, port)
+
+                # HTML中的port是随机数，真正的端口编码在class后面的字母中。
+                # 比如这个：
+                # <span class="port CFACE">9054</span>
+                # CFACE解码后对应的是3128。
+                port = 0
+                for _ in each_proxy.xpath(".//span[contains(@class, 'port')]"
+                                          "/attribute::class")[0]. \
+                        replace("port ", ""):
+                    port *= 10
+                    port += (ord(_) - ord('A'))
+                port /= 8
+
+                yield '{}:{}'.format(ip_addr, int(port))
             except Exception as e:
                 pass
 
