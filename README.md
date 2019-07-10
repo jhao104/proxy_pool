@@ -96,7 +96,7 @@ SERVER_API = {
 # Workdir proxy_pool
 docker build -t proxy_pool .
 pip install docker-compose
-docker-compose -f Docker/docker-compose.yml up -d
+docker-compose -f docker-compose.yml up -d
 ```
 
 * 开发环境 Docker
