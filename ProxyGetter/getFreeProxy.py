@@ -30,17 +30,14 @@ class GetFreeProxy(object):
     """
 
     @staticmethod
-    def freeProxyFirst(page=10):
+    def freeProxy01():
         """
         无忧代理 http://www.data5u.com/
         几乎没有能用的
-        :param page: 页数
         :return:
         """
         url_list = [
             'http://www.data5u.com/',
-            'http://www.data5u.com/free/gngn/index.shtml',
-            'http://www.data5u.com/free/gnpt/index.shtml'
         ]
         for url in url_list:
             html_tree = getHtmlTree(url)
@@ -300,7 +297,7 @@ class GetFreeProxy(object):
 if __name__ == '__main__':
     from CheckProxy import CheckProxy
 
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFirst)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy01())
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySecond)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyThird)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFourth)
@@ -310,7 +307,7 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEight)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyNinth)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTen)
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEleven)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEleven)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTwelve)
 
     # CheckProxy.checkAllGetProxyFunc()
