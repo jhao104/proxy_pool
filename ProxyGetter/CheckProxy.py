@@ -67,4 +67,4 @@ class CheckProxy(object):
 
 if __name__ == '__main__':
     CheckProxy.checkAllGetProxyFunc()
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFirst)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy01)

@@ -12,16 +12,11 @@
 -------------------------------------------------
 """
 import requests
-import time
 from lxml import etree
 
-from Util.LogHandler import LogHandler
 from Util.WebRequest import WebRequest
 
-# logger = LogHandler(__name__, stream=False)
 
-
-# noinspection PyPep8Naming
 def robustCrawl(func):
     def decorate(*args, **kwargs):
         try:
@@ -34,7 +29,6 @@ def robustCrawl(func):
     return decorate
 
 
-# noinspection PyPep8Naming
 def verifyProxyFormat(proxy):
     """
     检查代理格式
@@ -47,7 +41,6 @@ def verifyProxyFormat(proxy):
     return True if len(_proxy) == 1 and _proxy[0] == proxy else False
 
 
-# noinspection PyPep8Naming
 def getHtmlTree(url, **kwargs):
     """
     获取html树
@@ -66,10 +59,6 @@ def getHtmlTree(url, **kwargs):
               }
     # TODO 取代理服务器用代理服务器访问
     wr = WebRequest()
-
-    # delay 2s for per request
-    time.sleep(2)
-
     html = wr.get(url=url, header=header).content
     return etree.HTML(html)
 
@@ -87,7 +76,6 @@ def tcpConnect(proxy):
     return True if result == 0 else False
 
 
-# noinspection PyPep8Naming
 def validUsefulProxy(proxy):
     """
     检验代理是否可用

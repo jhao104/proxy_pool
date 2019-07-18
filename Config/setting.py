@@ -46,8 +46,8 @@ DATABASES = {
 # register the proxy getter function
 
 PROXY_GETTER = [
-    "freeProxyFirst",
-    "freeProxySecond",
+    "freeProxy01",
+    "freeProxy02",
     # "freeProxyThird",  # 网站已不能访问
     "freeProxyFourth",
     "freeProxyFifth",

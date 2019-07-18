@@ -49,24 +49,52 @@ class GetFreeProxy(object):
                     print(e)
 
     @staticmethod
-    def freeProxySecond(count=20):
+    def freeProxy02(count=20):
         """
         代理66 http://www.66ip.cn/
         :param count: 提取数量
         :return:
         """
         urls = [
-            "http://www.66ip.cn/mo.php?sxb=&tqsl={count}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=",
-            "http://www.66ip.cn/nmtq.php?getnum={count}"
-            "&isp=0&anonymoustype=0&start=&ports=&export=&ipaddress=&area=1&proxytype=2&api=66ip",
-            ]
-        request = WebRequest()
-        for _ in urls:
-            url = _.format(count=count)
-            html = request.get(url).content
-            ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", html)
-            for ip in ips:
-                yield ip.strip()
+            "http://www.66ip.cn/mo.php?sxb=&tqsl={}&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=",
+            "http://www.66ip.cn/nmtq.php?getnum={}&isp=0&anonymoustype=0&s"
+            "tart=&ports=&export=&ipaddress=&area=0&proxytype=2&api=66ip"
+        ]
+
+        try:
+            import execjs
+            import requests
+
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
+                       'Accept': '*/*',
+                       'Connection': 'keep-alive',
+                       'Accept-Language': 'zh-CN,zh;q=0.8'}
+            session = requests.session()
+            src = session.get("http://www.66ip.cn/", headers=headers).text
+            src = src.split("</script>")[0] + '}'
+            src = src.replace("<script>", "function test() {")
+            src = src.replace("while(z++)try{eval(", ';var num=10;while(z++)try{var tmp=')
+            src = src.replace(");break}", ";num--;if(tmp.search('cookie') != -1 | num<0){return tmp}}")
+            ctx = execjs.compile(src)
+            src = ctx.call("test")
+            src = src[src.find("document.cookie="): src.find("};if((")]
+            src = src.replace("document.cookie=", "")
+            src = "function test() {var window={}; return %s }" % src
+            cookie = execjs.compile(src).call('test')
+            js_cookie = cookie.split(";")[0].split("=")[-1]
+        except Exception as e:
+            print(e)
+            return
+
+        for url in urls:
+            try:
+                html = session.get(url.format(count), cookies={"__jsl_clearance": js_cookie}, headers=headers).text
+                ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", html)
+                for ip in ips:
+                    yield ip.strip()
+            except Exception as e:
+                print(e)
+                pass
 
     @staticmethod
     def freeProxyThird(days=1):
@@ -297,8 +325,8 @@ class GetFreeProxy(object):
 if __name__ == '__main__':
     from CheckProxy import CheckProxy
 
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy01())
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySecond)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy01())
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy02)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyThird)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFourth)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFifth)
