@@ -39,13 +39,24 @@ class GetFreeProxy(object):
         """
         url_list = [
             'http://www.data5u.com/',
+            'http://www.data5u.com/free/gngn/index.shtml',
+            'http://www.data5u.com/free/gnpt/index.shtml'
         ]
+        key = 'ABCDEFGHIZ'
         for url in url_list:
             html_tree = getHtmlTree(url)
             ul_list = html_tree.xpath('//ul[@class="l2"]')
             for ul in ul_list:
                 try:
-                    yield ':'.join(ul.xpath('.//li/text()')[0:2])
+                    ip = ul.xpath('./span[1]/li/text()')[0]
+                    classnames =  ul.xpath('./span[2]/li/attribute::class')[0]
+                    classname = classnames.split(' ')[1]
+                    port_sum = 0
+                    for c in classname:
+                        port_sum *= 10
+                        port_sum += key.index(c)
+                    port = port_sum >> 3
+                    yield '{}:{}'.format(ip, port)
                 except Exception as e:
                     print(e)
 
