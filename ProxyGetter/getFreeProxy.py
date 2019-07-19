@@ -14,6 +14,7 @@
 import re
 import sys
 import requests
+from time import sleep
 
 sys.path.append('..')
 
@@ -155,22 +156,7 @@ class GetFreeProxy(object):
                 pass
 
     @staticmethod
-    def freeProxySixth():
-        """
-        讯代理 http://www.xdaili.cn/  已停用
-        :return:
-        """
-        url = 'http://www.xdaili.cn/ipagent/freeip/getFreeIps?page=1&rows=10'
-        request = WebRequest()
-        try:
-            res = request.get(url, timeout=10).json()
-            for row in res['RESULT']['rows']:
-                yield '{}:{}'.format(row['ip'], row['port'])
-        except Exception as e:
-            pass
-
-    @staticmethod
-    def freeProxySeventh():
+    def freeProxy05():
         """
         快代理 https://www.kuaidaili.com
         """
@@ -181,6 +167,7 @@ class GetFreeProxy(object):
         for url in url_list:
             tree = getHtmlTree(url)
             proxy_list = tree.xpath('.//table//tr')
+            sleep(1)  # 必须sleep 不然第二条请求不到数据
             for tr in proxy_list[1:]:
                 yield ':'.join(tr.xpath('./td/text()')[0:2])
 
@@ -313,7 +300,7 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy02)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy03)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy04)
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySixth)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy05)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySeventh)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEight)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyNinth)

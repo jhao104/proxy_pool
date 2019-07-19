@@ -50,8 +50,7 @@ PROXY_GETTER = [
     "freeProxy02",
     "freeProxy03",
     "freeProxy04",
-    # "freeProxySixth"   # 不再提供免费代理
-    "freeProxySeventh",
+    "freeProxy05",
     # "freeProxyEight",
     # "freeProxyNinth",
     "freeProxyTen",
