@@ -97,23 +97,7 @@ class GetFreeProxy(object):
                 pass
 
     @staticmethod
-    def freeProxyThird(days=1):
-        """
-        ip181 http://www.ip181.com/  不能用了
-        :param days:
-        :return:
-        """
-        url = 'http://www.ip181.com/'
-        html_tree = getHtmlTree(url)
-        try:
-            tr_list = html_tree.xpath('//tr')[1:]
-            for tr in tr_list:
-                yield ':'.join(tr.xpath('./td/text()')[0:2])
-        except Exception as e:
-            pass
-
-    @staticmethod
-    def freeProxyFourth(page_count=1):
+    def freeProxy03(page_count=1):
         """
         西刺代理 http://www.xicidaili.com
         :return:
@@ -134,7 +118,7 @@ class GetFreeProxy(object):
                         pass
 
     @staticmethod
-    def freeProxyFifth():
+    def freeProxy04():
         """
         guobanjia http://www.goubanjia.com/
         :return:
@@ -326,11 +310,10 @@ if __name__ == '__main__':
     from CheckProxy import CheckProxy
 
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy01())
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy02)
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyThird)
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFourth)
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyFifth)
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySixth)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy02)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy03)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy04)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySixth)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySeventh)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEight)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyNinth)
@@ -339,3 +322,5 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTwelve)
 
     # CheckProxy.checkAllGetProxyFunc()
+
+
