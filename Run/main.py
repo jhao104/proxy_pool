@@ -12,7 +12,8 @@
 """
 __author__ = 'JHao'
 
-import sys，signal
+import sys
+import signal
 from multiprocessing import Process
 
 sys.path.append('.')
@@ -31,14 +32,13 @@ def run():
     p_list.append(p2)
     p3 = Process(target=RefreshRun, name='RefreshRun')
     p_list.append(p3)
-    
-    def kill_child_processes(signum,frame):
+
+    def kill_child_processes(signum, frame):
         for p in p_list:
-           p.terminate()
+            p.terminate()
         sys.exit(1)
 
     signal.signal(signal.SIGTERM, kill_child_processes)
-
 
     for p in p_list:
         p.daemon = True

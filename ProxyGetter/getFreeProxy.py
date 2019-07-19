@@ -49,7 +49,7 @@ class GetFreeProxy(object):
             for ul in ul_list:
                 try:
                     ip = ul.xpath('./span[1]/li/text()')[0]
-                    classnames =  ul.xpath('./span[2]/li/attribute::class')[0]
+                    classnames = ul.xpath('./span[2]/li/attribute::class')[0]
                     classname = classnames.split(' ')[1]
                     port_sum = 0
                     for c in classname:
@@ -289,7 +289,7 @@ class GetFreeProxy(object):
 if __name__ == '__main__':
     from CheckProxy import CheckProxy
 
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy01())
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy01)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy02)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy03)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy04)
