@@ -88,7 +88,7 @@ class ProxyManager(object):
         self.db.changeTable(self.useful_proxy_queue)
         item_dict = self.db.getAll()
         if EnvUtil.PY3:
-            return list(item_dict.keys()) if item_dict else list()
+            return str(list(item_dict.keys())) if item_dict else None
         return item_dict.keys() if item_dict else list()
 
     def getNumber(self):
