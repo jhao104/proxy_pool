@@ -172,35 +172,17 @@ class GetFreeProxy(object):
                 yield ':'.join(tr.xpath('./td/text()')[0:2])
 
     @staticmethod
-    def freeProxyEight():
+    def freeProxy06():
         """
-        秘密代理 http://www.mimiip.com  已停用
-        """
-        url_gngao = ['http://www.mimiip.com/gngao/%s' % n for n in range(1, 2)]  # 国内高匿
-        url_gnpu = ['http://www.mimiip.com/gnpu/%s' % n for n in range(1, 2)]  # 国内普匿
-        url_gntou = ['http://www.mimiip.com/gntou/%s' % n for n in range(1, 2)]  # 国内透明
-        url_list = url_gngao + url_gnpu + url_gntou
-
-        request = WebRequest()
-        for url in url_list:
-            r = request.get(url, timeout=10)
-            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W].*<td>(\d+)</td>', r.text)
-            for proxy in proxies:
-                yield ':'.join(proxy)
-
-    @staticmethod
-    def freeProxyNinth():
-        """
-        码农代理 https://proxy.coderbusy.com/ 已停用
+        码农代理 https://proxy.coderbusy.com/
         :return:
         """
-        urls = ['https://proxy.coderbusy.com/classical/country/cn.aspx?page=1']
-        request = WebRequest()
+        urls = ['https://proxy.coderbusy.com/']
         for url in urls:
-            r = request.get(url, timeout=10)
-            proxies = re.findall('data-ip="(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})".+?>(\d+)</td>', r.text)
-            for proxy in proxies:
-                yield ':'.join(proxy)
+            tree = getHtmlTree(url)
+            proxy_list = tree.xpath('.//table//tr')
+            for tr in proxy_list[1:]:
+                yield ':'.join(tr.xpath('./td/text()')[0:2])
 
     @staticmethod
     def freeProxyTen():
@@ -300,8 +282,8 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy02)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy03)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy04)
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy05)
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxySeventh)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy05)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy06)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEight)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyNinth)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTen)
@@ -309,5 +291,3 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTwelve)
 
     # CheckProxy.checkAllGetProxyFunc()
-
-
