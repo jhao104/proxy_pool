@@ -49,7 +49,7 @@ DATABASES = {
     "default": {
         "TYPE": "SSDB",        # 如果使用SSDB或redis数据库，均配置为SSDB
         "HOST": "127.0.0.1",   # db host
-        "PORT": 8888,          # db port
+        "PORT": 8888,          # db port，例如SSDB通常使用8888，redis通常默认使用6379
         "NAME": "proxy",       # 默认配置
         "PASSWORD": ""         # db password
 
