@@ -16,7 +16,7 @@ __author__ = 'JHao'
 class Proxy(object):
 
     def __init__(self, proxy):
-        if isinstance(proxy, basestring):
+        if isinstance(proxy, str):
             self._proxy = proxy
             self._fail_count = 0
             self._region = ""
@@ -101,4 +101,4 @@ if __name__ == '__main__':
 
     import json
 
-    print json.dumps(p, default=proxy2Json)
+    print(json.dumps(p, default=proxy2Json))
