@@ -185,12 +185,13 @@ class GetFreeProxy(object):
                 yield ':'.join(tr.xpath('./td/text()')[0:2])
 
     @staticmethod
-    def freeProxyTen():
+    def freeProxy07():
         """
         云代理 http://www.ip3366.net/free/
         :return:
         """
-        urls = ['http://www.ip3366.net/free/']
+        urls = ['http://www.ip3366.net/free/?stype=1',
+                "http://www.ip3366.net/free/?stype=2"]
         request = WebRequest()
         for url in urls:
             r = request.get(url, timeout=10)
@@ -283,8 +284,8 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy03)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy04)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy05)
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy06)
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEight)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy06)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy07)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyNinth)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyTen)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxyEleven)

@@ -52,7 +52,7 @@ PROXY_GETTER = [
     "freeProxy04",
     "freeProxy05",
     "freeProxy06",
-    "freeProxyEleven",
+    "freeProxy07",
     "freeProxyTwelve",
     # foreign website, outside the wall
     # "freeProxyWallFirst",
