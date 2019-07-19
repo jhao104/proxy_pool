@@ -46,22 +46,15 @@ DATABASES = {
 # register the proxy getter function
 
 PROXY_GETTER = [
-    "freeProxyFirst",
-    "freeProxySecond",
-    # "freeProxyThird",  # 网站已不能访问
-    "freeProxyFourth",
-    "freeProxyFifth",
-    # "freeProxySixth"   # 不再提供免费代理
-    "freeProxySeventh",
-    # "freeProxyEight",
-    # "freeProxyNinth",
-    "freeProxyTen",
-    "freeProxyEleven",
-    "freeProxyTwelve",
-    # foreign website, outside the wall
-    # "freeProxyWallFirst",
-    # "freeProxyWallSecond",
-    # "freeProxyWallThird"
+    "freeProxy01",
+    "freeProxy02",
+    "freeProxy03",
+    "freeProxy04",
+    "freeProxy05",
+    "freeProxy06",
+    "freeProxy07",
+    "freeProxy08",
+    "freeProxy09",
 ]
 
 # # API config http://127.0.0.1:5010
