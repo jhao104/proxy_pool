@@ -33,7 +33,10 @@ class GetFreeProxy(object):
     def freeProxyFirst(page=10):
         """
         无忧代理 http://www.data5u.com/
-        几乎没有能用的
+        无忧代理有反爬虫机制。
+        需要获得元素的 classname。
+        匹配classname中每个字符在key中的位置，组合得到一个整数。
+        最后将整数右移3位得到的才是正确的端口号。
         :param page: 页数
         :return:
         """
@@ -42,12 +45,21 @@ class GetFreeProxy(object):
             'http://www.data5u.com/free/gngn/index.shtml',
             'http://www.data5u.com/free/gnpt/index.shtml'
         ]
+        key = 'ABCDEFGHIZ'
         for url in url_list:
             html_tree = getHtmlTree(url)
             ul_list = html_tree.xpath('//ul[@class="l2"]')
             for ul in ul_list:
                 try:
-                    yield ':'.join(ul.xpath('.//li/text()')[0:2])
+                    ip = ul.xpath('./span[1]/li/text()')[0]
+                    classnames =  ul.xpath('./span[2]/li/attribute::class')[0]
+                    classname = classnames.split(' ')[1]
+                    port_sum = 0
+                    for c in classname:
+                        port_sum *= 10
+                        port_sum += key.index(c)
+                    port = port_sum >> 3
+                    yield '{}:{}'.format(ip, port)
                 except Exception as e:
                     print(e)
 
