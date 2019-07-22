@@ -40,9 +40,9 @@ class ProxyCheck(ProxyManager, Thread):
 
     def run(self):
         self.db.changeTable(self.useful_proxy_queue)
-        while self.queue.qsize():
+        while True:
             try:
-                proxy = self.queue.get()
+                proxy = self.queue.get(block=False)
             except Empty:
                 break
             count = self.item_dict[proxy]
