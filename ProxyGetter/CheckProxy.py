@@ -12,7 +12,7 @@
 """
 __author__ = 'JHao'
 
-from getFreeProxy import GetFreeProxy
+from .getFreeProxy import GetFreeProxy
 from Util.utilFunction import verifyProxyFormat
 
 
