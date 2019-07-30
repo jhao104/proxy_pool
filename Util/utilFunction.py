@@ -11,10 +11,10 @@
                    2016/11/25: 添加robustCrawl、verifyProxy、getHtmlTree
 -------------------------------------------------
 """
-import requests
 from lxml import etree
 
 from Util.WebRequest import WebRequest
+from .validators import validators
 
 
 def robustCrawl(func):
@@ -76,13 +76,6 @@ def tcpConnect(proxy):
     return True if result == 0 else False
 
 
-validators = []
-
-def validator(func):
-    validators.append(func)
-    return func
-
-
 def validUsefulProxy(proxy):
     """
     检验代理是否可用
@@ -93,47 +86,3 @@ def validUsefulProxy(proxy):
         if not v_func(proxy):
             return False
     return True
-
-@validator
-def validTimeOut(proxy):
-    """
-    检测超时
-    :param proxy:
-    :return:
-    """
-    if isinstance(proxy, bytes):
-        proxy = proxy.decode('utf8')
-    proxies = {"http": "http://{proxy}".format(proxy=proxy)}
-    try:
-        # 超过20秒的代理就不要了
-        r = requests.get('http://httpbin.org/ip', proxies=proxies, timeout=10, verify=False)
-        if r.status_code == 200 and r.json().get("origin"):
-            # logger.info('%s is ok' % proxy)
-            return True
-    except Exception as e:
-        # logger.error(str(e))
-        return False
-
-@validator
-def validBaidubaike(proxy):
-    """
-    检测是否能获取百度信息
-    :param proxy:
-    :return:
-    """
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/47.0.2526.80 Safari/537.36'
-    }
-    url = "https://baike.baidu.com/"
-    if isinstance(proxy, bytes):
-        proxy = proxy.decode('utf8')
-    proxies = {"http": "http://{proxy}".format(proxy=proxy)}
-    try:
-        # 超过20秒的代理就不要了
-        r = requests.get(url, proxies=proxies, headers=headers, timeout=10, verify=False)
-        print(r)
-        if r.status_code == 200:
-            return True
-    except Exception as e:
-        # logger.error(str(e))
-        return False
