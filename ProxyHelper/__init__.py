@@ -11,3 +11,6 @@
 -------------------------------------------------
 """
 __author__ = 'JHao'
+
+from ProxyHelper.Proxy import Proxy
+from ProxyHelper.ProxyHelper import checkProxyUseful

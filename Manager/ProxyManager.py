@@ -15,7 +15,7 @@ __author__ = 'JHao'
 
 import random
 
-from Util import EnvUtil
+from ProxyHelper import Proxy
 from DB.DbClient import DbClient
 from Config.ConfigGetter import config
 from Util.LogHandler import LogHandler
@@ -34,27 +34,36 @@ class ProxyManager(object):
         self.log = LogHandler('proxy_manager')
         self.useful_proxy_queue = 'useful_proxy'
 
-    def refresh(self):
+    def fetch(self):
         """
-        fetch proxy into Db by ProxyGetter/getFreeProxy.py
+        fetch proxy into db by ProxyGetter
         :return:
         """
         self.db.changeTable(self.raw_proxy_queue)
+        proxy_set = set()
+        self.log.info("ProxyFetch : start")
         for proxyGetter in config.proxy_getter_functions:
-            # fetch
+            self.log.info("ProxyFetch - {func}: start".format(func=proxyGetter))
             try:
-                self.log.info("{func}: fetch proxy start".format(func=proxyGetter))
                 for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
-                    # 直接存储代理, 不用在代码中排重, hash 结构本身具有排重功能
                     proxy = proxy.strip()
-                    if proxy and verifyProxyFormat(proxy):
-                        self.log.info('{func}: fetch proxy {proxy}'.format(func=proxyGetter, proxy=proxy))
-                        self.db.put(proxy)
+
+                    if not proxy or not verifyProxyFormat(proxy):
+                        self.log.error('ProxyFetch - {func}: '
+                                       '{proxy} illegal'.format(func=proxyGetter, proxy=proxy.ljust(20)))
+                        continue
+                    elif proxy in proxy_set:
+                        self.log.info('ProxyFetch - {func}: '
+                                      '{proxy} exist'.format(func=proxyGetter, proxy=proxy.ljust(20)))
+                        continue
                     else:
-                        self.log.error('{func}: fetch proxy {proxy} error'.format(func=proxyGetter, proxy=proxy))
+                        self.log.info('ProxyFetch - {func}: '
+                                      '{proxy} success'.format(func=proxyGetter, proxy=proxy.ljust(20)))
+                        self.db.put(Proxy(proxy, source=proxyGetter))
+                        proxy_set.add(proxy)
             except Exception as e:
-                self.log.error("{func}: fetch proxy fail".format(func=proxyGetter))
-                continue
+                self.log.error("ProxyFetch - {func}: error".format(func=proxyGetter))
+                self.log.error(str(e))
 
     def get(self):
         """
@@ -62,23 +71,20 @@ class ProxyManager(object):
         :return:
         """
         self.db.changeTable(self.useful_proxy_queue)
-        item_dict = self.db.getAll()
-        if item_dict:
-            if EnvUtil.PY3:
-                return random.choice(list(item_dict.keys()))
-            else:
-                return random.choice(item_dict.keys())
+        item_list = self.db.getAll()
+        if item_list:
+            random_choice = random.choice(item_list)
+            return Proxy.newProxyFromJson(random_choice)
         return None
-        # return self.db.pop()
 
-    def delete(self, proxy):
+    def delete(self, proxy_str):
         """
         delete proxy from pool
-        :param proxy:
+        :param proxy_str:
         :return:
         """
         self.db.changeTable(self.useful_proxy_queue)
-        self.db.delete(proxy)
+        self.db.delete(proxy_str)
 
     def getAll(self):
         """
@@ -86,10 +92,8 @@ class ProxyManager(object):
         :return:
         """
         self.db.changeTable(self.useful_proxy_queue)
-        item_dict = self.db.getAll()
-        if EnvUtil.PY3:
-            return list(item_dict.keys()) if item_dict else list()
-        return item_dict.keys() if item_dict else list()
+        item_list = self.db.getAll()
+        return [Proxy.newProxyFromJson(_).info_dict for _ in item_list]
 
     def getNumber(self):
         self.db.changeTable(self.raw_proxy_queue)
@@ -101,4 +105,4 @@ class ProxyManager(object):
 
 if __name__ == '__main__':
     pp = ProxyManager()
-    pp.refresh()
+    pp.fetch()

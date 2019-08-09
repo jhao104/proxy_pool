@@ -11,8 +11,24 @@
 -------------------------------------------------
 """
 
-# database config
+import sys
 from os import getenv
+from logging import getLogger
+
+log = getLogger(__name__)
+
+HEADER = """
+    ______                        ______             _
+    | ___ \_                      | ___ \           | |
+    | |_/ / \__ __   __  _ __   _ | |_/ /___   ___  | |
+    |  __/|  _// _ \ \ \/ /| | | ||  __// _ \ / _ \ | |
+    | |   | | | (_) | >  < \ |_| || |  | (_) | (_) || |___
+    \_|   |_|  \___/ /_/\_\ \__  |\_|   \___/ \___/ \_____\
+                           __ / /
+                          /___ /
+"""
+
+PY3 = sys.version_info >= (3,)
 
 
 class ConfigError(BaseException):

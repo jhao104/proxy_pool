@@ -11,3 +11,5 @@
 -------------------------------------------------
 """
 __author__ = 'JHao'
+
+from Manager.ProxyManager import ProxyManager
