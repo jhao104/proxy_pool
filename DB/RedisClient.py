@@ -1,127 +1,133 @@
 # -*- coding: utf-8 -*-
-# !/usr/bin/env python
+"""
+-------------------------------------------------
+   File Name：     RedisClient
+   Description :  封装Redis相关操作
+   Author :        JHao
+   date：          2019/8/9
+-------------------------------------------------
+   Change Activity:
+                   2019/8/9: 封装Redis相关操作
+-------------------------------------------------
+"""
+__author__ = 'JHao'
 
-'''
-self.name为Redis中的一个key
-2017/4/17 修改pop
-'''
+from Config.setting import PY3
 
-# ############################
-# 已弃用，
-# SsdbClient.py 支持redis
-##############################
-
-import json
-import random
-import redis
-import sys
+from redis.connection import BlockingConnectionPool
+from redis import Redis
 
 
 class RedisClient(object):
     """
-    Reids client
+    Redis client 和SSDB协议一致 数据结构一致, 但部分方法不通用
+
+    Redis中代理存放的结构为hash：
+        原始代理存放在name为raw_proxy的hash中, key为代理的ip:por, value为代理属性的字典;
+        验证后的代理存放在name为useful_proxy的hash中, key为代理的ip:port, value为代理属性的字典;
+
     """
 
-    # 为了保持DbClient的标准
-    # 在RedisClient里面接受username参数, 但不进行使用.
-    # 因为不能将username通过kwargs传进redis.Redis里面, 会报错:
-    # TypeError: __init__() got an unexpected keyword argument 'username'
-    def __init__(self, name, host, port, username, **kwargs):
+    def __init__(self, name, **kwargs):
         """
         init
-        :param name:
-        :param host:
-        :param port:
+        :param name: hash name
+        :param host: host
+        :param port: port
+        :param password: password
         :return:
         """
         self.name = name
-        self.__conn = redis.Redis(host=host, port=port, db=0, **kwargs)
+        self.__conn = Redis(connection_pool=BlockingConnectionPool(**kwargs))
 
-    def get(self):
+    def get(self, proxy_str):
         """
-        get random result
+        从hash中获取对应的proxy, 使用前需要调用changeTable()
+        :param proxy_str: proxy str
         :return:
         """
-        key = self.__conn.hgetall(name=self.name)
-        # return random.choice(key.keys()) if key else None
-        # key.keys()在python3中返回dict_keys，不支持index，不能直接使用random.choice
-        # 另：python3中，redis返回为bytes,需要解码
-        rkey = random.choice(list(key.keys())) if key else None
-        if isinstance(rkey, bytes):
-            return rkey.decode('utf-8')
+        data = self.__conn.hget(name=self.name, key=proxy_str)
+        if data:
+            return data.decode('utf-8') if PY3 else data
         else:
-            return rkey
-            # return self.__conn.srandmember(name=self.name)
+            return None
 
-    def put(self, key):
+    def put(self, proxy_obj):
         """
-        put an  item
-        :param value:
+        将代理放入hash, 使用changeTable指定hash name
+        :param proxy_obj: Proxy obj
         :return:
         """
-        key = json.dumps(key) if isinstance(key, (dict, list)) else key
-        return self.__conn.hincrby(self.name, key, 1)
-        # return self.__conn.sadd(self.name, value)
+        data = self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.info_json)
+        return data
 
-    def getvalue(self, key):
-        value = self.__conn.hget(self.name, key)
-        return value if value else None
+    def delete(self, proxy_str):
+        """
+        移除指定代理, 使用changeTable指定hash name
+        :param proxy_str: proxy str
+        :return:
+        """
+        self.__conn.hdel(self.name, proxy_str)
+
+    def exists(self, proxy_str):
+        """
+        判断指定代理是否存在, 使用changeTable指定hash name
+        :param proxy_str: proxy str
+        :return:
+        """
+        return self.__conn.hexists(self.name, proxy_str)
+
+    def update(self, proxy_obj):
+        """
+        更新 proxy 属性
+        :param proxy_obj:
+        :return:
+        """
+        self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.info_json)
 
     def pop(self):
         """
-        pop an item
-        :return:
+        弹出一个代理
+        :return: dict {proxy: value}
         """
-        key = self.get()
-        if key:
-            self.__conn.hdel(self.name, key)
-        return key
-        # return self.__conn.spop(self.name)
-
-    def delete(self, key):
-        """
-        delete an item
-        :param key:
-        :return:
-        """
-        self.__conn.hdel(self.name, key)
-        # self.__conn.srem(self.name, value)
-
-    def inckey(self, key, value):
-        self.__conn.hincrby(self.name, key, value)
+        # proxies = self.__conn.hkeys(self.name)
+        # if proxies:
+        #     proxy = random.choice(proxies)
+        #     value = self.__conn.hget(self.name, proxy)
+        #     self.delete(proxy)
+        #     return {'proxy': proxy.decode('utf-8') if PY3 else proxy,
+        #             'value': value.decode('utf-8') if PY3 and value else value}
+        return None
 
     def getAll(self):
-        # return self.__conn.hgetall(self.name).keys()
-        # python3 redis返回bytes类型,需要解码
-        if sys.version_info.major == 3:
-            return [key.decode('utf-8') for key in self.__conn.hgetall(self.name).keys()]
+        """
+        列表形式返回所有代理, 使用changeTable指定hash name
+        :return:
+        """
+        item_dict = self.__conn.hgetall(self.name)
+        if PY3:
+            return [value.decode('utf8') for key, value in item_dict.items()]
         else:
-            return self.__conn.hgetall(self.name).keys()
-            # return self.__conn.smembers(self.name)
+            return item_dict.values()
 
-    def get_status(self):
+    def clear(self):
+        """
+        清空所有代理, 使用changeTable指定hash name
+        :return:
+        """
+        return self.__conn.delete(self.name)
+
+    def getNumber(self):
+        """
+        返回代理数量
+        :return:
+        """
         return self.__conn.hlen(self.name)
-        # return self.__conn.scard(self.name)
 
     def changeTable(self, name):
+        """
+        切换操作对象
+        :param name: raw_proxy/useful_proxy
+        :return:
+        """
         self.name = name
-
-
-if __name__ == '__main__':
-    redis_con = RedisClient('proxy', 'localhost', 6379)
-    # redis_con.put('abc')
-    # redis_con.put('123')
-    # redis_con.put('123.115.235.221:8800')
-    # redis_con.put(['123', '115', '235.221:8800'])
-    # print(redis_con.getAll())
-    # redis_con.delete('abc')
-    # print(redis_con.getAll())
-
-    # print(redis_con.getAll())
-    redis_con.changeTable('raw_proxy')
-    redis_con.pop()
-
-    # redis_con.put('132.112.43.221:8888')
-    # redis_con.changeTable('proxy')
-    print(redis_con.get_status())
-    print(redis_con.getAll())

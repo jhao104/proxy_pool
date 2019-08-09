@@ -69,7 +69,7 @@ class DbClient(object):
         if "SSDB" == config.db_type:
             __type = "SsdbClient"
         elif "REDIS" == config.db_type:
-            __type = "SsdbClient"
+            __type = "RedisClient"
         elif "MONGODB" == config.db_type:
             __type = "MongodbClient"
         else:
@@ -109,9 +109,3 @@ class DbClient(object):
 
     def getNumber(self):
         return self.client.getNumber()
-
-
-if __name__ == "__main__":
-    account = DbClient()
-    account.changeTable('useful_proxy')
-    print(account.pop())

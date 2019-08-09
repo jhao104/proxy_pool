@@ -3,7 +3,7 @@
 """
 -------------------------------------------------
    File Name：     SsdbClient.py
-   Description :  封装SSDB/Redis操作
+   Description :  封装SSDB操作
    Author :       JHao
    date：          2016/12/2
 -------------------------------------------------
@@ -133,9 +133,3 @@ class SsdbClient(object):
         :return:
         """
         self.name = name
-
-
-if __name__ == '__main__':
-    c = SsdbClient(name='raw_proxy', host='120.79.78.193', port=8888, password=None)
-    c.get("103.194.233.188:80810")
-    print(c.clear())

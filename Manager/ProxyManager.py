@@ -93,7 +93,7 @@ class ProxyManager(object):
         """
         self.db.changeTable(self.useful_proxy_queue)
         item_list = self.db.getAll()
-        return [Proxy.newProxyFromJson(_).info_dict for _ in item_list]
+        return [Proxy.newProxyFromJson(_) for _ in item_list]
 
     def getNumber(self):
         self.db.changeTable(self.raw_proxy_queue)
