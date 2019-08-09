@@ -30,32 +30,19 @@ HEADER = """
 
 PY3 = sys.version_info >= (3,)
 
+DB_TYPE = getenv('db_type', 'SSDB').upper()
+DB_HOST = getenv('db_host', '127.0.0.1')
+DB_PORT = getenv('db_port', '8080')
+DB_PASSWORD = getenv('db_password', '')
 
-class ConfigError(BaseException):
-    pass
-
-
-DB_TYPE = getenv('db_type', 'SSDB')
-
-if DB_TYPE == 'SSDB':
-    DB_HOST = getenv('ssdb_host', '127.0.0.1')
-    DB_PORT = getenv('ssdb_port', '6379')
-    DB_PASSWORD = getenv('ssdb_password', '')
-elif DB_TYPE == 'MONGODB':
-    DB_HOST = getenv('mongodb_host', '127.0.0.1')
-    DB_PORT = getenv('mongodb_host', '27017')
-    DB_PASSWORD = getenv('mongodb_password', '')
-else:
-    raise ConfigError('Unknown database type, your environment variable `db_type` should be one of SSDB/MONGODB.')
-
+""" 数据库配置 """
 DATABASES = {
     "default": {
-        "TYPE": DB_TYPE,  # TYPE SSDB/MONGODB if use redis, only modify the host port, the type should be SSDB
-        "HOST": DB_HOST,
-        "PORT": DB_PORT,
+        "TYPE": "REDIS",
+        "HOST": "19.19.22.54",
+        "PORT": "6379",
         "NAME": "proxy",
-        "PASSWORD": DB_PASSWORD
-
+        "PASSWORD": "_@Fintell"
     }
 }
 
@@ -73,9 +60,28 @@ PROXY_GETTER = [
     "freeProxy09",
 ]
 
-# # API config http://127.0.0.1:5010
-
+""" API config http://127.0.0.1:5010 """
 SERVER_API = {
     "HOST": "0.0.0.0",  # The ip specified which starting the web API
     "PORT": 5010  # port number to which the server listens to
 }
+
+
+class ConfigError(BaseException):
+    pass
+
+
+def checkConfig():
+    if DB_TYPE not in ["SSDB", "REDIS"]:
+        raise ConfigError('db_type Do not support: %s, must SSDB/REDIS .' % DB_TYPE)
+
+    if not DB_PORT.isdigit():
+        raise ConfigError('db_port must be digit, not %s' % DB_PORT)
+
+    from ProxyGetter import getFreeProxy
+    illegal_getter = list(filter(lambda key: not hasattr(getFreeProxy.GetFreeProxy, key), PROXY_GETTER))
+    if len(illegal_getter) > 0:
+        raise ConfigError("ProxyGetter: %s does not exists" % "/".join(illegal_getter))
+
+
+checkConfig()
