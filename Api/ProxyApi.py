@@ -118,5 +118,5 @@ def runFlaskWithGunicorn():
 
 
 if __name__ == '__main__':
-    # runFlask()
-    runFlaskWithGunicorn()
+    runFlask()
+    # runFlaskWithGunicorn()
