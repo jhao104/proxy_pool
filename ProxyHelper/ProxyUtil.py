@@ -12,7 +12,6 @@
 """
 __author__ = 'JHao'
 
-from ProxyHelper import Proxy
 from Util import validUsefulProxy
 
 from datetime import datetime
@@ -39,4 +38,3 @@ def checkProxyUseful(proxy_obj):
         proxy_obj.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         proxy_obj.fail_count += 1
         return proxy_obj, False
-

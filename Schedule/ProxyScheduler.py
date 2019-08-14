@@ -44,7 +44,10 @@ def usefulProxyScheduler():
     doUsefulProxyCheck()
 
 
-if __name__ == '__main__':
+def runScheduler():
+    rawProxyScheduler()
+    usefulProxyScheduler()
+
     scheduler_log = LogHandler("scheduler_log")
     scheduler = BlockingScheduler(logger=scheduler_log)
 
@@ -52,3 +55,7 @@ if __name__ == '__main__':
     scheduler.add_job(usefulProxyScheduler, 'interval', minutes=1, id="useful_proxy_check", name="useful_proxy定时检查")
 
     scheduler.start()
+
+
+if __name__ == '__main__':
+    runScheduler()
