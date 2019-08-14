@@ -4,5 +4,7 @@ Flask==0.12
 requests==2.20.0
 lxml==3.7.2
 PyExecJS==1.5.1
+click==7.0
+gunicorn==19.9.0
 pymongo
 redis

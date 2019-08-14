@@ -3,17 +3,20 @@
 """
 -------------------------------------------------
    File Name：     ProxyApi.py
-   Description :
+   Description :   WebApi
    Author :       JHao
    date：          2016/12/4
 -------------------------------------------------
    Change Activity:
-                   2016/12/4:
+                   2016/12/04: WebApi
+                   2019/08/14: 集成Gunicorn启动方式
 -------------------------------------------------
 """
 __author__ = 'JHao'
 
 import sys
+import gunicorn.app.base
+from gunicorn.six import iteritems
 from werkzeug.wrappers import Response
 from flask import Flask, jsonify, request
 
@@ -83,9 +86,37 @@ def getStatus():
     return status
 
 
-def run():
+class StandaloneApplication(gunicorn.app.base.BaseApplication):
+
+    def __init__(self, app, options=None):
+        self.options = options or {}
+        self.application = app
+        super(StandaloneApplication, self).__init__()
+
+    def load_config(self):
+        _config = dict([(key, value) for key, value in iteritems(self.options)
+                        if key in self.cfg.settings and value is not None])
+        for key, value in iteritems(_config):
+            self.cfg.set(key.lower(), value)
+
+    def load(self):
+        return self.application
+
+
+def runFlask():
     app.run(host=config.host_ip, port=config.host_port)
 
 
+def runFlaskWithGunicorn():
+    _options = {
+        'bind': '%s:%s' % (config.host_ip, config.host_port),
+        'workers': 4,
+        'accesslog': '-',  # log to stdout
+        'access_log_format': '%(h)s %(l)s %(t)s "%(r)s" %(s)s "%(a)s"'
+    }
+    StandaloneApplication(app, _options).run()
+
+
 if __name__ == '__main__':
-    run()
+    # runFlask()
+    runFlaskWithGunicorn()
