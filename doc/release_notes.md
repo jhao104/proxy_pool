@@ -1,5 +1,12 @@
 ## Release Notes
 
+* 2.0.0 (201908)
+
+    1. WebApi集成Gunicorn方式启动, Windows平台暂不支持;
+    2. 优化Proxy调度程序;
+    3. 扩展Proxy属性;
+    4. 提供cli工具, 更加方便启动proxyPool
+    
 * 1.14 (2019.07)
 
     1. 修复`ProxyValidSchedule`假死bug,原因是Queue阻塞;
