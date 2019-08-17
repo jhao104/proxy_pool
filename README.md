@@ -21,7 +21,7 @@
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
-* 测试地址: http://118.24.52.95:5010 (单机勿压, 感谢。 恶意访问关[小黑屋](https://github.com/jhao104/proxy_pool/blob/bff423dffe6e2881ee45d5b66d8a6ad682c8e4ab/doc/block_ips.md)哦)
+* 测试地址: http://118.24.52.95 (单机勿压, 感谢。 恶意访问关[小黑屋](https://github.com/jhao104/proxy_pool/blob/bff423dffe6e2881ee45d5b66d8a6ad682c8e4ab/doc/block_ips.md)哦)
 
 ### 下载安装
 
