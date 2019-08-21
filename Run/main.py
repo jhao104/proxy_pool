@@ -19,19 +19,16 @@ from multiprocessing import Process
 sys.path.append('.')
 sys.path.append('..')
 
-from Api.ProxyApi import run as ProxyApiRun
-from Schedule.ProxyValidSchedule import run as ValidRun
-from Schedule.ProxyRefreshSchedule import run as RefreshRun
+from Schedule.ProxyScheduler import runScheduler
+from Api.ProxyApi import runFlaskWithGunicorn
 
 
 def run():
     p_list = list()
-    p1 = Process(target=ProxyApiRun, name='ProxyApiRun')
+    p1 = Process(target=runScheduler, name='scheduler')
     p_list.append(p1)
-    p2 = Process(target=ValidRun, name='ValidRun')
+    p2 = Process(target=runFlaskWithGunicorn, name='api')
     p_list.append(p2)
-    p3 = Process(target=RefreshRun, name='RefreshRun')
-    p_list.append(p3)
 
     def kill_child_processes(signum, frame):
         for p in p_list:
