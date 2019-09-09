@@ -23,7 +23,7 @@ DB_TYPE = getenv('db_type', 'SSDB')
 
 if DB_TYPE == 'SSDB':
     DB_HOST = getenv('ssdb_host', '127.0.0.1')
-    DB_PORT = getenv('ssdb_port', '6379')
+    DB_PORT = getenv('ssdb_port', '8866')
 elif DB_TYPE == 'MONGODB':
     DB_HOST = getenv('mongodb_host', '127.0.0.1')
     DB_PORT = getenv('mongodb_host', '27017')
@@ -44,18 +44,20 @@ DATABASES = {
 # register the proxy getter function
 
 PROXY_GETTER = [
-    "freeProxyFirst",
-    "freeProxySecond",
-    # "freeProxyThird",  # 网站已不能访问
-    "freeProxyFourth",
-    "freeProxyFifth",
-    # "freeProxySixth"   # 不再提供免费代理
-    "freeProxySeventh",
-    # "freeProxyEight",
-    # "freeProxyNinth",
-    "freeProxyTen",
-    "freeProxyEleven",
-    "freeProxyTwelve",
+    "freeProxy01",
+    "freeProxy02",
+    # "freeProxy03",  # 网站已不能访问
+    "freeProxy04",
+    "freeProxy05",
+    # "freeProxy06"   # 不再提供免费代理
+    "freeProxy07",
+    # "freeProxy08",
+    # "freeProxy09",
+    "freeProxy10",
+    "freeProxy11",
+    "freeProxy12",
+    "freeProxy13",
+    "freeProxy14",
     # foreign website, outside the wall
     # "freeProxyWallFirst",
     # "freeProxyWallSecond",
