@@ -92,6 +92,15 @@ SERVER_API = {
 
 ```
 
+### Docker
+
+```bash
+docker pull jhao104/proxy_pool
+
+docker run --env db_type=REDIS --env db_host=127.0.0.1 --env db_port=6379 --env db_password=pwd_str -p 5010:5010 jhao104/proxy_pool
+
+```
+
 
 ### 使用
 
