@@ -38,6 +38,7 @@ DB_HOST = getenv('db_host', '127.0.0.1')
 DB_PORT = getenv('db_port', '8080')
 DB_PASSWORD = getenv('db_password', '')
 
+
 """ 数据库配置 """
 DATABASES = {
     "default": {
