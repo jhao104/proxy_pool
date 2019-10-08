@@ -30,7 +30,7 @@
 ```shell
 git clone git@github.com:jhao104/proxy_pool.git
 
-或者直接到https://github.com/jhao104/proxy_pool 下载zip文件
+或者直接到https://github.com/jhao104/proxy_pool/releases 下载zip文件
 ```
 
 * 安装依赖:
@@ -47,9 +47,9 @@ pip install -r requirements.txt
 # 配置DB     
 DATABASES = {
     "default": {
-        "TYPE": "SSDB",        # 目前支持SSDB或redis数据库
+        "TYPE": "SSDB",        # 目前支持SSDB或REDIS数据库
         "HOST": "127.0.0.1",   # db host
-        "PORT": 8888,          # db port，例如SSDB通常使用8888，redis通常默认使用6379
+        "PORT": 8888,          # db port，例如SSDB通常使用8888，REDIS通常默认使用6379
         "NAME": "proxy",       # 默认配置
         "PASSWORD": ""         # db password
 
@@ -80,7 +80,7 @@ SERVER_API = {
 * 启动:
 
 ```shell
-# 如果你的依赖已经安全完成并且具备运行条件,可以在cli下运行通过ProxyPool.py启动
+# 如果你的依赖已经安装完成并且具备运行条件,可以在cli目录下通过ProxyPool.py启。动
 # 程序分为: schedule 调度程序 和 webserver Api服务
 
 # 首先启动调度程序
