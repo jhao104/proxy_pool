@@ -21,7 +21,7 @@
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
-* 测试地址: http://123.207.35.36:5010 (单机勿压。感谢)
+* 测试地址: http://118.24.52.95 (单机勿压, 感谢。 恶意访问关[小黑屋](https://github.com/jhao104/proxy_pool/blob/bff423dffe6e2881ee45d5b66d8a6ad682c8e4ab/doc/block_ips.md)哦)
 
 ### 下载安装
 
@@ -30,7 +30,7 @@
 ```shell
 git clone git@github.com:jhao104/proxy_pool.git
 
-或者直接到https://github.com/jhao104/proxy_pool 下载zip文件
+或者直接到https://github.com/jhao104/proxy_pool/releases 下载zip文件
 ```
 
 * 安装依赖:
@@ -39,40 +39,68 @@ git clone git@github.com:jhao104/proxy_pool.git
 pip install -r requirements.txt
 ```
 
-* 配置Config.ini:
+* 配置Config/setting.py:
 
 ```shell
-# Config.ini 为项目配置文件
-# 配置DB
-type = SSDB       # 如果使用SSDB或redis数据库，均配置为SSDB
-host = localhost  # db host
-port = 8888       # db port
-name = proxy      # 默认配置
+# Config/setting.py 为项目配置文件
+
+# 配置DB     
+DATABASES = {
+    "default": {
+        "TYPE": "SSDB",        # 目前支持SSDB或REDIS数据库
+        "HOST": "127.0.0.1",   # db host
+        "PORT": 8888,          # db port，例如SSDB通常使用8888，REDIS通常默认使用6379
+        "NAME": "proxy",       # 默认配置
+        "PASSWORD": ""         # db password
+
+    }
+}
+
 
 # 配置 ProxyGetter
-freeProxyFirst  = 1  # 这里是启动的抓取函数，可在ProxyGetter/getFreeProxy.py 扩展
-freeProxySecond = 1
-....
 
-# 配置 HOST (api服务)
-ip = 127.0.0.1       # 监听ip,0.0.0.0开启外网访问
-port = 5010          # 监听端口
-# 上面配置启动后，代理api地址为 http://127.0.0.1:5010
+PROXY_GETTER = [
+    "freeProxy01",      # 这里是启用的代理抓取函数名，可在ProxyGetter/getFreeProxy.py 扩展
+    "freeProxy02",
+    ....
+]
+
+
+# 配置 API服务
+
+SERVER_API = {
+    "HOST": "0.0.0.0",  # 监听ip, 0.0.0.0 监听所有IP
+    "PORT": 5010        # 监听端口
+}
+       
+# 上面配置启动后，代理池访问地址为 http://127.0.0.1:5010
 
 ```
 
 * 启动:
 
 ```shell
-# 如果你的依赖已经安全完成并且具备运行条件,可以直接在Run下运行main.py
-# 到Run目录下:
->>>python main.py
+# 如果你的依赖已经安装完成并且具备运行条件,可以在cli目录下通过ProxyPool.py启。动
+# 程序分为: schedule 调度程序 和 webserver Api服务
 
-# 如果运行成功你应该看到有4个main.py进程
+# 首先启动调度程序
+>>>python proxyPool.py schedule
 
-# 你也可以分别运行他们,
-# 依次到Api下启动ProxyApi.py,Schedule下启动ProxyRefreshSchedule.py和ProxyValidSchedule.py即可.
+# 然后启动webApi服务
+>>>python proxyPool.py webserver
+
+
 ```
+
+### Docker
+
+```bash
+docker pull jhao104/proxy_pool
+
+docker run --env db_type=REDIS --env db_host=127.0.0.1 --env db_port=6379 --env db_password=pwd_str -p 5010:5010 jhao104/proxy_pool
+
+```
+
 
 ### 使用
 
@@ -98,7 +126,7 @@ port = 5010          # 监听端口
 import requests
 
 def get_proxy():
-    return requests.get("http://127.0.0.1:5010/get/").content
+    return requests.get("http://127.0.0.1:5010/get/").json()
 
 def delete_proxy(proxy):
     requests.get("http://127.0.0.1:5010/delete/?proxy={}".format(proxy))
@@ -108,7 +136,7 @@ def delete_proxy(proxy):
 def getHtml():
     # ....
     retry_count = 5
-    proxy = get_proxy()
+    proxy = get_proxy().get("proxy")
     while retry_count > 0:
         try:
             html = requests.get('https://www.example.com', proxies={"http": "http://{}".format(proxy)})
@@ -147,22 +175,42 @@ class GetFreeProxy(object):
         # 确保每个proxy都是 host:ip正确的格式就行
 ```
 
-* 2、添加好方法后，修改Config.ini文件中的`[ProxyGetter]`项：
+* 2、添加好方法后，修改Config/setting.py文件中的`PROXY_GETTER`项：
 
-　　在`Config.ini`的`[ProxyGetter]`下添加自定义的方法的名字:
+　　在`PROXY_GETTER`下添加自定义的方法的名字:
 
 ```shell
-
-[ProxyGetter]
-;register the proxy getter function
-freeProxyFirst  = 0  # 如果要取消某个方法，将其删除或赋为0即可
-....
-freeProxyCustom  = 1  # 确保名字和你添加方法名字一致
-
+PROXY_GETTER = [
+    "freeProxy01",    
+    "freeProxy02",
+    ....
+    "freeProxyCustom"  #  # 确保名字和你添加方法名字一致
+]
 ```
 
 
-　　`ProxyRefreshSchedule`会每隔一段时间抓取一次代理，下次抓取时会自动识别调用你定义的方法。
+　　`ProxySchedule`会每隔一段时间抓取一次代理，下次抓取时会自动识别调用你定义的方法。
+
+### 代理采集
+
+   目前实现的采集免费代理网站有(排名不分先后, 下面仅是对其发布的免费代理情况, 付费代理测评可以参考[这里](https://zhuanlan.zhihu.com/p/33576641)): 
+   
+  | 厂商名称 |  状态  |  更新速度 |  可用率  |  是否被墙  |  地址 |
+  | -----   |  ---- | --------  | ------ | --------- | ----- |
+  | 无忧代理 |  可用  | 几分钟一次 |   *     |  否       | [地址](http://www.data5u.com/free/index.html) |
+  | 66代理   | 可用  | 更新很慢   |   *     |  否      | [地址](http://www.66ip.cn/) |
+  | 西刺代理 | 可用   | 几分钟一次 |   *     | 否       | [地址](http://www.xicidaili.com)|
+  | 全网代理 |  可用  | 几分钟一次 |   *     |  否      | [地址](http://www.goubanjia.com/)|
+  | 训代理 |  已关闭免费代理  | * |   *     |  否      | [地址](http://www.xdaili.cn/)|
+  | 快代理 |  可用  |几分钟一次|   *     |  否      | [地址](https://www.kuaidaili.com/)|
+  | 云代理 |  可用  |几分钟一次|   *     |  否      | [地址](http://www.ip3366.net/)|
+  | IP海 |  可用  |几小时一次|   *     |  否      | [地址](http://www.iphai.com/)|
+  | 免费IP代理库 |  可用  |快|   *     |  否      | [地址](http://ip.jiangxianli.com/)|
+  | 中国IP地址 |  可用  |几分钟一次|   *     |  是      | [地址](http://cn-proxy.com/)|
+  | Proxy List |  可用  |几分钟一次|   *     |  是      | [地址](https://proxy-list.org/chinese/index.php)|
+  | ProxyList+ |  可用  |几分钟一次|   *     |  是      | [地址](https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1)|
+  
+  如果还有其他好的免费代理网站, 可以在提交在[issues](https://github.com/jhao104/proxy_pool/issues/71), 下次更新时会考虑在项目中支持。
 
 ### 问题反馈
 
@@ -178,10 +226,10 @@ freeProxyCustom  = 1  # 确保名字和你添加方法名字一致
 
 　　这里感谢以下contributor的无私奉献：
 
-　　[@kangnwh](https://github.com/kangnwh)| [@bobobo80](https://github.com/bobobo80)| [@halleywj](https://github.com/halleywj)| [@newlyedward](https://github.com/newlyedward)| [@wang-ye](https://github.com/wang-ye)| [@gladmo](https://github.com/gladmo)| [@bernieyangmh](https://github.com/bernieyangmh)| [@PythonYXY](https://github.com/PythonYXY)| [@zuijiawoniu](https://github.com/zuijiawoniu)| [@netAir](https://github.com/netAir)| [@scil](https://github.com/scil)| [@tangrela](https://github.com/tangrela)| [@highroom](https://github.com/highroom)
+　　[@kangnwh](https://github.com/kangnwh)| [@bobobo80](https://github.com/bobobo80)| [@halleywj](https://github.com/halleywj)| [@newlyedward](https://github.com/newlyedward)| [@wang-ye](https://github.com/wang-ye)| [@gladmo](https://github.com/gladmo)| [@bernieyangmh](https://github.com/bernieyangmh)| [@PythonYXY](https://github.com/PythonYXY)| [@zuijiawoniu](https://github.com/zuijiawoniu)| [@netAir](https://github.com/netAir)| [@scil](https://github.com/scil)| [@tangrela](https://github.com/tangrela)| [@highroom](https://github.com/highroom)| [@luocaodan](https://github.com/luocaodan)| [@vc5](https://github.com/vc5)| [@1again](https://github.com/1again)| [@obaiyan](https://github.com/obaiyan)
 
 
 ### Release Notes
 
-   [release notes](https://github.com/jhao104/proxy_pool/blob/master/doc/release_notes.md) [@luocaodan](https://github.com/luocaodan)
+   [release notes](https://github.com/jhao104/proxy_pool/blob/master/doc/release_notes.md)
 
