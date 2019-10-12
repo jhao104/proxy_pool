@@ -76,8 +76,8 @@ class ConfigError(BaseException):
 
 
 def checkConfig():
-    if DB_TYPE not in ["SSDB", "REDIS"]:
-        raise ConfigError('db_type Do not support: %s, must SSDB/REDIS .' % DB_TYPE)
+    if DB_TYPE not in ["SSDB", "REDIS", "MONGODB"]:
+        raise ConfigError('db_type Do not support: %s, must SSDB/REDIS/MONGODB .' % DB_TYPE)
 
     if not DB_PORT.isdigit():
         raise ConfigError('db_port must be digit, not %s' % DB_PORT)
