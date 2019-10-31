@@ -17,34 +17,37 @@ import os
 import sys
 
 from Config.ConfigGetter import config
-from Util.utilClass import Singleton
+from Util import Singleton
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
 class DbClient(object):
     """
-    DbClient DB工厂类 提供get/put/pop/delete/getAll/changeTable方法
+    DbClient DB工厂类 提供get/put/update/pop/delete/exists/getAll/clean/getNumber/changeTable方法
 
-    目前存放代理的table/collection/hash有两种：
+    目前存放代理的有两种, 使用changeTable方法切换操作对象：
         raw_proxy： 存放原始的代理；
-        useful_proxy_queue： 存放检验后的代理；
+        useful_proxy： 存放检验后的代理；
+
 
     抽象方法定义：
-        get(proxy): 返回proxy的信息；
-        put(proxy): 存入一个代理；
-        pop(): 弹出一个代理
-        exists(proxy)： 判断代理是否存在
-        getNumber(raw_proxy): 返回代理总数（一个计数器）；
-        update(proxy, num): 修改代理属性计数器的值;
-        delete(proxy): 删除指定代理；
-        getAll(): 返回所有代理；
-        changeTable(name): 切换 table or collection or hash;
+        get(proxy): 返回指定proxy的信息;
+        put(proxy): 存入一个proxy信息;
+        pop(): 返回并删除一个proxy信息;
+        update(proxy): 更新指定proxy信息;
+        delete(proxy): 删除指定proxy;
+        exists(proxy): 判断指定proxy是否存在;
+        getAll(): 列表形式返回所有代理;
+        clean(): 清除所有proxy信息;
+        getNumber(): 返回proxy数据量;
+        changeTable(name): 切换操作对象 raw_proxy/useful_proxy
 
 
         所有方法需要相应类去具体实现：
-            SSDB：SsdbClient.py
-            REDIS:RedisClient.py  停用 统一使用SsdbClient.py
+            ssdb: SsdbClient.py
+            redis: RedisClient.py
+            mongodb: MongodbClient.py
 
     """
 
@@ -66,7 +69,7 @@ class DbClient(object):
         if "SSDB" == config.db_type:
             __type = "SsdbClient"
         elif "REDIS" == config.db_type:
-            __type = "SsdbClient"
+            __type = "RedisClient"
         elif "MONGODB" == config.db_type:
             __type = "MongodbClient"
         else:
@@ -98,14 +101,11 @@ class DbClient(object):
     def getAll(self):
         return self.client.getAll()
 
+    def clear(self):
+        return self.client.clear()
+
     def changeTable(self, name):
         self.client.changeTable(name)
 
     def getNumber(self):
         return self.client.getNumber()
-
-
-if __name__ == "__main__":
-    account = DbClient()
-    account.changeTable('useful_proxy')
-    print(account.pop())

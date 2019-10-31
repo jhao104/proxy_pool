@@ -3,17 +3,19 @@
 """
 -------------------------------------------------
    File Name：     ProxyApi.py
-   Description :
+   Description :   WebApi
    Author :       JHao
    date：          2016/12/4
 -------------------------------------------------
    Change Activity:
-                   2016/12/4:
+                   2016/12/04: WebApi
+                   2019/08/14: 集成Gunicorn启动方式
 -------------------------------------------------
 """
 __author__ = 'JHao'
 
 import sys
+import platform
 from werkzeug.wrappers import Response
 from flask import Flask, jsonify, request
 
@@ -37,11 +39,11 @@ class JsonResponse(Response):
 app.response_class = JsonResponse
 
 api_list = {
-    'get': u'get an usable proxy',
+    'get': u'get an useful proxy',
     # 'refresh': u'refresh proxy pool',
     'get_all': u'get all proxy from proxy pool',
     'delete?proxy=127.0.0.1:8080': u'delete an unable proxy',
-    'get_status': u'proxy statistics'
+    'get_status': u'proxy number'
 }
 
 
@@ -53,7 +55,7 @@ def index():
 @app.route('/get/')
 def get():
     proxy = ProxyManager().get()
-    return proxy if proxy else 'no proxy!'
+    return proxy.info_json if proxy else {"code": 0, "src": "no proxy"}
 
 
 @app.route('/refresh/')
@@ -67,14 +69,14 @@ def refresh():
 @app.route('/get_all/')
 def getAll():
     proxies = ProxyManager().getAll()
-    return proxies
+    return [_.info_dict for _ in proxies]
 
 
 @app.route('/delete/', methods=['GET'])
 def delete():
     proxy = request.args.get('proxy')
     ProxyManager().delete(proxy)
-    return 'success'
+    return {"code": 0, "src": "success"}
 
 
 @app.route('/get_status/')
@@ -83,9 +85,44 @@ def getStatus():
     return status
 
 
-def run():
+if platform.system() != "Windows":
+    import gunicorn.app.base
+    from gunicorn.six import iteritems
+
+
+    class StandaloneApplication(gunicorn.app.base.BaseApplication):
+
+        def __init__(self, app, options=None):
+            self.options = options or {}
+            self.application = app
+            super(StandaloneApplication, self).__init__()
+
+        def load_config(self):
+            _config = dict([(key, value) for key, value in iteritems(self.options)
+                            if key in self.cfg.settings and value is not None])
+            for key, value in iteritems(_config):
+                self.cfg.set(key.lower(), value)
+
+        def load(self):
+            return self.application
+
+
+def runFlask():
     app.run(host=config.host_ip, port=config.host_port)
 
 
+def runFlaskWithGunicorn():
+    _options = {
+        'bind': '%s:%s' % (config.host_ip, config.host_port),
+        'workers': 4,
+        'accesslog': '-',  # log to stdout
+        'access_log_format': '%(h)s %(l)s %(t)s "%(r)s" %(s)s "%(a)s"'
+    }
+    StandaloneApplication(app, _options).run()
+
+
 if __name__ == '__main__':
-    run()
+    if platform.system() == "Windows":
+        runFlask()
+    else:
+        runFlaskWithGunicorn()

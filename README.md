@@ -21,7 +21,7 @@
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
-* 测试地址: http://118.24.52.95:5010 (单机勿压。感谢)
+* 测试地址: http://118.24.52.95 (单机勿压, 感谢。 恶意访问关[小黑屋](https://github.com/jhao104/proxy_pool/blob/bff423dffe6e2881ee45d5b66d8a6ad682c8e4ab/doc/block_ips.md)哦)
 
 ### 下载安装
 
@@ -30,7 +30,7 @@
 ```shell
 git clone git@github.com:jhao104/proxy_pool.git
 
-或者直接到https://github.com/jhao104/proxy_pool 下载zip文件
+或者直接到https://github.com/jhao104/proxy_pool/releases 下载zip文件
 ```
 
 * 安装依赖:
@@ -47,9 +47,9 @@ pip install -r requirements.txt
 # 配置DB     
 DATABASES = {
     "default": {
-        "TYPE": "SSDB",        # 如果使用SSDB或redis数据库，均配置为SSDB
+        "TYPE": "SSDB",        # 目前支持SSDB或REDIS数据库
         "HOST": "127.0.0.1",   # db host
-        "PORT": 8888,          # db port，例如SSDB通常使用8888，redis通常默认使用6379
+        "PORT": 8888,          # db port，例如SSDB通常使用8888，REDIS通常默认使用6379
         "NAME": "proxy",       # 默认配置
         "PASSWORD": ""         # db password
 
@@ -60,8 +60,8 @@ DATABASES = {
 # 配置 ProxyGetter
 
 PROXY_GETTER = [
-    "freeProxyFirst",      # 这里是启用的代理抓取函数名，可在ProxyGetter/getFreeProxy.py 扩展
-    "freeProxySecond",
+    "freeProxy01",      # 这里是启用的代理抓取函数名，可在ProxyGetter/getFreeProxy.py 扩展
+    "freeProxy02",
     ....
 ]
 
@@ -80,32 +80,27 @@ SERVER_API = {
 * 启动:
 
 ```shell
-# 如果你的依赖已经安全完成并且具备运行条件,可以直接在Run下运行main.py
-# 到Run目录下:
->>>python main.py
+# 如果你的依赖已经安装完成并且具备运行条件,可以在cli目录下通过ProxyPool.py启。动
+# 程序分为: schedule 调度程序 和 webserver Api服务
 
-# 如果运行成功你应该看到有4个main.py进程
+# 首先启动调度程序
+>>>python proxyPool.py schedule
 
-# 你也可以分别运行他们,
-# 依次到Api下启动ProxyApi.py,Schedule下启动ProxyRefreshSchedule.py和ProxyValidSchedule.py即可.
+# 然后启动webApi服务
+>>>python proxyPool.py webserver
+
+
 ```
 
-* 生产环境 Docker/docker-compose
+### Docker
 
-```shell
-# Workdir proxy_pool
-docker build -t proxy_pool .
-pip install docker-compose
-docker-compose -f docker-compose.yml up -d
+```bash
+docker pull jhao104/proxy_pool
+
+docker run --env db_type=REDIS --env db_host=127.0.0.1 --env db_port=6379 --env db_password=pwd_str -p 5010:5010 jhao104/proxy_pool
+
 ```
 
-* 开发环境 Docker
-
-```shell
-# Workdir proxy_pool
-docker build -t proxy_pool .
-docker run -it --rm -v $(pwd):/usr/src/app -p 5010:5010 proxy_pool
-```
 
 ### 使用
 
@@ -131,7 +126,7 @@ docker run -it --rm -v $(pwd):/usr/src/app -p 5010:5010 proxy_pool
 import requests
 
 def get_proxy():
-    return requests.get("http://127.0.0.1:5010/get/").content
+    return requests.get("http://127.0.0.1:5010/get/").json()
 
 def delete_proxy(proxy):
     requests.get("http://127.0.0.1:5010/delete/?proxy={}".format(proxy))
@@ -141,7 +136,7 @@ def delete_proxy(proxy):
 def getHtml():
     # ....
     retry_count = 5
-    proxy = get_proxy()
+    proxy = get_proxy().get("proxy")
     while retry_count > 0:
         try:
             html = requests.get('https://www.example.com', proxies={"http": "http://{}".format(proxy)})
@@ -186,15 +181,15 @@ class GetFreeProxy(object):
 
 ```shell
 PROXY_GETTER = [
-    "freeProxyFirst",    
-    "freeProxySecond",
+    "freeProxy01",    
+    "freeProxy02",
     ....
     "freeProxyCustom"  #  # 确保名字和你添加方法名字一致
 ]
 ```
 
 
-　　`ProxyRefreshSchedule`会每隔一段时间抓取一次代理，下次抓取时会自动识别调用你定义的方法。
+　　`ProxySchedule`会每隔一段时间抓取一次代理，下次抓取时会自动识别调用你定义的方法。
 
 ### 代理采集
 
