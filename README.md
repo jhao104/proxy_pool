@@ -101,6 +101,23 @@ docker run --env db_type=REDIS --env db_host=127.0.0.1 --env db_port=6379 --env 
 
 ```
 
+### helm chart(更多使用参数请参考[helm chart文档](./helm/README.md)):
+```bash
+git clone git@github.com:jhao104/proxy_pool.git
+
+cd proxy_pool
+
+helm install proxy-pool ./helm/proxy-pool --set proxyPoolConfig.dbHost=192.168.1.100 --set proxyPoolConfig.dbPassword=calmkart
+
+kubectl port-forward svc/proxy-pool 8080:80
+
+# Wait a few minutes
+curl localhost:8080/get/
+# result: xxx.xxx.xxx.xxx:xxxx
+
+curl localhost:8080/get_all/
+```
+
 
 ### 使用
 

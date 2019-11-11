@@ -112,7 +112,7 @@ pip install -r requirements.txt
 ```
 
 docker:
-```
+```bash
 git clone git@github.com:jhao104/proxy_pool.git
 
 cd proxy_pool
@@ -127,6 +127,24 @@ curl localhost:5010/get/
 
 curl localhost:5010/get_all/
 ```
+
+helm chart(更多使用参数请参考[helm chart文档](../helm/README.md)):
+```bash
+git clone git@github.com:jhao104/proxy_pool.git
+
+cd proxy_pool
+
+helm install proxy-pool ./helm/proxy-pool 
+
+kubectl port-forward svc/proxy-pool 8080:80
+
+# Wait a few minutes
+curl localhost:8080/get/
+# result: xxx.xxx.xxx.xxx:xxxx
+
+curl localhost:8080/get_all/
+```
+
 
 ### 5、使用
 　　定时任务启动后，会通过GetFreeProxy中的方法抓取代理存入数据库并验证。此后默认每10分钟会重复执行一次。定时任务启动大概一两分钟后，便可在[SSDB](https://github.com/jhao104/SSDBAdmin)中看到刷新出来的可用的代理：
