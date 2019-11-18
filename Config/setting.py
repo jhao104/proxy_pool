@@ -35,7 +35,7 @@ PY3 = sys.version_info >= (3,)
 
 DB_TYPE = getenv('db_type', 'SSDB').upper()
 DB_HOST = getenv('db_host', '127.0.0.1')
-DB_PORT = getenv('db_port', '8080')
+DB_PORT = getenv('db_port', 8888)
 DB_PASSWORD = getenv('db_password', '')
 
 
@@ -79,8 +79,8 @@ def checkConfig():
     if DB_TYPE not in ["SSDB", "REDIS"]:
         raise ConfigError('db_type Do not support: %s, must SSDB/REDIS .' % DB_TYPE)
 
-    if not DB_PORT.isdigit():
-        raise ConfigError('db_port must be digit, not %s' % DB_PORT)
+    if type(DB_PORT) == str and not DB_PORT.isdigit():
+        raise ConfigError('if db_port is string, it must be digit, not %s' % DB_PORT)
 
     from ProxyGetter import getFreeProxy
     illegal_getter = list(filter(lambda key: not hasattr(getFreeProxy.GetFreeProxy, key), PROXY_GETTER))
