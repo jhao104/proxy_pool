@@ -344,6 +344,27 @@ class GetFreeProxy(object):
             for proxy in proxies:
                 yield ':'.join(proxy)
 
+    @staticmethod
+    def freeProxy16(max_page=1):
+        """
+        https://proxyranker.com/
+        89免费代理
+        :param max_page:
+        :return:
+        """
+        base_url = 'http://www.thebigproxylist.com/'
+        request = WebRequest()
+        for page in range(1, max_page + 1):
+            url = base_url.format(page)
+            r = request.get(url, timeout=10)
+            proxies = re.findall(
+                #r'<td.*?>[\s\S]*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})[\s\S]*?</td>[\s\S]*?<td.*?>[\s\S]*?(\d+)[\s\S]*?</td>',
+                r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
+
+            for proxy in proxies:
+                yield proxy
+
+
 
 if __name__ == '__main__':
     from CheckProxy import CheckProxy
@@ -359,5 +380,7 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy09)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy13)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy14)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy15)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy16)
 
     CheckProxy.checkAllGetProxyFunc()
