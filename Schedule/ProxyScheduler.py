@@ -49,7 +49,7 @@ def runScheduler():
     usefulProxyScheduler()
 
     scheduler_log = LogHandler("scheduler_log")
-    scheduler = BlockingScheduler(logger=scheduler_log)
+    scheduler = BlockingScheduler(logger=scheduler_log, timezone="Asia/Shanghai")
 
     scheduler.add_job(rawProxyScheduler, 'interval', minutes=5, id="raw_proxy_check", name="raw_proxy定时采集")
     scheduler.add_job(usefulProxyScheduler, 'interval', minutes=1, id="useful_proxy_check", name="useful_proxy定时检查")
