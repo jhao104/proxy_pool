@@ -231,20 +231,19 @@ class GetFreeProxy(object):
                 yield ":".join(proxy)
 
     @staticmethod
-    def freeProxy09(page_count=2):
+    def freeProxy09(page_count=1):
         """
         http://ip.jiangxianli.com/?page=
         免费代理库
         :return:
         """
         for i in range(1, page_count + 1):
-            url = 'http://ip.jiangxianli.com/?page={}'.format(i)
+            url = 'http://ip.jiangxianli.com/?country=中国&?page={}'.format(i)
             html_tree = getHtmlTree(url)
-            tr_list = html_tree.xpath("/html/body/div[1]/div/div[1]/div[2]/table/tbody/tr")
-            if len(tr_list) == 0:
-                continue
-            for tr in tr_list:
-                yield tr.xpath("./td[2]/text()")[0] + ":" + tr.xpath("./td[3]/text()")[0]
+            for index, tr in enumerate(html_tree.xpath("//table//tr")):
+                if index == 0:
+                    continue
+                yield ":".join(tr.xpath("./td/text()")[0:2]).strip()
 
     # @staticmethod
     # def freeProxy10():
@@ -335,8 +334,8 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy06)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy07)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy08)
-    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy09)
+    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy09)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy13)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy14)
 
-    CheckProxy.checkAllGetProxyFunc()
+    # CheckProxy.checkAllGetProxyFunc()
