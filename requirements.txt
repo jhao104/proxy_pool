@@ -1,6 +1,6 @@
 APScheduler==3.2.0
 werkzeug==0.11.15
-Flask==0.12
+Flask==1.0
 requests==2.20.0
 lxml==3.7.2
 PyExecJS==1.5.1
