@@ -322,6 +322,19 @@ class GetFreeProxy(object):
             for proxy in proxies:
                 yield ':'.join(proxy)
 
+    @staticmethod
+    def freeProxy15():
+        urls = ['http://www.xiladaili.com/putong/',
+                "http://www.xiladaili.com/gaoni/",
+                "http://www.xiladaili.com/http/",
+                "http://www.xiladaili.com/https/"]
+        request = WebRequest()
+        for url in urls:
+            r = request.get(url, timeout=10)
+            ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
+            for ip in ips:
+                yield ip.strip()
+
 
 if __name__ == '__main__':
     from CheckProxy import CheckProxy
@@ -334,8 +347,9 @@ if __name__ == '__main__':
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy06)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy07)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy08)
-    CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy09)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy09)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy13)
     # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy14)
+    # CheckProxy.checkGetProxyFunc(GetFreeProxy.freeProxy15)
 
-    # CheckProxy.checkAllGetProxyFunc()
+    CheckProxy.checkAllGetProxyFunc()
