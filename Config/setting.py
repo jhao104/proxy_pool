@@ -54,14 +54,17 @@ DATABASES = {
 
 PROXY_GETTER = [
     "freeProxy01",
-    "freeProxy02",
+    # "freeProxy02",
     "freeProxy03",
     "freeProxy04",
     "freeProxy05",
-    "freeProxy06",
+    # "freeProxy06",
     "freeProxy07",
-    "freeProxy08",
+    # "freeProxy08",
     "freeProxy09",
+    "freeProxy13",
+    "freeProxy14",
+    "freeProxy14",
 ]
 
 """ API config http://127.0.0.1:5010 """
