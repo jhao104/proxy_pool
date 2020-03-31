@@ -139,7 +139,7 @@ def getHtml():
     proxy = get_proxy().get("proxy")
     while retry_count > 0:
         try:
-            html = requests.get('https://www.example.com', proxies={"http": "http://{}".format(proxy)})
+            html = requests.get('http://www.example.com', proxies={"http": "http://{}".format(proxy)})
             # 使用代理访问
             return html
         except Exception:
