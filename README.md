@@ -97,7 +97,11 @@ SERVER_API = {
 ```bash
 docker pull jhao104/proxy_pool
 
-docker run --env db_type=REDIS --env db_host=127.0.0.1 --env db_port=6379 --env db_password=pwd_str -p 5010:5010 jhao104/proxy_pool
+# 远程数据库
+docker run --env db_type=REDIS --env db_host=x.x.x.x --env db_port=6379 --env db_password=pwd_str -p 5010:5010 jhao104/proxy_pool
+
+# 宿主机上的数据库
+docker run --env db_type=REDIS --env db_host=host.docker.internal --env db_port=6379 --env db_password=pwd_str -p 5010:5010 jhao104/proxy_pool
 
 ```
 
