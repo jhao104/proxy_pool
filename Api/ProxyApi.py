@@ -69,7 +69,7 @@ def refresh():
 @app.route('/get_all/')
 def getAll():
     proxies = ProxyManager().getAll()
-    return [_.info_dict for _ in proxies]
+    return jsonify([_.info_dict for _ in proxies])
 
 
 @app.route('/delete/', methods=['GET'])
