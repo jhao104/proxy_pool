@@ -14,6 +14,7 @@
 __author__ = 'JHao'
 
 import random
+import json
 
 from ProxyHelper import Proxy
 from DB.DbClient import DbClient
@@ -42,8 +43,10 @@ class ProxyManager(object):
         self.db.changeTable(self.raw_proxy_queue)
         proxy_set = set()
         self.log.info("ProxyFetch : start")
+
         for proxyGetter in config.proxy_getter_functions:
-            self.log.info("ProxyFetch - {func}: start".format(func=proxyGetter))
+            self.log.info(
+                "ProxyFetch - {func}: start".format(func=proxyGetter))
             try:
                 for proxy in getattr(GetFreeProxy, proxyGetter.strip())():
                     proxy = proxy.strip()
@@ -51,18 +54,22 @@ class ProxyManager(object):
                     if not proxy or not verifyProxyFormat(proxy):
                         self.log.error('ProxyFetch - {func}: '
                                        '{proxy} illegal'.format(func=proxyGetter, proxy=proxy.ljust(20)))
+
                         continue
                     elif proxy in proxy_set:
                         self.log.info('ProxyFetch - {func}: '
                                       '{proxy} exist'.format(func=proxyGetter, proxy=proxy.ljust(20)))
+
                         continue
                     else:
                         self.log.info('ProxyFetch - {func}: '
                                       '{proxy} success'.format(func=proxyGetter, proxy=proxy.ljust(20)))
-                        self.db.put(Proxy(proxy, source=proxyGetter))
+                        self.db.put(
+                            Proxy(proxy, source=proxyGetter))
                         proxy_set.add(proxy)
             except Exception as e:
-                self.log.error("ProxyFetch - {func}: error".format(func=proxyGetter))
+                self.log.error(
+                    "ProxyFetch - {func}: error".format(func=proxyGetter))
                 self.log.error(str(e))
 
     def get(self):
@@ -72,9 +79,30 @@ class ProxyManager(object):
         """
         self.db.changeTable(self.useful_proxy_queue)
         item_list = self.db.getAll()
+
         if item_list:
             random_choice = random.choice(item_list)
+
             return Proxy.newProxyFromJson(random_choice)
+
+        return None
+
+    def get_socks(self):
+        """
+        return a useful socks proxy
+        :return:
+        """
+        self.db.changeTable(self.useful_proxy_queue)
+        item_list = self.db.getAll()
+
+        if item_list:
+            for _ in item_list:
+                random_choice = random.choice(item_list)
+                proxy_type = json.loads(random_choice)['proxy'].split("://")[0]
+
+                if proxy_type == 'socks4':
+                    return Proxy.newProxyFromJson(random_choice)
+
         return None
 
     def delete(self, proxy_str):
@@ -93,6 +121,7 @@ class ProxyManager(object):
         """
         self.db.changeTable(self.useful_proxy_queue)
         item_list = self.db.getAll()
+
         return [Proxy.newProxyFromJson(_) for _ in item_list]
 
     def getNumber(self):
@@ -100,6 +129,7 @@ class ProxyManager(object):
         total_raw_proxy = self.db.getNumber()
         self.db.changeTable(self.useful_proxy_queue)
         total_useful_queue = self.db.getNumber()
+
         return {'raw_proxy': total_raw_proxy, 'useful_proxy': total_useful_queue}
 
 
