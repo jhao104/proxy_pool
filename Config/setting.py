@@ -55,16 +55,19 @@ DATABASES = {
 PROXY_GETTER = [
     "freeProxy01",
     # "freeProxy02",
-    "freeProxy03",
+    # "freeProxy03",
     "freeProxy04",
     "freeProxy05",
-    # "freeProxy06",
-    "freeProxy07",
+    "freeProxy06",
+    # "freeProxy07",
     # "freeProxy08",
     "freeProxy09",
-    "freeProxy13",
-    "freeProxy14",
-    "freeProxy14",
+    # "freeProxy14",
+    "freeProxy15",
+    "proxygather_com",
+    "proxy_list_download",
+    "spys_one",
+    "socks_proxy_net",
 ]
 
 """ API config http://127.0.0.1:5010 """
@@ -80,15 +83,19 @@ class ConfigError(BaseException):
 
 def checkConfig():
     if DB_TYPE not in ["SSDB", "REDIS"]:
-        raise ConfigError('db_type Do not support: %s, must SSDB/REDIS .' % DB_TYPE)
+        raise ConfigError(
+            'db_type Do not support: %s, must SSDB/REDIS .' % DB_TYPE)
 
     if type(DB_PORT) == str and not DB_PORT.isdigit():
-        raise ConfigError('if db_port is string, it must be digit, not %s' % DB_PORT)
+        raise ConfigError(
+            'if db_port is string, it must be digit, not %s' % DB_PORT)
 
     from ProxyGetter import getFreeProxy
-    illegal_getter = list(filter(lambda key: not hasattr(getFreeProxy.GetFreeProxy, key), PROXY_GETTER))
+    illegal_getter = list(filter(lambda key: not hasattr(
+        getFreeProxy.GetFreeProxy, key), PROXY_GETTER))
     if len(illegal_getter) > 0:
-        raise ConfigError("ProxyGetter: %s does not exists" % "/".join(illegal_getter))
+        raise ConfigError("ProxyGetter: %s does not exists" %
+                          "/".join(illegal_getter))
 
 
 checkConfig()
