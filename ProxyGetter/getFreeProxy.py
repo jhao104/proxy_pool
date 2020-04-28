@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
+from bs4 import BeautifulSoup
+from requests_html import HTMLSession
+from Util.utilFunction import getHtmlTree
+from Util.WebRequest import WebRequest
 """
 -------------------------------------------------
    File Name：     GetFreeProxy.py
@@ -18,8 +22,6 @@ from time import sleep
 
 sys.path.append('..')
 
-from Util.WebRequest import WebRequest
-from Util.utilFunction import getHtmlTree
 
 # for debug to disable insecureWarning
 requests.packages.urllib3.disable_warnings()
@@ -56,7 +58,7 @@ class GetFreeProxy(object):
                         port_sum *= 10
                         port_sum += key.index(c)
                     port = port_sum >> 3
-                    yield '{}:{}'.format(ip, port)
+                    yield 'http://{}:{}'.format(ip, port)
                 except Exception as e:
                     print(e)
 
@@ -85,8 +87,10 @@ class GetFreeProxy(object):
             src = session.get("http://www.66ip.cn/", headers=headers).text
             src = src.split("</script>")[0] + '}'
             src = src.replace("<script>", "function test() {")
-            src = src.replace("while(z++)try{eval(", ';var num=10;while(z++)try{var tmp=')
-            src = src.replace(");break}", ";num--;if(tmp.search('cookie') != -1 | num<0){return tmp}}")
+            src = src.replace(
+                "while(z++)try{eval(", ';var num=10;while(z++)try{var tmp=')
+            src = src.replace(
+                ");break}", ";num--;if(tmp.search('cookie') != -1 | num<0){return tmp}}")
             ctx = execjs.compile(src)
             src = ctx.call("test")
             src = src[src.find("document.cookie="): src.find("};if((")]
@@ -100,10 +104,12 @@ class GetFreeProxy(object):
 
         for url in urls:
             try:
-                html = session.get(url.format(count), cookies={"__jsl_clearance": js_cookie}, headers=headers).text
-                ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", html)
+                html = session.get(url.format(count), cookies={
+                                   "__jsl_clearance": js_cookie}, headers=headers).text
+                ips = re.findall(
+                    r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", html)
                 for ip in ips:
-                    yield ip.strip()
+                    yield 'http://'+ip.strip()
             except Exception as e:
                 print(e)
                 pass
@@ -122,10 +128,11 @@ class GetFreeProxy(object):
             for i in range(1, page_count + 1):
                 page_url = each_url + str(i)
                 tree = getHtmlTree(page_url)
-                proxy_list = tree.xpath('.//table[@id="ip_list"]//tr[position()>1]')
+                proxy_list = tree.xpath(
+                    './/table[@id="ip_list"]//tr[position()>1]')
                 for proxy in proxy_list:
                     try:
-                        yield ':'.join(proxy.xpath('./td/text()')[0:2])
+                        yield 'http://'+':'.join(proxy.xpath('./td/text()')[0:2])
                     except Exception as e:
                         pass
 
@@ -162,7 +169,7 @@ class GetFreeProxy(object):
                     port += (ord(_) - ord('A'))
                 port /= 8
 
-                yield '{}:{}'.format(ip_addr, int(port))
+                yield 'http://{}:{}'.format(ip_addr, int(port))
             except Exception as e:
                 pass
 
@@ -180,7 +187,7 @@ class GetFreeProxy(object):
             proxy_list = tree.xpath('.//table//tr')
             sleep(1)  # 必须sleep 不然第二条请求不到数据
             for tr in proxy_list[1:]:
-                yield ':'.join(tr.xpath('./td/text()')[0:2])
+                yield 'http://'+':'.join(tr.xpath('./td/text()')[0:2])
 
     @staticmethod
     def freeProxy06():
@@ -193,7 +200,7 @@ class GetFreeProxy(object):
             tree = getHtmlTree(url)
             proxy_list = tree.xpath('.//table//tr')
             for tr in proxy_list[1:]:
-                yield ':'.join(tr.xpath('./td/text()')[0:2])
+                yield 'http://'+':'.join(tr.xpath('./td/text()')[0:2])
 
     @staticmethod
     def freeProxy07():
@@ -206,9 +213,10 @@ class GetFreeProxy(object):
         request = WebRequest()
         for url in urls:
             r = request.get(url, timeout=10)
-            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
+            proxies = re.findall(
+                r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
             for proxy in proxies:
-                yield ":".join(proxy)
+                yield 'http://' + ":".join(proxy)
 
     @staticmethod
     def freeProxy08():
@@ -228,7 +236,7 @@ class GetFreeProxy(object):
             proxies = re.findall(r'<td>\s*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s*?</td>[\s\S]*?<td>\s*?(\d+)\s*?</td>',
                                  r.text)
             for proxy in proxies:
-                yield ":".join(proxy)
+                yield "http://"+":".join(proxy)
 
     @staticmethod
     def freeProxy09(page_count=1):
@@ -243,7 +251,7 @@ class GetFreeProxy(object):
             for index, tr in enumerate(html_tree.xpath("//table//tr")):
                 if index == 0:
                     continue
-                yield ":".join(tr.xpath("./td/text()")[0:2]).strip()
+                yield 'http://'+":".join(tr.xpath("./td/text()")[0:2]).strip()
 
     # @staticmethod
     # def freeProxy10():
@@ -301,7 +309,7 @@ class GetFreeProxy(object):
                 r'<td.*?>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td.*?>(\d+)</td>',
                 r.text)
             for proxy in proxies:
-                yield ':'.join(proxy)
+                yield 'http://'+':'.join(proxy)
 
     @staticmethod
     def freeProxy14(max_page=2):
@@ -320,7 +328,7 @@ class GetFreeProxy(object):
                 r'<td.*?>[\s\S]*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})[\s\S]*?</td>[\s\S]*?<td.*?>[\s\S]*?(\d+)[\s\S]*?</td>',
                 r.text)
             for proxy in proxies:
-                yield ':'.join(proxy)
+                yield 'http://'+':'.join(proxy)
 
     @staticmethod
     def freeProxy15():
@@ -331,9 +339,103 @@ class GetFreeProxy(object):
         request = WebRequest()
         for url in urls:
             r = request.get(url, timeout=10)
-            ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
+            ips = re.findall(
+                r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
             for ip in ips:
-                yield ip.strip()
+                yield "http://" + ip.strip()
+
+    @staticmethod
+    def socks_proxy_net():
+        url = "https://www.socks-proxy.net"
+
+        resp = requests.get(url)
+        soup = BeautifulSoup(resp.text, "html5lib")
+
+        tables = [
+            [
+                [td.get_text(strip=True) for td in tr.find_all('td')]
+                for tr in table.find_all('tr')
+            ]
+            for table in soup.find_all('table')
+        ]
+
+        if not tables:
+            return
+
+        for row in tables[0]:
+            try:
+                yield 'socks4://' + row[0] + ':' + row[1]
+            except BaseException:
+                continue
+
+    @staticmethod
+    def proxy_list_download():
+        urls = ["https://www.proxy-list.download/api/v1/get?type=socks4",
+                "https://www.proxy-list.download/api/v1/get?type=socks5"]
+        proxy_resp = ""
+        for url in urls:
+            resp = requests.get(url, timeout=10)
+            proxy_resp += resp.text
+        proxy_list = proxy_resp.split('\n')
+        for proxy in proxy_list:
+            yield "socks4://" + proxy
+
+    @staticmethod
+    def proxygather_com():
+        url = "https://proxygather.com/sockslist"
+        try:
+            session = HTMLSession()
+            resp = session.get(url, timeout=10)
+            resp.html.render()
+        except BaseException:
+            return
+        soup = BeautifulSoup(resp.html.html, "html5lib")
+
+        tables = [
+            [
+                [td.get_text(strip=True) for td in tr.find_all('td')]
+                for tr in table.find_all('tr')
+            ]
+            for table in soup.find_all('table')
+        ]
+
+        if not tables:
+            return
+
+        for row in tables[0]:
+            try:
+                ip = row[1].split(')')[-1]
+                port = row[2].split(')')[-1]
+                yield 'socks4://' + ip + ':' + port
+            except BaseException:
+                continue
+
+    @staticmethod
+    def spys_one():
+        url = "http://spys.one/en/socks-proxy-list/"
+        header = {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_2) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/12.0.2 Safari/605.1.15'}
+        data = {
+            'xpp': '5',
+            'xf1': '4',
+            'xf2': '0',
+            'xf4': '0',
+            'xf5': '2'
+        }
+        try:
+            session = HTMLSession()
+            resp = session.post(url, headers=header, data=data, timeout=10)
+            resp.html.render()
+        except BaseException:
+            return
+
+        soup = BeautifulSoup(resp.html.html, "html5lib")
+
+        tds = soup.findAll('font', {'class': 'spy14'})
+        for td in tds:
+            script = td.find('script')
+            if script:
+                yield "socks4://" + td.contents[0]+':'+td.contents[-1]
 
 
 if __name__ == '__main__':
