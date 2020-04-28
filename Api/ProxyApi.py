@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # !/usr/bin/env python
+from Manager.ProxyManager import ProxyManager
+from Config.ConfigGetter import config
 """
 -------------------------------------------------
    File Name：     ProxyApi.py
@@ -21,8 +23,6 @@ from flask import Flask, jsonify, request
 
 sys.path.append('../')
 
-from Config.ConfigGetter import config
-from Manager.ProxyManager import ProxyManager
 
 app = Flask(__name__)
 
@@ -58,6 +58,12 @@ def get():
     return proxy.info_json if proxy else {"code": 0, "src": "no proxy"}
 
 
+@app.route('/get_socks/')
+def get_socks():
+    proxy = ProxyManager().get_socks()
+    return proxy.info_json if proxy else {"code": 0, "src": "no proxy"}
+
+
 @app.route('/refresh/')
 def refresh():
     # TODO refresh会有守护程序定时执行，由api直接调用性能较差，暂不使用
@@ -88,7 +94,6 @@ def getStatus():
 if platform.system() != "Windows":
     import gunicorn.app.base
     from six import iteritems
-
 
     class StandaloneApplication(gunicorn.app.base.BaseApplication):
 
