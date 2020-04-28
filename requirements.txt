@@ -8,3 +8,7 @@ click==7.0
 gunicorn==19.9.0
 pymongo
 redis
+bs4
+html5lib
+requests_html
+pysocks
