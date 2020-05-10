@@ -15,6 +15,7 @@ import requests
 from lxml import etree
 
 from Util.WebRequest import WebRequest
+from Config.ConfigGetter import config
 
 
 def robustCrawl(func):
@@ -86,7 +87,7 @@ def validUsefulProxy(proxy):
         proxy = proxy.decode("utf8")
     proxies = {"http": "http://{proxy}".format(proxy=proxy)}
     try:
-        r = requests.get('http://www.baidu.com', proxies=proxies, timeout=10, verify=False)
+        r = requests.get(config.verify_host, proxies=proxies, timeout=10, verify=False)
         if r.status_code == 200:
             return True
     except Exception as e:

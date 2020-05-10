@@ -10,7 +10,6 @@
                    2019/2/15:
 -------------------------------------------------
 """
-
 import sys
 from os import getenv
 from logging import getLogger
@@ -72,6 +71,8 @@ SERVER_API = {
     "HOST": "0.0.0.0",  # The ip specified which starting the web API
     "PORT": 5010  # port number to which the server listens to
 }
+
+VERIFY_HOST = getenv('proxy_verify_host', 'http://www.baidu.com')
 
 
 class ConfigError(BaseException):
