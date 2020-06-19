@@ -12,6 +12,7 @@
 -------------------------------------------------
 """
 from lxml import etree
+import requests
 
 from Util.WebRequest import WebRequest
 from .validators import validators
@@ -98,7 +99,7 @@ def validUsefulProxy(proxy):
         pass
     return False
 
-    for v_func in validators:
-        if not v_func(proxy):
-            return False
-    return True
+    # for v_func in validators:
+    #     if not v_func(proxy):
+    #         return False
+    # return True
