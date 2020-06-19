@@ -57,6 +57,10 @@ class ConfigGetter(object):
     def host_port(self):
         return SERVER_API.get("PORT", 5010)
 
+    @LazyProperty
+    def verify_host(self):
+        return VERIFY_HOST
+
 
 config = ConfigGetter()
 
