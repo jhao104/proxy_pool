@@ -11,10 +11,10 @@
                    2016/11/25: 添加robustCrawl、verifyProxy、getHtmlTree
 -------------------------------------------------
 """
-import requests
 from lxml import etree
 
 from Util.WebRequest import WebRequest
+from .validators import validators
 from Config.ConfigGetter import config
 
 
@@ -98,3 +98,7 @@ def validUsefulProxy(proxy):
         pass
     return False
 
+    for v_func in validators:
+        if not v_func(proxy):
+            return False
+    return True
