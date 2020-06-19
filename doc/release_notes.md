@@ -1,6 +1,6 @@
 ## Release Notes
 
-* master
+* 2.0.2
 
     1. 新增免费代理源 `西拉代理`  （2020-03-30）
     2. Fix Bug [#401](https://github.com/jhao104/proxy_pool/issues/401) [#356](https://github.com/jhao104/proxy_pool/issues/356)
