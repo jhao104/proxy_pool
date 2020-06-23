@@ -11,6 +11,3 @@
 -------------------------------------------------
 """
 __author__ = 'JHao'
-
-from Schedule.RawProxyCheck import doRawProxyCheck
-from Schedule.UsefulProxyCheck import doUsefulProxyCheck
