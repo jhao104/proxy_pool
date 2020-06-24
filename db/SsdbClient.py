@@ -15,7 +15,7 @@
 """
 __author__ = 'JHao'
 
-from config.setting import PY3
+from Config.setting import PY3
 
 from redis.connection import BlockingConnectionPool
 from redis import Redis

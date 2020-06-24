@@ -12,7 +12,7 @@
 """
 __author__ = 'J_hao'
 
-from util.WebRequest import WebRequest
+from Util.WebRequest import WebRequest
 
 
 # noinspection PyPep8Naming

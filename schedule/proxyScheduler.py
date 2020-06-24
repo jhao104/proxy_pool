@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 -------------------------------------------------
-   File Name：     ProxyScheduler
+   File Name：     proxyScheduler
    Description :
    Author :        JHao
    date：          2019/8/5
 -------------------------------------------------
    Change Activity:
-                   2019/8/5: ProxyScheduler
+                   2019/8/5: proxyScheduler
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -17,9 +17,9 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 
 sys.path.append('../')
 
-from Schedule import doRawProxyCheck, doUsefulProxyCheck
-from Manager import ProxyManager
-from Util import LogHandler
+from schedule import doRawProxyCheck, doUsefulProxyCheck
+from handler import ProxyManager
+from util import LogHandler
 
 
 class DoFetchProxy(ProxyManager):

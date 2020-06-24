@@ -16,49 +16,62 @@ __author__ = 'JHao'
 import os
 import sys
 
-from Config.ConfigGetter import config
-from Util import Singleton
+from util.six import urlparse
+from util.singleton import Singleton
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 
 class DbClient(object):
     """
-    DbClient DB工厂类 提供get/put/update/pop/delete/exists/getAll/clean/getNumber/changeTable方法
+    DbClient DB工厂类 提供get/put/update/pop/delete/exists/getAll/clean/getCount/changeTable方法
 
     目前存放代理的有两种, 使用changeTable方法切换操作对象：
-        raw_proxy： 存放原始的代理；
-        useful_proxy： 存放检验后的代理；
+        raw_proxy： 存放Fetch的原始代理；
+        use_proxy： 存放校验后的代理信息；
 
 
     抽象方法定义：
-        get(proxy): 返回指定proxy的信息;
-        put(proxy): 存入一个proxy信息;
-        pop(): 返回并删除一个proxy信息;
+        get(): 返回一个proxy;
+        put(proxy): 存入一个proxy;
+        pop(): 返回并删除一个proxy;
         update(proxy): 更新指定proxy信息;
         delete(proxy): 删除指定proxy;
         exists(proxy): 判断指定proxy是否存在;
-        getAll(): 列表形式返回所有代理;
+        getAll(): 返回所有代理;
         clean(): 清除所有proxy信息;
-        getNumber(): 返回proxy数据量;
-        changeTable(name): 切换操作对象 raw_proxy/useful_proxy
+        getCount(): 返回proxy统计信息;
+        changeTable(name): 切换操作对象 raw_proxy/use_proxy
 
 
         所有方法需要相应类去具体实现：
-            ssdb: SsdbClient.py
-            redis: RedisClient.py
-            mongodb: MongodbClient.py
+            ssdb: ssdbClient.py
+            redis: redisClient.py
+            mongodb: mongodbClient.py
 
     """
 
     __metaclass__ = Singleton
 
-    def __init__(self):
+    def __init__(self, db_conn):
         """
         init
         :return:
         """
+        self.db_conn = db_conn
+        self.parseDbConn(db_conn)
         self.__initDbClient()
+
+    @classmethod
+    def parseDbConn(cls, db_conn):
+        db_conf = urlparse(db_conn)
+        cls.db_type = db_conf.scheme.upper().strip()
+        cls.db_host = db_conf.hostname
+        cls.db_port = db_conf.port
+        cls.db_user = db_conf.username
+        cls.db_pwd = db_conf.password
+        cls.db_name = db_conf.path[1:]
+        return cls
 
     def __initDbClient(self):
         """
@@ -66,22 +79,23 @@ class DbClient(object):
         :return:
         """
         __type = None
-        if "SSDB" == config.db_type:
-            __type = "SsdbClient"
-        elif "REDIS" == config.db_type:
-            __type = "RedisClient"
-        elif "MONGODB" == config.db_type:
-            __type = "MongodbClient"
+        if "SSDB" == self.db_type:
+            __type = "ssdbClient"
+        elif "REDIS" == self.db_type:
+            __type = "redisClient"
+        elif "MONGODB" == self.db_type:
+            __type = "mongodbClient"
         else:
             pass
-        assert __type, 'type error, Not support DB type: {}'.format(config.db_type)
-        self.client = getattr(__import__(__type), __type)(name=config.db_name,
-                                                          host=config.db_host,
-                                                          port=config.db_port,
-                                                          password=config.db_password)
+        assert __type, 'type error, Not support DB type: {}'.format(self.db_type)
+        self.client = getattr(__import__(__type), "%sClient" % self.db_type.title())(host=self.db_host,
+                                                                                     port=self.db_port,
+                                                                                     username=self.db_user,
+                                                                                     password=self.db_pwd,
+                                                                                     db=self.db_name)
 
-    def get(self, key, **kwargs):
-        return self.client.get(key, **kwargs)
+    def get(self, **kwargs):
+        return self.client.get(**kwargs)
 
     def put(self, key, **kwargs):
         return self.client.put(key, **kwargs)
@@ -107,5 +121,5 @@ class DbClient(object):
     def changeTable(self, name):
         self.client.changeTable(name)
 
-    def getNumber(self):
-        return self.client.getNumber()
+    def getCount(self):
+        return self.client.getCount()

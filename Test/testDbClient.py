@@ -12,7 +12,7 @@
 """
 __author__ = 'JHao'
 
-from proxyDB.DbClient import DbClient
+from db.DbClient import DbClient
 
 if __name__ == '__main__':
     #  ############### ssdb ###############

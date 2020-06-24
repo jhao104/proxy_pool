@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 -------------------------------------------------
-   File Name：     __init__.py.py  
+   File Name：     __init__.py
    Description :  
    Author :       JHao
    date：          2016/11/25

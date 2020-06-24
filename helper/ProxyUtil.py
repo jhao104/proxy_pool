@@ -12,7 +12,7 @@
 """
 __author__ = 'JHao'
 
-from Util import validUsefulProxy
+from util import validUsefulProxy
 
 from datetime import datetime
 

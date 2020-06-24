@@ -13,7 +13,7 @@
 __author__ = 'JHao'
 
 import json
-from helper import Proxy
+from ProxyHelper import Proxy
 
 
 def testProxyClass():

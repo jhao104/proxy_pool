@@ -12,22 +12,28 @@
 """
 __author__ = 'J_hao'
 
-from Config.ConfigGetter import config
+from handler.configHandler import ConfigHandler
+from time import sleep
 
 
-# noinspection PyPep8Naming
 def testConfig():
     """
     :return:
     """
-    print(config.db_type)
-    print(config.db_name)
-    print(config.db_host)
-    print(config.db_port)
-    print(config.db_password)
-    assert isinstance(config.proxy_getter_functions, list)
-    print(config.proxy_getter_functions)
+    conf = ConfigHandler()
+    print(conf.dbConn)
+    print(conf.serverPort)
+    print(conf.serverHost)
+    print(conf.useProxy)
+    print(conf.rawProxy)
+    assert isinstance(conf.fetchers, list)
+    print(conf.fetchers)
+
+    for _ in range(10):
+        print(conf.fetchers)
+        sleep(5)
 
 
 if __name__ == '__main__':
     testConfig()
+

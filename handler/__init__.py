@@ -2,15 +2,14 @@
 """
 -------------------------------------------------
    File Name：     __init__.py
-   Description :
-   Author :        JHao
-   date：          2019/7/11
+   Description :  
+   Author :       JHao
+   date：          2016/12/3
 -------------------------------------------------
    Change Activity:
-                   2019/7/11:
+                   2016/12/3: 
 -------------------------------------------------
 """
 __author__ = 'JHao'
 
-from ProxyHelper.Proxy import Proxy
-from ProxyHelper.ProxyUtil import checkProxyUseful
+# from handler.ProxyManager import ProxyManager

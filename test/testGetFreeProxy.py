@@ -13,8 +13,8 @@
 __author__ = 'J_hao'
 
 
-from fetcher.getFreeProxy import GetFreeProxy
-from config.ConfigGetter import config
+from ProxyGetter.getFreeProxy import GetFreeProxy
+from Config.ConfigGetter import config
 
 
 def testGetFreeProxy():

@@ -14,9 +14,9 @@
 from lxml import etree
 import requests
 
-from util.WebRequest import WebRequest
+from Util.WebRequest import WebRequest
 from .validators import validators
-from config.ConfigGetter import config
+from Config.ConfigGetter import config
 
 
 def robustCrawl(func):

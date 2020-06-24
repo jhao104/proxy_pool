@@ -14,6 +14,7 @@
 __author__ = 'JHao'
 
 from redis.connection import BlockingConnectionPool
+from random import choice
 from redis import Redis
 
 
@@ -40,14 +41,17 @@ class RedisClient(object):
         kwargs.pop("username")
         self.__conn = Redis(connection_pool=BlockingConnectionPool(decode_responses=True, **kwargs))
 
-    def get(self, proxy_str):
+    def get(self):
         """
-        从hash中获取对应的proxy, 使用前需要调用changeTable()
-        :param proxy_str: proxy str
+        返回一个代理
         :return:
         """
-        data = self.__conn.hget(name=self.name, key=proxy_str)
-        return data
+        proxies = self.__conn.hkeys(self.name)
+        proxy = choice(proxies) if proxies else None
+        if proxy:
+            return self.__conn.hget(self.name, proxy)
+        else:
+            return False
 
     def put(self, proxy_obj):
         """
@@ -58,13 +62,26 @@ class RedisClient(object):
         data = self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.info_json)
         return data
 
+    def pop(self):
+        """
+        弹出一个代理
+        :return: dict {proxy: value}
+        """
+        proxies = self.__conn.hkeys(self.name)
+        for proxy in proxies:
+            proxy_info = self.__conn.hget(self.name, proxy)
+            self.__conn.hdel(self.name, proxy)
+            return proxy_info
+        else:
+            return False
+
     def delete(self, proxy_str):
         """
         移除指定代理, 使用changeTable指定hash name
         :param proxy_str: proxy str
         :return:
         """
-        self.__conn.hdel(self.name, proxy_str)
+        return self.__conn.hdel(self.name, proxy_str)
 
     def exists(self, proxy_str):
         """
@@ -80,19 +97,7 @@ class RedisClient(object):
         :param proxy_obj:
         :return:
         """
-        self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.info_json)
-
-    def pop(self):
-        """
-        弹出一个代理
-        :return: dict {proxy: value}
-        """
-        cursor, data_dict = self.__conn.hscan(self.name, count=1)
-        for key, value in data_dict.items():
-            self.__conn.hdel(self.name, key)
-            return value
-        else:
-            return False
+        return self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.info_json)
 
     def getAll(self):
         """

@@ -4,12 +4,13 @@
    File Name：     __init__.py.py  
    Description :  
    Author :       JHao
-   date：          2016/12/3
+   date：          2016/11/25
 -------------------------------------------------
    Change Activity:
-                   2016/12/3: 
+                   2016/11/25: 
 -------------------------------------------------
 """
-__author__ = 'JHao'
 
-from Manager.ProxyManager import ProxyManager
+from Util.utilFunction import validUsefulProxy
+from Util.LogHandler import LogHandler
+from Util.utilClass import Singleton
