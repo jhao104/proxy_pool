@@ -12,7 +12,7 @@
 """
 __author__ = 'J_hao'
 
-from Util.LogHandler import LogHandler
+from util.LogHandler import LogHandler
 
 
 # noinspection PyPep8Naming

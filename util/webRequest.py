@@ -13,14 +13,22 @@
 __author__ = 'J_hao'
 
 from requests.models import Response
+from lxml import etree
 import requests
 import random
 import time
 
+from handler.logHandler import LogHandler
+
+requests.packages.urllib3.disable_warnings()
+
 
 class WebRequest(object):
+    name = "web_request"
+
     def __init__(self, *args, **kwargs):
-        pass
+        self.log = LogHandler(self.name, file=False)
+        self.response = Response()
 
     @property
     def user_agent(self):
@@ -51,18 +59,14 @@ class WebRequest(object):
                 'Connection': 'keep-alive',
                 'Accept-Language': 'zh-CN,zh;q=0.8'}
 
-    def get(self, url, header=None, retry_time=5, timeout=30,
-            retry_flag=list(), retry_interval=5, *args, **kwargs):
+    def get(self, url, header=None, retry_time=5, retry_interval=5, timeout=30, *args, **kwargs):
         """
         get method
         :param url: target url
         :param header: headers
-        :param retry_time: retry time when network error
+        :param retry_time: retry time
+        :param retry_interval: retry interval
         :param timeout: network timeout
-        :param retry_flag: if retry_flag in content. do retry
-        :param retry_interval: retry interval(second)
-        :param args:
-        :param kwargs:
         :return:
         """
         headers = self.header
@@ -70,16 +74,23 @@ class WebRequest(object):
             headers.update(header)
         while True:
             try:
-                html = requests.get(url, headers=headers, timeout=timeout, **kwargs)
-                if any(f in html.content for f in retry_flag):
-                    raise Exception
-                return html
+                self.response = requests.get(url, headers=headers, timeout=timeout, *args, **kwargs)
+                return self
             except Exception as e:
-                print(e)
+                self.log.error("requests: %s error: %s" % (url, str(e)))
                 retry_time -= 1
                 if retry_time <= 0:
-                    # 多次请求失败
                     resp = Response()
                     resp.status_code = 200
-                    return resp
+                    return self
+                self.log.info("retry %s second after" % retry_interval)
                 time.sleep(retry_interval)
+
+    @property
+    def tree(self):
+        return etree.HTML(self.response.content)
+
+    @property
+    def text(self):
+        return self.response.text
+
