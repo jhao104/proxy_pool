@@ -237,3 +237,6 @@ PROXY_GETTER = [
 
    [release notes](https://github.com/jhao104/proxy_pool/blob/master/doc/release_notes.md)
 
+### [AD](https://tracking.gitads.io/?campaign=gitads&repo=proxy_pool&redirect=gitads.io)
+
+[![AD](https://raw.githubusercontent.com/jhao104/proxy_pool/master/doc/720X300-2.png)](https://tracking.gitads.io/?campaign=gitads&repo=testrepo&redirect=gitads.io)
