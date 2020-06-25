@@ -87,6 +87,24 @@ class ProxyManager(object):
 
         return None
 
+    def get_http(self):
+        """
+        return a http proxy
+        :return:
+        """
+        self.db.changeTable(self.useful_proxy_queue)
+        item_list = self.db.getAll()
+
+        if item_list:
+            for _ in item_list:
+                random_choice = random.choice(item_list)
+                proxy_type = json.loads(random_choice)['proxy'].split("://")[0]
+
+                if proxy_type == 'http':
+                    return Proxy.newProxyFromJson(random_choice)
+
+        return None
+
     def get_socks(self):
         """
         return a useful socks proxy

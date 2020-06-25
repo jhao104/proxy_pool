@@ -64,6 +64,12 @@ def get_socks():
     return proxy.info_json if proxy else {"code": 0, "src": "no proxy"}
 
 
+@app.route('/get_http/')
+def get_http():
+    proxy = ProxyManager().get_http()
+    return proxy.info_json if proxy else {"code": 0, "src": "no proxy"}
+
+
 @app.route('/refresh/')
 def refresh():
     # TODO refresh会有守护程序定时执行，由api直接调用性能较差，暂不使用
