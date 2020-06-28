@@ -14,10 +14,9 @@ __author__ = 'JHao'
 
 import click
 
-from util import six
 from config.setting import BANNER
 
-# from Schedule.ProxyScheduler import runScheduler
+from helper.proxyScheduler import runScheduler
 from api.proxyApi import runFlask
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -33,7 +32,7 @@ def cli():
 def schedule():
     """ 启动调度程序 """
     click.echo(BANNER)
-    # runScheduler()
+    runScheduler()
 
 
 @cli.command(name="server")

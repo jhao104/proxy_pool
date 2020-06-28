@@ -32,7 +32,7 @@ class ProxyHandler(object):
         self.db.changeTable(self.conf.useProxy)
         proxy = self.db.get()
         if proxy:
-            return Proxy.newProxyFromJson(proxy)
+            return Proxy.createFromJson(proxy)
         return None
 
     def pop(self):
@@ -43,8 +43,16 @@ class ProxyHandler(object):
         self.db.changeTable(self.conf.useProxy)
         proxy = self.db.pop()
         if proxy:
-            return Proxy.newProxyFromJson(proxy)
+            return Proxy.createFromJson(proxy)
         return None
+
+    def put(self, proxy_obj):
+        """
+        put proxy into use proxy
+        :return:
+        """
+        self.db.changeTable(self.conf.useProxy)
+        self.db.put(proxy_obj)
 
     def delete(self, proxy_str):
         """
@@ -62,7 +70,7 @@ class ProxyHandler(object):
         """
         self.db.changeTable(self.conf.useProxy)
         proxies_dict = self.db.getAll()
-        return [Proxy.newProxyFromJson(value) for _, value in proxies_dict.items()]
+        return [Proxy.createFromJson(value) for _, value in proxies_dict.items()]
 
     def exists(self, proxy_str):
         """

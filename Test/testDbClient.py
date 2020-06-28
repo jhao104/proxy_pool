@@ -12,7 +12,7 @@
 """
 __author__ = 'JHao'
 
-from db.DbClient import DbClient
+from db.dbClient import DbClient
 
 if __name__ == '__main__':
     #  ############### ssdb ###############

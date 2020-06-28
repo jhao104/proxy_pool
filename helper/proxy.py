@@ -29,7 +29,7 @@ class Proxy(object):
         self._last_time = last_time
 
     @classmethod
-    def newProxyFromJson(cls, proxy_json):
+    def createFromJson(cls, proxy_json):
         """
         根据proxy属性json创建Proxy实例
         :param proxy_json:
@@ -87,7 +87,7 @@ class Proxy(object):
         return self._last_time
 
     @property
-    def info_dict(self):
+    def to_dict(self):
         """ 属性字典 """
         return {"proxy": self._proxy,
                 "fail_count": self._fail_count,
@@ -99,9 +99,9 @@ class Proxy(object):
                 "last_time": self.last_time}
 
     @property
-    def info_json(self):
+    def to_json(self):
         """ 属性json格式 """
-        return json.dumps(self.info_dict, ensure_ascii=False)
+        return json.dumps(self.to_dict, ensure_ascii=False)
 
     # --- proxy method ---
     @fail_count.setter

@@ -59,7 +59,7 @@ class RedisClient(object):
         :param proxy_obj: Proxy obj
         :return:
         """
-        data = self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.info_json)
+        data = self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.to_json)
         return data
 
     def pop(self):
@@ -97,7 +97,7 @@ class RedisClient(object):
         :param proxy_obj:
         :return:
         """
-        return self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.info_json)
+        return self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.to_json)
 
     def getAll(self):
         """

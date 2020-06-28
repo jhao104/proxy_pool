@@ -32,38 +32,27 @@ class Fetcher(object):
         :return:
         """
         proxy_set = set()
-        self.log.info("ProxyFetcher : start")
+        self.log.info("ProxyFetch : start")
         for fetch_name in self.conf.fetchers:
-            self.log.info("ProxyFetcher - {func}: start".format(func=fetch_name))
+            self.log.info("ProxyFetch - {func}: start".format(func=fetch_name))
             fetcher = getattr(ProxyFetcher, fetch_name, None)
             if not fetcher:
-                self.log.error("ProxyFetcher - {func}: class method not exists!")
+                self.log.error("ProxyFetch - {func}: class method not exists!")
                 continue
             if not callable(fetcher):
-                self.log.error("ProxyFetcher - {func}: must be class method")
+                self.log.error("ProxyFetch - {func}: must be class method")
                 continue
 
             try:
                 for proxy in fetcher():
-                    proxy = proxy.strip()
-                    if not proxy or not verifyProxyFormat(proxy):
-                        self.log.error('ProxyFetch - {func}: '
-                                       '{proxy} illegal'.format(func=proxyGetter, proxy=proxy.ljust(20)))
-                        continue
-                    elif proxy in proxy_set:
-                        self.log.info('ProxyFetch - {func}: '
-                                      '{proxy} exist'.format(func=proxyGetter, proxy=proxy.ljust(20)))
+                    if proxy in proxy_set:
+                        self.log.info('ProxyFetch - %s: %s exist' % (fetch_name, proxy.ljust(23)))
                         continue
                     else:
-                        self.log.info('ProxyFetch - {func}: '
-                                      '{proxy} success'.format(func=proxyGetter, proxy=proxy.ljust(20)))
-                        self.db.put(Proxy(proxy, source=proxyGetter))
+                        self.log.info('ProxyFetch - %s: %s success' % (fetch_name, proxy.ljust(23)))
+                    if proxy.strip():
                         proxy_set.add(proxy)
             except Exception as e:
-                self.log.error("ProxyFetch - {func}: error".format(func=proxyGetter))
+                self.log.error("ProxyFetch - {func}: error".format(func=fetch_name))
                 self.log.error(str(e))
-
-
-if __name__ == '__main__':
-    a = callable(getattr(ProxyFetcher, 'freeProxy01'))
-    pass
+        return proxy_set

@@ -7,14 +7,14 @@
    date：          2019/8/6
 -------------------------------------------------
    Change Activity:
-                   2019/8/6:
+                   2019/08/06:
 -------------------------------------------------
 """
 __author__ = 'JHao'
 
+from util.six import Empty
 from threading import Thread
 from datetime import datetime
-from util.six import Queue, Empty
 
 from helper.proxy import Proxy
 from util.validators import validators
@@ -51,7 +51,7 @@ def proxyCheck(proxy_obj):
         return proxy_obj
 
 
-class ProxyCheck(Thread):
+class Checker(Thread):
 
     def __init__(self, check_type, queue, thread_name):
         Thread.__init__(self, name=thread_name)
@@ -69,17 +69,17 @@ class ProxyCheck(Thread):
                 self.log.info("ProxyCheck - {}  : exit".format(self.name))
                 break
 
-            proxy = Proxy.newProxyFromJson(proxy_json)
+            proxy = Proxy.createFromJson(proxy_json)
             proxy = proxyCheck(proxy)
             if self.type == "raw":
                 if proxy.last_status:
-                    if self.proxy_handler.exists(proxy_obj.proxy):
-                        self.log.info('RawProxyCheck - {}  : {} validation exists'.format(self.name,
-                                                                                          proxy_obj.proxy.ljust(20)))
+                    if self.proxy_handler.exists(proxy.proxy):
+                        self.log.info('ProxyCheck - {}  : {} exists'.format(self.name, proxy.proxy.ljust(23)))
+                    else:
+                        self.log.info('ProxyCheck - {}  : {} success'.format(self.name, proxy.proxy.ljust(23)))
+                        self.proxy_handler.put(proxy)
                 else:
-                    self.db.put(proxy_obj)
-                    self.log.info(
-                        'RawProxyCheck - {}  : {} validation pass'.format(self.name, proxy_obj.proxy.ljust(20)))
+                    self.log.info('ProxyCheck - {}  : {} fail'.format(self.name, proxy.proxy.ljust(23)))
             else:
-                self.log.info('RawProxyCheck - {}  : {} validation fail'.format(self.name, proxy_obj.proxy.ljust(20)))
+                pass
             self.queue.task_done()
