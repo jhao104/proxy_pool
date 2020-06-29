@@ -55,4 +55,9 @@ class Fetcher(object):
             except Exception as e:
                 self.log.error("ProxyFetch - {func}: error".format(func=fetch_name))
                 self.log.error(str(e))
+        self.log.info("ProxyFetch - all complete!")
         return proxy_set
+
+
+def runFetcher():
+    return Fetcher().fetch()

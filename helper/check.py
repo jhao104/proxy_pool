@@ -52,6 +52,9 @@ def proxyCheck(proxy_obj):
 
 
 class Checker(Thread):
+    """
+    多线程检测代理是否可用
+    """
 
     def __init__(self, check_type, queue, thread_name):
         Thread.__init__(self, name=thread_name)
@@ -66,7 +69,7 @@ class Checker(Thread):
             try:
                 proxy_json = self.queue.get(block=False)
             except Empty:
-                self.log.info("ProxyCheck - {}  : exit".format(self.name))
+                self.log.info("ProxyCheck - {}  : complete".format(self.name))
                 break
 
             proxy = Proxy.createFromJson(proxy_json)
@@ -83,3 +86,21 @@ class Checker(Thread):
             else:
                 pass
             self.queue.task_done()
+
+
+def runChecker(tp, queue):
+    """
+    run Checker
+    :param tp: raw/use
+    :param queue: Proxy Queue
+    :return:
+    """
+    thread_list = list()
+    for index in range(20):
+        thread_list.append(Checker(tp, queue, "thread_%s" % str(index).zfill(2)))
+
+    for thread in thread_list:
+        thread.start()
+
+    for thread in thread_list:
+        thread.join()

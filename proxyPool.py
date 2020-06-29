@@ -16,7 +16,7 @@ import click
 
 from config.setting import BANNER
 
-from helper.proxyScheduler import runScheduler
+from helper.scheduler import runScheduler
 from api.proxyApi import runFlask
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
