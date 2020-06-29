@@ -15,7 +15,6 @@ __author__ = 'JHao'
 import click
 
 from config.setting import BANNER
-
 from helper.scheduler import runScheduler
 from api.proxyApi import runFlask
 
@@ -38,10 +37,8 @@ def schedule():
 @cli.command(name="server")
 def schedule():
     """ 启动api服务 """
-    # click.echo(BANNER)
-    # runFlask()
-    from test import testProxyFetcher
-    testProxyFetcher.test()
+    click.echo(BANNER)
+    runFlask()
 
 
 if __name__ == '__main__':
