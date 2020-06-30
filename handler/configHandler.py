@@ -57,3 +57,7 @@ class ConfigHandler(object):
     @LazyProperty
     def verifyTimeout(self):
         return os.getenv("VERIFY_TIMEOUT", setting.VERIFY_TIMEOUT)
+
+    @LazyProperty
+    def maxFailCount(self):
+        return os.getenv("MAX_FAIL_COUNT", setting.MAX_FAIL_COUNT)

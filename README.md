@@ -1,5 +1,5 @@
 
-爬虫IP代理池
+ProxyPool 代理IP池
 =======
 [![Build Status](https://travis-ci.org/jhao104/proxy_pool.svg?branch=master)](https://travis-ci.org/jhao104/proxy_pool)
 [![](https://img.shields.io/badge/Powered%20by-@j_hao104-green.svg)](http://www.spiderpy.cn/blog/)
@@ -17,78 +17,75 @@
                            __ / /
                           /___ /
 
-##### [介绍文档](https://github.com/jhao104/proxy_pool/blob/master/doc/introduce.md)
+### ProxyPool
+
+* 文档: [document](https://github.com/jhao104/proxy_pool/blob/master/doc/introduce.md)
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
 * 测试地址: http://118.24.52.95 (单机勿压, 感谢。 恶意访问关[小黑屋](https://github.com/jhao104/proxy_pool/blob/bff423dffe6e2881ee45d5b66d8a6ad682c8e4ab/doc/block_ips.md)哦)
 
-### 下载安装
+* 有闲心的朋友帮忙点点末尾的[广告](https://tracking.gitads.io/?repo=proxy_pool)哦 :stuck_out_tongue_winking_eye:
 
-* 下载源码:
+### 安装
 
-```shell
+#### 下载代码:
+
+* git clone
+
+```bash
 git clone git@github.com:jhao104/proxy_pool.git
+```
 
-或者直接到https://github.com/jhao104/proxy_pool/releases 下载zip文件
+* releases
+
+```bash
+https://github.com/jhao104/proxy_pool/releases 下载zip文件
 ```
 
 * 安装依赖:
 
-```shell
+```bash
 pip install -r requirements.txt
 ```
 
-* 配置Config/setting.py:
-
-```shell
-# Config/setting.py 为项目配置文件
-
-# 配置DB     
-DATABASES = {
-    "default": {
-        "TYPE": "SSDB",        # 目前支持SSDB或REDIS数据库
-        "HOST": "127.0.0.1",   # db host
-        "PORT": 8888,          # db port，例如SSDB通常使用8888，REDIS通常默认使用6379
-        "NAME": "proxy",       # 默认配置
-        "PASSWORD": ""         # db password
-
-    }
-}
+* 修改配置:
 
 
-# 配置 ProxyGetter
+```python
+# setting.py 为项目配置文件
 
-PROXY_GETTER = [
-    "freeProxy01",      # 这里是启用的代理抓取函数名，可在ProxyGetter/getFreeProxy.py 扩展
+# 配置API服务
+
+HOST = "0.0.0.0"               # IP
+PORT = 5000                    # 监听端口
+
+
+# 配置数据库
+
+DB_CONN = 'ssdb://@127.0.0.1:8888'
+
+
+# 配置 ProxyFetcher
+
+PROXY_FETCHER = [
+    "freeProxy01",      # 这里是启用的代理抓取方法名，所有fetch方法位于fetcher/proxyFetcher.py
     "freeProxy02",
-    ....
+    # ....
 ]
-
-
-# 配置 API服务
-
-SERVER_API = {
-    "HOST": "0.0.0.0",  # 监听ip, 0.0.0.0 监听所有IP
-    "PORT": 5010        # 监听端口
-}
-       
-# 上面配置启动后，代理池访问地址为 http://127.0.0.1:5010
-
 ```
 
 * 启动:
 
-```shell
-# 如果你的依赖已经安装完成并且具备运行条件,可以在cli目录下通过ProxyPool.py启。动
-# 程序分为: schedule 调度程序 和 webserver Api服务
+```bash
+# 如果已经具备运行条件, 可用通过proxyPool.py启动。
+# 程序分为: schedule 调度程序 和 server Api服务
 
-# 首先启动调度程序
->>>python proxyPool.py schedule
+# 启动调度程序
+python proxyPool.py schedule
 
-# 然后启动webApi服务
->>>python proxyPool.py webserver
-
+# 启动webApi服务
+python proxyPool.py server
 
 ```
 

@@ -22,6 +22,7 @@ from flask import Flask, jsonify, request
 from util.six import iteritems
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
+from helper.proxy import Proxy
 
 app = Flask(__name__)
 conf = ConfigHandler()
@@ -57,13 +58,13 @@ def index():
 @app.route('/get/')
 def get():
     proxy = proxy_handler.get()
-    return proxy.info_dict if proxy else {"code": 0, "src": "no proxy"}
+    return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
 
 
 @app.route('/pop/')
 def pop():
     proxy = proxy_handler.pop()
-    return proxy.info_dict if proxy else {"code": 0, "src": "no proxy"}
+    return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
 
 
 @app.route('/refresh/')
@@ -75,13 +76,13 @@ def refresh():
 @app.route('/get_all/')
 def getAll():
     proxies = proxy_handler.getAll()
-    return jsonify([_.info_dict for _ in proxies])
+    return jsonify([_.to_dict for _ in proxies])
 
 
 @app.route('/delete/', methods=['GET'])
 def delete():
     proxy = request.args.get('proxy')
-    status = proxy_handler.delete(proxy)
+    status = proxy_handler.delete(Proxy(proxy))
     return {"code": 0, "src": status}
 
 

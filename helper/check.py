@@ -20,6 +20,7 @@ from helper.proxy import Proxy
 from util.validators import validators
 from handler.logHandler import LogHandler
 from handler.proxyHandler import ProxyHandler
+from handler.configHandler import ConfigHandler
 
 
 def proxyCheck(proxy_obj):
@@ -62,6 +63,7 @@ class Checker(Thread):
         self.log = LogHandler("checker")
         self.proxy_handler = ProxyHandler()
         self.queue = queue
+        self.conf = ConfigHandler()
 
     def run(self):
         self.log.info("ProxyCheck - {}  : start".format(self.name))
@@ -76,7 +78,7 @@ class Checker(Thread):
             proxy = proxyCheck(proxy)
             if self.type == "raw":
                 if proxy.last_status:
-                    if self.proxy_handler.exists(proxy.proxy):
+                    if self.proxy_handler.exists(proxy):
                         self.log.info('ProxyCheck - {}  : {} exists'.format(self.name, proxy.proxy.ljust(23)))
                     else:
                         self.log.info('ProxyCheck - {}  : {} success'.format(self.name, proxy.proxy.ljust(23)))
@@ -84,7 +86,20 @@ class Checker(Thread):
                 else:
                     self.log.info('ProxyCheck - {}  : {} fail'.format(self.name, proxy.proxy.ljust(23)))
             else:
-                pass
+                if proxy.last_status:
+                    self.log.info('ProxyCheck - {}  : {} pass'.format(self.name, proxy.proxy.ljust(23)))
+                    self.proxy_handler.put(proxy)
+                else:
+                    if proxy.fail_count > self.conf.maxFailCount:
+                        self.log.info('ProxyCheck - {}  : {} fail, count {} delete'.format(self.name,
+                                                                                           proxy.proxy.ljust(23),
+                                                                                           self.conf.maxFailCount))
+                        self.proxy_handler.delete(proxy)
+                    else:
+                        self.log.info('ProxyCheck - {}  : {} fail, count {} keep'.format(self.name,
+                                                                                         proxy.proxy.ljust(23),
+                                                                                         self.conf.maxFailCount))
+                    self.proxy_handler.put(proxy)
             self.queue.task_done()
 
 

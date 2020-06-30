@@ -29,6 +29,7 @@ SHOW_CONFIG = True            # print key config
 
 # ############### server config ###############
 HOST = "0.0.0.0"
+
 PORT = 5000
 
 # ############### db config ###################
@@ -63,6 +64,9 @@ PROXY_FETCHER = [
 
 # ############# proxy validator #################
 VERIFY_RUL = "http://www.baidu.com"
+
 VERIFY_TIMEOUT = 10
+
+MAX_FAIL_COUNT = 0
 
 
