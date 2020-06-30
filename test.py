@@ -12,7 +12,7 @@
 """
 __author__ = 'JHao'
 
-from Test import testConfig
+from test import testConfigHandler
 
 if __name__ == '__main__':
-    testConfig.testConfig()
+    testConfigHandler.testConfig()

@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
 """
 -------------------------------------------------
-   File Name：     __init__.py.py  
+   File Name：     __init__.py
    Description :  
    Author :       JHao
-   date：          2016/11/25
+   date：          2016/12/3
 -------------------------------------------------
    Change Activity:
-                   2016/11/25: 
+                   2016/12/3: 
 -------------------------------------------------
 """
+__author__ = 'JHao'
 
-# from util.utilFunction import validUsefulProxy
-# from util.LogHandler import LogHandler
-# from util.utilClass import Singleton
+# from handler.ProxyManager import ProxyManager
