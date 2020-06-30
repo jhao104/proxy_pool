@@ -99,7 +99,7 @@ class Checker(Thread):
                         self.log.info('ProxyCheck - {}  : {} fail, count {} keep'.format(self.name,
                                                                                          proxy.proxy.ljust(23),
                                                                                          self.conf.maxFailCount))
-                    self.proxy_handler.put(proxy)
+                        self.proxy_handler.put(proxy)
             self.queue.task_done()
 
 
