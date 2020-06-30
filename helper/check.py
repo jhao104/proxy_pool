@@ -59,7 +59,7 @@ class Checker(Thread):
     def __init__(self, check_type, queue, thread_name):
         Thread.__init__(self, name=thread_name)
         self.type = check_type
-        self.log = LogHandler(self.name)
+        self.log = LogHandler("checker")
         self.proxy_handler = ProxyHandler()
         self.queue = queue
 

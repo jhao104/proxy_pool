@@ -59,7 +59,7 @@ class WebRequest(object):
                 'Connection': 'keep-alive',
                 'Accept-Language': 'zh-CN,zh;q=0.8'}
 
-    def get(self, url, header=None, retry_time=5, retry_interval=5, timeout=30, *args, **kwargs):
+    def get(self, url, header=None, retry_time=5, retry_interval=5, timeout=10, *args, **kwargs):
         """
         get method
         :param url: target url
