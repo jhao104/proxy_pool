@@ -23,8 +23,7 @@ class RedisClient(object):
     Redis client
 
     Redis中代理存放的结构为hash：
-        原始代理存放在name为raw_proxy的hash中, key为ip:port, value为代理属性的字典;
-        验证后的代理存放在name为use_proxy的hash中, key为代理的ip:port, value为代理属性的字典;
+    key为ip:port, value为代理属性的字典;
 
     """
 
@@ -124,7 +123,7 @@ class RedisClient(object):
     def changeTable(self, name):
         """
         切换操作对象
-        :param name: raw_proxy/use_proxy
+        :param name:
         :return:
         """
         self.name = name

@@ -14,12 +14,12 @@ __author__ = 'JHao'
 
 
 def main():
-    from db.DbClient import DbClient
+    from db.dbClient import DbClient
     from helper.proxy import Proxy
 
     db = DbClient("redis://:_@Fintell@10.10.61.65:6379")
-    db.changeTable("raw_proxy")
-    proxy = Proxy.newProxyFromJson(
+    db.changeTable("use_proxy")
+    proxy = Proxy.createFromJson(
         '{"proxy": "27.38.96.101:9797", "fail_count": 0, "region": "", "type": "",'
         ' "source": "freeProxy03", "check_count": 0, "last_status": "", "last_time": ""}')
 

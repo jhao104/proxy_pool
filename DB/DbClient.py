@@ -8,7 +8,8 @@
    date：          2016/12/2
 -------------------------------------------------
    Change Activity:
-                   2016/12/2:
+                   2016/12/02:   DB工厂类
+                   2020/07/03:   取消raw_proxy储存
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -26,10 +27,6 @@ class DbClient(object):
     """
     DbClient DB工厂类 提供get/put/update/pop/delete/exists/getAll/clean/getCount/changeTable方法
 
-    目前存放代理的有两种, 使用changeTable方法切换操作对象：
-        raw_proxy： 存放Fetch的原始代理；
-        use_proxy： 存放校验后的代理信息；
-
 
     抽象方法定义：
         get(): 返回一个proxy;
@@ -41,7 +38,7 @@ class DbClient(object):
         getAll(): 返回所有代理;
         clean(): 清除所有proxy信息;
         getCount(): 返回proxy统计信息;
-        changeTable(name): 切换操作对象 raw_proxy/use_proxy
+        changeTable(name): 切换操作对象
 
 
         所有方法需要相应类去具体实现：
