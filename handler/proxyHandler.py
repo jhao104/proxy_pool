@@ -23,13 +23,13 @@ class ProxyHandler(object):
     def __init__(self):
         self.conf = ConfigHandler()
         self.db = DbClient(self.conf.dbConn)
+        self.db.changeTable(self.conf.tableName)
 
     def get(self):
         """
         return a useful proxy
         :return:
         """
-        self.db.changeTable(self.conf.useProxy)
         proxy = self.db.get()
         if proxy:
             return Proxy.createFromJson(proxy)
@@ -40,7 +40,6 @@ class ProxyHandler(object):
         return and delete a useful proxy
         :return:
         """
-        self.db.changeTable(self.conf.useProxy)
         proxy = self.db.pop()
         if proxy:
             return Proxy.createFromJson(proxy)
@@ -51,7 +50,6 @@ class ProxyHandler(object):
         put proxy into use proxy
         :return:
         """
-        self.db.changeTable(self.conf.useProxy)
         self.db.put(proxy)
 
     def delete(self, proxy):
@@ -60,7 +58,6 @@ class ProxyHandler(object):
         :param proxy:
         :return:
         """
-        self.db.changeTable(self.conf.useProxy)
         return self.db.delete(proxy.proxy)
 
     def getAll(self):
@@ -68,7 +65,6 @@ class ProxyHandler(object):
         get all proxy from pool as Proxy list
         :return:
         """
-        self.db.changeTable(self.conf.useProxy)
         proxies_dict = self.db.getAll()
         return [Proxy.createFromJson(value) for _, value in proxies_dict.items()]
 
@@ -78,7 +74,6 @@ class ProxyHandler(object):
         :param proxy:
         :return:
         """
-        self.db.changeTable(self.conf.useProxy)
         return self.db.exists(proxy.proxy)
 
     def getCount(self):
@@ -86,8 +81,5 @@ class ProxyHandler(object):
         return raw_proxy and use_proxy count
         :return:
         """
-        self.db.changeTable(self.conf.useProxy)
-        total_raw_proxy = self.db.getCount()
-        self.db.changeTable(self.conf.rawProxy)
         total_use_proxy = self.db.getCount()
-        return {'raw_proxy': total_raw_proxy, 'use_proxy': total_use_proxy}
+        return {'count': total_use_proxy}

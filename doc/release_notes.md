@@ -4,9 +4,10 @@
 
     1. 新增免费代理源 `西拉代理`  （2020-03-30）
     2. Fix Bug [#401](https://github.com/jhao104/proxy_pool/issues/401) [#356](https://github.com/jhao104/proxy_pool/issues/356)
-    3. 优化Docker镜像体积 (2020-06-19)
-    4. 优化配置
-    5. 优化代码结构
+    3. 优化Docker镜像体积; (2020-06-19)
+    4. 优化配置方式;
+    5. 优化代码结构;
+    6. 不再储存raw_proxy, 抓取后直接验证入库;
 
 * 2.0.1 (2020)
 

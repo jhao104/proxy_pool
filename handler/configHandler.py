@@ -38,12 +38,8 @@ class ConfigHandler(object):
         return os.getenv("DB_CONN", setting.DB_CONN)
 
     @LazyProperty
-    def rawProxy(self):
-        return setting.RAW_PROXY
-
-    @LazyProperty
-    def useProxy(self):
-        return setting.USE_PROXY
+    def tableName(self):
+        return os.getenv("TABLE_NAME", setting.TABLE_NAME)
 
     @property
     def fetchers(self):

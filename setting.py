@@ -39,11 +39,8 @@ PORT = 5000
 #      Ssdb:  ssdb://:password@ip:port
 DB_CONN = 'redis://:_@Fintell@10.10.61.65:6379'
 
-# raw proxy db
-RAW_PROXY = 'raw_proxy'
-
-# useful proxy db
-USE_PROXY = 'use_proxy'
+# proxy table name
+TABLE_NAME = 'use_proxy'
 
 
 # ###### config the proxy fetch function ######
