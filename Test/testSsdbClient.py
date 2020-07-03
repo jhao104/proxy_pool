@@ -1,23 +1,23 @@
 # -*- coding: utf-8 -*-
 """
 -------------------------------------------------
-   File Name：     testRedisClient
+   File Name：     testSsdbClient
    Description :
    Author :        JHao
-   date：          2020/6/23
+   date：          2020/7/3
 -------------------------------------------------
    Change Activity:
-                   2020/6/23:
+                   2020/7/3:
 -------------------------------------------------
 """
 __author__ = 'JHao'
 
 
-def testRedisClient():
+def testSsdbClient():
     from db.dbClient import DbClient
     from helper.proxy import Proxy
 
-    uri = "redis://:_@Fintell@10.10.61.65:6379"
+    uri = "ssdb://@120.79.78.193:8888"
     db = DbClient(uri)
     db.changeTable("use_proxy")
     proxy = Proxy.createFromJson(
@@ -32,12 +32,12 @@ def testRedisClient():
 
     print("exists: ", db.exists("27.38.96.101:8888"))
 
-    print("pop: ", db.pop())
-
     print("getAll: ", db.getAll())
+
+    print("pop: ", db.pop())
 
     print("getCount", db.getCount())
 
 
 if __name__ == '__main__':
-    testRedisClient()
+    testSsdbClient()

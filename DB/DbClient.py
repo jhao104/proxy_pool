@@ -29,9 +29,9 @@ class DbClient(object):
 
 
     抽象方法定义：
-        get(): 返回一个proxy;
+        get(): 随机返回一个proxy;
         put(proxy): 存入一个proxy;
-        pop(): 返回并删除一个proxy;
+        pop(): 顺序返回并删除一个proxy;
         update(proxy): 更新指定proxy信息;
         delete(proxy): 删除指定proxy;
         exists(proxy): 判断指定proxy是否存在;
