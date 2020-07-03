@@ -2,9 +2,9 @@
 # !/usr/bin/env python
 """
 -------------------------------------------------
-   File Name：     SsdbClient.py
-   Description :  封装SSDB操作
-   Author :       JHao
+   File Name：     ssdbClient.py
+   Description :   封装SSDB操作
+   Author :        JHao
    date：          2016/12/2
 -------------------------------------------------
    Change Activity:
