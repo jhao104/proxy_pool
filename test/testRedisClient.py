@@ -17,7 +17,7 @@ def testRedisClient():
     from db.dbClient import DbClient
     from helper.proxy import Proxy
 
-    uri = "redis://:_@Fintell@10.10.61.65:6379"
+    uri = "redis://:pwd@127.0.0.1:6379"
     db = DbClient(uri)
     db.changeTable("use_proxy")
     proxy = Proxy.createFromJson(

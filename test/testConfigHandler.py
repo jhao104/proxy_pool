@@ -24,8 +24,7 @@ def testConfig():
     print(conf.dbConn)
     print(conf.serverPort)
     print(conf.serverHost)
-    print(conf.useProxy)
-    print(conf.rawProxy)
+    print(conf.tableName)
     assert isinstance(conf.fetchers, list)
     print(conf.fetchers)
 

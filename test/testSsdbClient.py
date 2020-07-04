@@ -17,7 +17,7 @@ def testSsdbClient():
     from db.dbClient import DbClient
     from helper.proxy import Proxy
 
-    uri = "ssdb://@120.79.78.193:8888"
+    uri = "ssdb://@127.0.0.1:8888"
     db = DbClient(uri)
     db.changeTable("use_proxy")
     proxy = Proxy.createFromJson(
@@ -34,7 +34,9 @@ def testSsdbClient():
 
     print("getAll: ", db.getAll())
 
-    print("pop: ", db.pop())
+    # print("pop: ", db.pop())
+
+    print("clear: ", db.clear())
 
     print("getCount", db.getCount())
 

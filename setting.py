@@ -37,7 +37,7 @@ PORT = 5000
 # example:
 #      Redis: redis://:password@ip:port/db
 #      Ssdb:  ssdb://:password@ip:port
-DB_CONN = 'redis://:_@Fintell@10.10.61.65:6379'
+DB_CONN = 'redis://:pwd@127.0.0.1:6379/0'
 
 # proxy table name
 TABLE_NAME = 'use_proxy'
@@ -47,13 +47,13 @@ TABLE_NAME = 'use_proxy'
 PROXY_FETCHER = [
     "freeProxy01",
     # "freeProxy02",
-    "freeProxy03",
+    # "freeProxy03",
     "freeProxy04",
     "freeProxy05",
     # "freeProxy06",
     "freeProxy07",
     # "freeProxy08",
-    "freeProxy09",
+    # "freeProxy09",
     "freeProxy13",
     "freeProxy14",
     "freeProxy15",

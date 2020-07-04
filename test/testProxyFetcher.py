@@ -13,45 +13,20 @@
 __author__ = 'JHao'
 
 from fetcher.proxyFetcher import ProxyFetcher
+from handler.configHandler import ConfigHandler
 
 
-def test():
-    # for _ in ProxyFetcher.freeProxy01():
-    #     print(_)
-    #
-    # for _ in ProxyFetcher.freeProxy02():
-    #     print(_)
-    #
-    # for _ in ProxyFetcher.freeProxy03():
-    #     print(_)
-    #
-    # for _ in ProxyFetcher.freeProxy04():
-    #     print(_)
-    #
-    # for _ in ProxyFetcher.freeProxy05():
-    #     print(_)
-    #
-    # for _ in ProxyFetcher.freeProxy06():
-    #     print(_)
-    #
-    # for _ in ProxyFetcher.freeProxy07():
-    #     print(_)
-    #
-    # for _ in ProxyFetcher.freeProxy08():
-    #     print(_)
-    #
-    # for _ in ProxyFetcher.freeProxy09():
-    #     print(_)
-
-    # for _ in ProxyFetcher.freeProxy13():
-    #     print(_)
-
-    # for _ in ProxyFetcher.freeProxy14():
-    #     print(_)
-
-    for _ in ProxyFetcher.freeProxy15():
-        print(_)
+def testProxyFetcher():
+    conf = ConfigHandler()
+    proxy_getter_functions = conf.fetchers
+    for proxyGetter in proxy_getter_functions:
+        proxy_count = 0
+        for proxy in getattr(ProxyFetcher, proxyGetter.strip())():
+            if proxy:
+                print('{func}: fetch proxy {proxy},proxy_count:{proxy_count}'.format(func=proxyGetter, proxy=proxy,
+                                                                                     proxy_count=proxy_count))
+                proxy_count += 1
 
 
 if __name__ == '__main__':
-    test()
+    testProxyFetcher()

@@ -14,7 +14,8 @@ __author__ = 'JHao'
 
 from db.dbClient import DbClient
 
-if __name__ == '__main__':
+
+def testDbClient():
     #  ############### ssdb ###############
     ssdb_uri = "ssdb://:password@127.0.0.1:8888"
     s = DbClient.parseDbConn(ssdb_uri)
@@ -31,5 +32,8 @@ if __name__ == '__main__':
     assert r.db_host == "127.0.0.1"
     assert r.db_port == 6379
     assert r.db_name == "1"
-
     print("DbClient ok!")
+
+
+if __name__ == '__main__':
+    testDbClient()
