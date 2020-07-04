@@ -18,6 +18,4 @@ COPY . .
 
 EXPOSE 5010
 
-WORKDIR /app/cli
-
 ENTRYPOINT [ "sh", "start.sh" ]
