@@ -1,5 +1,5 @@
 
-爬虫IP代理池
+ProxyPool 爬虫代理IP池
 =======
 [![Build Status](https://travis-ci.org/jhao104/proxy_pool.svg?branch=master)](https://travis-ci.org/jhao104/proxy_pool)
 [![](https://img.shields.io/badge/Powered%20by-@j_hao104-green.svg)](http://www.spiderpy.cn/blog/)
@@ -17,100 +17,88 @@
                            __ / /
                           /___ /
 
-##### [介绍文档](https://github.com/jhao104/proxy_pool/blob/master/doc/introduce.md)
+### ProxyPool
+
+* 文档: [document](https://github.com/jhao104/proxy_pool/blob/master/doc/introduce.md)
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
 * 测试地址: http://118.24.52.95 (单机勿压, 感谢。 恶意访问关[小黑屋](https://github.com/jhao104/proxy_pool/blob/bff423dffe6e2881ee45d5b66d8a6ad682c8e4ab/doc/block_ips.md)哦)
 
-### 下载安装
+* 有时间的朋友帮忙点下末尾的[推广](https://tracking.gitads.io/?repo=proxy_pool)哦 :stuck_out_tongue_winking_eye:
 
-* 下载源码:
+### 运行项目
 
-```shell
+##### 下载代码:
+
+* git clone
+
+```bash
 git clone git@github.com:jhao104/proxy_pool.git
-
-或者直接到https://github.com/jhao104/proxy_pool/releases 下载zip文件
 ```
 
-* 安装依赖:
+* releases
 
-```shell
+```bash
+https://github.com/jhao104/proxy_pool/releases 下载对应zip文件
+```
+
+##### 安装依赖:
+
+```bash
 pip install -r requirements.txt
 ```
 
-* 配置Config/setting.py:
-
-```shell
-# Config/setting.py 为项目配置文件
-
-# 配置DB     
-DATABASES = {
-    "default": {
-        "TYPE": "SSDB",        # 目前支持SSDB或REDIS数据库
-        "HOST": "127.0.0.1",   # db host
-        "PORT": 8888,          # db port，例如SSDB通常使用8888，REDIS通常默认使用6379
-        "NAME": "proxy",       # 默认配置
-        "PASSWORD": ""         # db password
-
-    }
-}
+#### 修改配置:
 
 
-# 配置 ProxyGetter
+```python
+# setting.py 为项目配置文件
 
-PROXY_GETTER = [
-    "freeProxy01",      # 这里是启用的代理抓取函数名，可在ProxyGetter/getFreeProxy.py 扩展
+# 配置API服务
+
+HOST = "0.0.0.0"               # IP
+PORT = 5000                    # 监听端口
+
+
+# 配置数据库
+
+DB_CONN = 'redis://@127.0.0.1:8888'
+
+
+# 配置 ProxyFetcher
+
+PROXY_FETCHER = [
+    "freeProxy01",      # 这里是启用的代理抓取方法名，所有fetch方法位于fetcher/proxyFetcher.py
     "freeProxy02",
-    ....
+    # ....
 ]
+```
 
+#### 启动项目:
 
-# 配置 API服务
+```bash
+# 如果已经具备运行条件, 可用通过proxyPool.py启动。
+# 程序分为: schedule 调度程序 和 server Api服务
 
-SERVER_API = {
-    "HOST": "0.0.0.0",  # 监听ip, 0.0.0.0 监听所有IP
-    "PORT": 5010        # 监听端口
-}
-       
-# 上面配置启动后，代理池访问地址为 http://127.0.0.1:5010
+# 启动调度程序
+python proxyPool.py schedule
+
+# 启动webApi服务
+python proxyPool.py server
 
 ```
 
-* 启动:
-
-```shell
-# 如果你的依赖已经安装完成并且具备运行条件,可以在cli目录下通过ProxyPool.py启。动
-# 程序分为: schedule 调度程序 和 webserver Api服务
-
-# 首先启动调度程序
->>>python proxyPool.py schedule
-
-# 然后启动webApi服务
->>>python proxyPool.py webserver
-
-
-```
-
-### Docker
+### Docker运行
 
 ```bash
 docker pull jhao104/proxy_pool
 
-# 远程数据库
-docker run --env db_type=REDIS --env db_host=x.x.x.x --env db_port=6379 --env db_password=pwd_str -p 5010:5010 jhao104/proxy_pool
-
-# 宿主机上的数据库
-docker run --env db_type=REDIS --env db_host=host.docker.internal --env db_port=6379 --env db_password=pwd_str -p 5010:5010 jhao104/proxy_pool
-
+docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy_pool:2.1.0
 ```
 
 
 ### 使用
-
-　　启动过几分钟后就能看到抓取到的代理IP，你可以直接到数据库中查看，推荐一个[SSDB可视化工具](https://github.com/jhao104/SSDBAdmin)。
-
-　　也可以通过api访问http://127.0.0.1:5010 查看。
 
 * Api
 
@@ -148,54 +136,54 @@ def getHtml():
             return html
         except Exception:
             retry_count -= 1
-    # 出错5次, 删除代理池中代理
+    # 删除代理池中代理
     delete_proxy(proxy)
     return None
 ```
 
 ### 扩展代理
 
-　　项目默认包含几个免费的代理获取方法，但是免费的毕竟质量不好，所以如果直接运行可能拿到的代理质量不理想。所以，提供了代理获取的扩展方法。
+　　项目默认包含几个免费的代理获取源，但是免费的毕竟质量有限，所以如果直接运行可能拿到的代理质量不理想。所以，提供了代理获取的扩展方法。
 
-　　添加一个新的代理获取方法如下:
+　　添加一个新的代理源方法如下:
 
-* 1、首先在[GetFreeProxy](https://github.com/jhao104/proxy_pool/blob/b9ccdfaada51b57cfb1bbd0c01d4258971bc8352/ProxyGetter/getFreeProxy.py#L32)类中添加你的获取代理的静态方法，
+* 1、首先在[ProxyFetcher](https://github.com/jhao104/proxy_pool/blob/1a3666283806a22ef287fba1a8efab7b94e94bac/fetcher/proxyFetcher.py#L21)类中添加自定义的获取代理的静态方法，
 该方法需要以生成器(yield)形式返回`host:ip`格式的代理，例如:
 
 ```python
 
-class GetFreeProxy(object):
+class ProxyFetcher(object):
     # ....
 
-    # 你自己的方法
+    # 自定义代理源获取方法
     @staticmethod
-    def freeProxyCustom():  # 命名不和已有重复即可
+    def freeProxyCustom1():  # 命名不和已有重复即可
 
-        # 通过某网站或者某接口或某数据库获取代理 任意你喜欢的姿势都行
-        # 假设你拿到了一个代理列表
-        proxies = ["139.129.166.68:3128", "139.129.166.61:3128", ...]
+        # 通过某网站或者某接口或某数据库获取代理
+        # 假设你已经拿到了一个代理列表
+        proxies = ["x.x.x.x:3128", "x.x.x.x:80"]
         for proxy in proxies:
             yield proxy
-        # 确保每个proxy都是 host:ip正确的格式就行
+        # 确保每个proxy都是 host:ip正确的格式返回
 ```
 
-* 2、添加好方法后，修改Config/setting.py文件中的`PROXY_GETTER`项：
+* 2、添加好方法后，修改[setting.py](https://github.com/jhao104/proxy_pool/blob/1a3666283806a22ef287fba1a8efab7b94e94bac/setting.py#L47)文件中的`PROXY_FETCHER`项：
 
-　　在`PROXY_GETTER`下添加自定义的方法的名字:
+　　在`PROXY_FETCHER`下添加自定义方法的名字:
 
-```shell
-PROXY_GETTER = [
+```python
+PROXY_FETCHER = [
     "freeProxy01",    
     "freeProxy02",
-    ....
-    "freeProxyCustom"  #  # 确保名字和你添加方法名字一致
+    # ....
+    "freeProxyCustom1"  #  # 确保名字和你添加方法名字一致
 ]
 ```
 
 
-　　`ProxySchedule`会每隔一段时间抓取一次代理，下次抓取时会自动识别调用你定义的方法。
+　　`schedule` 进程会每隔一段时间抓取一次代理，下次抓取时会自动识别调用你定义的方法。
 
-### 代理采集
+### 免费代理源
 
    目前实现的采集免费代理网站有(排名不分先后, 下面仅是对其发布的免费代理情况, 付费代理测评可以参考[这里](https://zhuanlan.zhihu.com/p/33576641)): 
    
@@ -205,7 +193,7 @@ PROXY_GETTER = [
   | 66代理   | 可用  | 更新很慢   |   *     |  否      | [地址](http://www.66ip.cn/) |
   | 西刺代理 | 可用   | 几分钟一次 |   *     | 否       | [地址](http://www.xicidaili.com)|
   | 全网代理 |  可用  | 几分钟一次 |   *     |  否      | [地址](http://www.goubanjia.com/)|
-  | 训代理 |  已关闭免费代理  | * |   *     |  否      | [地址](http://www.xdaili.cn/)|
+  | ~~训代理~~ |  已关闭免费代理  | * |   *     |  否      | [地址](http://www.xdaili.cn/)|
   | 快代理 |  可用  |几分钟一次|   *     |  否      | [地址](https://www.kuaidaili.com/)|
   | 云代理 |  可用  |几分钟一次|   *     |  否      | [地址](http://www.ip3366.net/)|
   | IP海 |  可用  |几小时一次|   *     |  否      | [地址](http://www.iphai.com/)|
@@ -218,7 +206,7 @@ PROXY_GETTER = [
 
 ### 问题反馈
 
-　　任何问题欢迎在[Issues](https://github.com/jhao104/proxy_pool/issues) 中反馈，如果没有账号可以去 我的[博客](http://www.spiderpy.cn/blog/message)中留言。
+　　任何问题欢迎在[Issues](https://github.com/jhao104/proxy_pool/issues) 中反馈，同时也可以到我的[博客](http://www.spiderpy.cn/blog/message)中留言。
 
 　　你的反馈会让此项目变得更加完美。
 
@@ -226,7 +214,7 @@ PROXY_GETTER = [
 
 　　本项目仅作为基本的通用的代理池架构，不接收特有功能(当然,不限于特别好的idea)。
 
-　　本项目依然不够完善，如果发现bug或有新的功能添加，请在[Issues](https://github.com/jhao104/proxy_pool/issues)中提交bug(或新功能)描述，在确认后提交你的代码。
+　　本项目依然不够完善，如果发现bug或有新的功能添加，请在[Issues](https://github.com/jhao104/proxy_pool/issues)中提交bug(或新功能)描述，我会尽力改进，使她更加完美。
 
 　　这里感谢以下contributor的无私奉献：
 
@@ -237,6 +225,7 @@ PROXY_GETTER = [
 
    [release notes](https://github.com/jhao104/proxy_pool/blob/master/doc/release_notes.md)
 
-### [AD](https://tracking.gitads.io/?repo=proxy_pool)
+### AD
 
-[![AD](https://images.gitads.io/proxy_pool)](https://tracking.gitads.io/?repo=proxy_pool)
+　　最后, 开源不易, 有时间的小伙伴可以点下[推广](https://tracking.gitads.io/?repo=proxy_pool)广告。
+　　[![AD](https://images.gitads.io/proxy_pool)](https://tracking.gitads.io/?repo=proxy_pool)

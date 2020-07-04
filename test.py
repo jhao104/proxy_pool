@@ -12,7 +12,16 @@
 """
 __author__ = 'JHao'
 
-from Test import testConfig
+from test import testConfigHandler
+from test import testLogHandler
+from test import testDbClient
 
 if __name__ == '__main__':
-    testConfig.testConfig()
+    print("ConfigHandler:")
+    testConfigHandler.testConfig()
+
+    print("LogHandler:")
+    testLogHandler.testLogHandler()
+
+    print("DbClient:")
+    testDbClient.testDbClient()
