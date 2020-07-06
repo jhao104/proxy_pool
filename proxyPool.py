@@ -14,7 +14,7 @@ __author__ = 'JHao'
 
 import click
 
-from config.setting import BANNER
+from setting import BANNER
 from helper.scheduler import runScheduler
 from api.proxyApi import runFlask
 
