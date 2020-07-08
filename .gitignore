@@ -1,3 +1,4 @@
 .idea/
+docs/_build
 *.pyc
 *.log
