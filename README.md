@@ -19,7 +19,7 @@ ProxyPool 爬虫代理IP池
 
 ### ProxyPool
 
-* 文档: [document](https://github.com/jhao104/proxy_pool/blob/master/doc/introduce.md)
+* 文档: [document](https://proxy-pool.readthedocs.io/zh/2.1.0/)
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
