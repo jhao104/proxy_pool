@@ -110,5 +110,4 @@ Contents
 .. toctree::
    :maxdepth: 2
 
-   user/intro.rst
-
+   user/index
