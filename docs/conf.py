@@ -21,6 +21,8 @@ project = 'ProxyPool'
 copyright = '2020, jhao104'
 author = 'jhao104'
 
+master_doc = 'index'
+
 # The full version, including alpha/beta/rc tags
 release = '2.1.0'
 
