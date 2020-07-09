@@ -19,11 +19,11 @@ ProxyPool 爬虫代理IP池
 
 ### ProxyPool
 
-* 文档: [document](https://proxy-pool.readthedocs.io/zh/2.1.0/)
+* 文档: [document](https://proxy-pool.readthedocs.io/zh/2.1.0/) [![Documentation Status](https://readthedocs.org/projects/proxy-pool/badge/?version=latest)](https://proxy-pool.readthedocs.io/zh/latest/?badge=latest)
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
-* 测试地址: http://118.24.52.95 (单机勿压, 感谢。 恶意访问关[小黑屋](https://github.com/jhao104/proxy_pool/blob/bff423dffe6e2881ee45d5b66d8a6ad682c8e4ab/doc/block_ips.md)哦)
+* 测试地址: http://118.24.52.95 (单机勿压)
 
 * 有时间的朋友帮忙点下末尾的[推广](https://tracking.gitads.io/?repo=proxy_pool)哦 :stuck_out_tongue_winking_eye:
 
@@ -49,7 +49,7 @@ https://github.com/jhao104/proxy_pool/releases 下载对应zip文件
 pip install -r requirements.txt
 ```
 
-#### 修改配置:
+##### 更新配置:
 
 
 ```python
