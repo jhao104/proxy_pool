@@ -7,15 +7,16 @@
    date：          2017/3/6
 -------------------------------------------------
    Change Activity:
-                   2017/3/6: log handler
-                   2017/9/21: 屏幕输出/文件输出 可选(默认屏幕和文件均输出)
+                   2017/03/06: log handler
+                   2017/09/21: 屏幕输出/文件输出 可选(默认屏幕和文件均输出)
+                   2020/07/13: Windows下TimedRotatingFileHandler线程不安全, 不再使用
 -------------------------------------------------
 """
 __author__ = 'JHao'
 
 import os
-
 import logging
+import platform
 
 from logging.handlers import TimedRotatingFileHandler
 
@@ -49,7 +50,8 @@ class LogHandler(logging.Logger):
         if stream:
             self.__setStreamHandler__()
         if file:
-            self.__setFileHandler__()
+            if platform.system() != "Windows":
+                self.__setFileHandler__()
 
     def __setFileHandler__(self, level=None):
         """
