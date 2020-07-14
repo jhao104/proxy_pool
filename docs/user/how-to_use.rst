@@ -49,7 +49,7 @@ Api               Method      Description            Arg
                delete_proxy(proxy)
        return None
 
-本例中我们在本地 ``127.0.0.1`` 启动端口为 ``5010`` 的 ``server``, 使用 ``/get`` 接口获取代理, ``/delete``
+本例中我们在本地 ``127.0.0.1`` 启动端口为 ``5010`` 的 ``server``, 使用 ``/get`` 接口获取代理, ``/delete`` 删除代理.
 
 读数据库
 >>>>>>>>>

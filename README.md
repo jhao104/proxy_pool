@@ -223,7 +223,7 @@ PROXY_FETCHER = [
 
 ### Release Notes
 
-   [release notes](https://github.com/jhao104/proxy_pool/blob/master/doc/release_notes.md)
+   [changelog](https://github.com/jhao104/proxy_pool/blob/master/docs/changelog.rst)
 
 ### AD
 

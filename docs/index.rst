@@ -111,3 +111,4 @@ Contents
    :maxdepth: 2
 
    user/index
+   changelog
