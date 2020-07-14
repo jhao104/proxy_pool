@@ -100,8 +100,8 @@ Api               Method      Description            Arg
                return html
            except Exception:
                retry_count -= 1
-       # 删除代理池中代理
-       delete_proxy(proxy)
+               # 删除代理池中代理
+               delete_proxy(proxy)
        return None
 
 Contents
