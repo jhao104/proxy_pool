@@ -48,7 +48,7 @@ class ConfigHandler(object):
 
     @LazyProperty
     def verifyUrl(self):
-        return os.getenv("VERIFY_URL", setting.VERIFY_RUL)
+        return os.getenv("VERIFY_URL", setting.VERIFY_URL)
 
     @LazyProperty
     def verifyTimeout(self):
