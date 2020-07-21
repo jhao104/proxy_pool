@@ -160,7 +160,7 @@ class ProxyFetcher(object):
                 pass
 
     @staticmethod
-    def freeProxy05():
+    def freeProxy05(page_count=1):
         """
         快代理 https://www.kuaidaili.com
         """
@@ -169,7 +169,7 @@ class ProxyFetcher(object):
             'https://www.kuaidaili.com/free/intr/{}/'
         ]
         url_list = []
-        for page_index in range(1, 3):
+        for page_index in range(1, page_count + 1):
             for pattern in url_pattern:
                 url_list.append(pattern.format(page_index))
 
