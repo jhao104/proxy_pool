@@ -35,7 +35,7 @@ def schedule():
 
 
 @cli.command(name="server")
-def schedule():
+def server():
     """ 启动api服务 """
     click.echo(BANNER)
     runFlask()
