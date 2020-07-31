@@ -35,7 +35,10 @@ ROOT_PATH = os.path.join(CURRENT_PATH, os.pardir)
 LOG_PATH = os.path.join(ROOT_PATH, 'log')
 
 if not os.path.exists(LOG_PATH):
-    os.mkdir(LOG_PATH)
+    try:
+        os.mkdir(LOG_PATH)
+    except FileExistsError:
+        pass
 
 
 class LogHandler(logging.Logger):
