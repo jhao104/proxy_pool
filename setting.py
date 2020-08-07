@@ -67,3 +67,13 @@ VERIFY_TIMEOUT = 10
 MAX_FAIL_COUNT = 0
 
 
+# ############# scheduler config #################
+
+# Set the timezone for the scheduler forcely (optional)
+# If it is running on a VM, and 
+#   "ValueError: Timezone offset does not match system offset" 
+#   was raised during scheduling.
+# Please uncomment the following line and set a timezone for the scheduler.
+# Otherwise it will detect the timezone from the system automatically.
+
+# TIMEZONE = "Asia/Shanghai"
