@@ -12,16 +12,16 @@
 """
 __author__ = 'JHao'
 
-from handler.configHandler import ConfigHandler
 from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.executors.pool import ProcessPoolExecutor
 
 from util.six import Queue
+from helper.proxy import Proxy
 from helper.fetch import runFetcher
 from helper.check import runChecker
-from helper.proxy import Proxy
 from handler.logHandler import LogHandler
 from handler.proxyHandler import ProxyHandler
+from handler.configHandler import ConfigHandler
 
 
 def runProxyFetch():

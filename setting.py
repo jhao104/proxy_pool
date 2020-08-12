@@ -25,7 +25,7 @@ BANNER = r"""
 ****************************************************************
 """
 
-SHOW_CONFIG = True            # print key config
+SHOW_CONFIG = True            # print config
 
 # ############### server config ###############
 HOST = "0.0.0.0"
