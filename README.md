@@ -63,7 +63,7 @@ PORT = 5000                    # 监听端口
 
 # 配置数据库
 
-DB_CONN = 'redis://@127.0.0.1:8888'
+DB_CONN = 'redis://:pwd@127.0.0.1:8888/0'
 
 
 # 配置 ProxyFetcher
@@ -94,7 +94,7 @@ python proxyPool.py server
 ```bash
 docker pull jhao104/proxy_pool
 
-docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy_pool:2.1.0
+docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy_pool:latest
 ```
 
 
