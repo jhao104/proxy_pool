@@ -102,6 +102,8 @@ docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy
 
 * Api
 
+启动web服务后, 默认配置下会开启 http://127.0.0.1:5010 的api接口服务:
+
 | api | method | Description | arg|
 | ----| ---- | ---- | ----|
 | / | GET | api介绍 | None |

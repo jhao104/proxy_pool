@@ -25,14 +25,12 @@ BANNER = r"""
 ****************************************************************
 """
 
-SHOW_CONFIG = True            # print config
-
 # ############### server config ###############
 HOST = "0.0.0.0"
 
 PORT = 5010
 
-# ############### db config ###################
+# ############### database config ###################
 # db connection uri
 # example:
 #      Redis: redis://:password@ip:port/db
