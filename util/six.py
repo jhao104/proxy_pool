@@ -24,7 +24,6 @@ else:
     def iteritems(d, **kw):
         return d.iteritems(**kw)
 
-
 if PY3:
     from urllib.parse import urlparse
 else:
@@ -39,3 +38,17 @@ if PY3:
     from queue import Empty, Queue
 else:
     from Queue import Empty, Queue
+
+
+def withMetaclass(meta, *bases):
+    """Create a base class with a metaclass."""
+
+    # This requires a bit of explanation: the basic idea is to make a dummy
+    # metaclass for one level of class instantiation that replaces itself with
+    # the actual metaclass.
+    class MetaClass(meta):
+
+        def __new__(cls, name, this_bases, d):
+            return meta(name, bases, d)
+
+    return type.__new__(MetaClass, 'temporary_class', (), {})
