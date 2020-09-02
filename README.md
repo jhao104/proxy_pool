@@ -27,7 +27,6 @@ ProxyPool 爬虫代理IP池
 
 * 测试地址: http://118.24.52.95 (单机勿压)
 
-* 有时间的朋友帮忙点下末尾的[推广](https://tracking.gitads.io/?repo=proxy_pool)哦 :stuck_out_tongue_winking_eye:
 
 ### 运行项目
 
@@ -229,8 +228,3 @@ PROXY_FETCHER = [
 
    [changelog](https://github.com/jhao104/proxy_pool/blob/master/docs/changelog.rst)
 
-### AD
-
-　　最后, 开源不易, 有时间的小伙伴可以点下 [广告](https://tracking.gitads.io/?repo=proxy_pool) 。
-
-　　[![AD](https://images.gitads.io/proxy_pool)](https://tracking.gitads.io/?repo=proxy_pool)
