@@ -19,13 +19,12 @@ ProxyPool 爬虫代理IP池
 
 ### ProxyPool
 
-* 文档: [document](https://proxy-pool.readthedocs.io/zh/2.1.0/) [![Documentation Status](https://readthedocs.org/projects/proxy-pool/badge/?version=latest)](https://proxy-pool.readthedocs.io/zh/latest/?badge=latest)
+* 文档: [document](https://proxy-pool.readthedocs.io/zh/latest/) [![Documentation Status](https://readthedocs.org/projects/proxy-pool/badge/?version=latest)](https://proxy-pool.readthedocs.io/zh/latest/?badge=latest)
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
 * 测试地址: http://118.24.52.95 (单机勿压)
 
-* 有时间的朋友帮忙点下末尾的[推广](https://tracking.gitads.io/?repo=proxy_pool)哦 :stuck_out_tongue_winking_eye:
 
 ### 运行项目
 
@@ -227,8 +226,3 @@ PROXY_FETCHER = [
 
    [changelog](https://github.com/jhao104/proxy_pool/blob/master/docs/changelog.rst)
 
-### AD
-
-　　最后, 开源不易, 有时间的小伙伴可以点下[推广](https://tracking.gitads.io/?repo=proxy_pool)广告。
-
-　　[![AD](https://images.gitads.io/proxy_pool)](https://tracking.gitads.io/?repo=proxy_pool)
