@@ -14,13 +14,13 @@ __author__ = 'JHao'
 
 import click
 
-from setting import BANNER
+from setting import BANNER, VERSION
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
 
 @click.group(context_settings=CONTEXT_SETTINGS)
-@click.version_option(version='2.1.0')
+@click.version_option(version=VERSION)
 def cli():
     """ProxyPool cli工具"""
 
@@ -29,6 +29,7 @@ def cli():
 def schedule():
     """ 启动调度程序 """
     click.echo(BANNER)
+    click.echo("VERSION: %s\n" % VERSION)
     from helper.scheduler import runScheduler
     runScheduler()
 
@@ -37,6 +38,7 @@ def schedule():
 def server():
     """ 启动api服务 """
     click.echo(BANNER)
+    click.echo("VERSION: %s\n" % VERSION)
     from api.proxyApi import runFlask
     runFlask()
 
