@@ -21,7 +21,7 @@ ProxyPool 爬虫代理IP池
 
 爬虫代理IP池项目,主要功能为定时采集网上发布的免费代理验证入库，定时验证入库的代理保证代理的可用性，提供API和CLI两种使用方式。同时你也可以扩展代理源以增加代理池IP的质量和数量。
 
-* 文档: [document](https://proxy-pool.readthedocs.io/zh/2.1.0/) [![Documentation Status](https://readthedocs.org/projects/proxy-pool/badge/?version=latest)](https://proxy-pool.readthedocs.io/zh/latest/?badge=latest)
+* 文档: [document](https://proxy-pool.readthedocs.io/zh/latest/) [![Documentation Status](https://readthedocs.org/projects/proxy-pool/badge/?version=latest)](https://proxy-pool.readthedocs.io/zh/latest/?badge=latest)
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
@@ -227,4 +227,3 @@ PROXY_FETCHER = [
 ### Release Notes
 
    [changelog](https://github.com/jhao104/proxy_pool/blob/master/docs/changelog.rst)
-
