@@ -145,15 +145,18 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy06():
         """
-        码农代理 https://proxy.coderbusy.com/
+        代理盒子 https://proxy.coderbusy.com/
         :return:
         """
-        urls = ['https://proxy.coderbusy.com/']
+        urls = ['https://proxy.coderbusy.com/zh-hans/ops/country/cn.html']
         for url in urls:
             tree = WebRequest().get(url).tree
             proxy_list = tree.xpath('.//table//tr')
             for tr in proxy_list[1:]:
-                yield ':'.join(tr.xpath('./td/text()')[0:2])
+                proxy = '{}:{}'.format("".join(tr.xpath("./td[1]/text()")).strip(),
+                                       "".join(tr.xpath("./td[2]//text()")).strip())
+                if proxy:
+                    yield proxy
 
     @staticmethod
     def freeProxy07():
