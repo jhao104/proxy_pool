@@ -248,24 +248,6 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy13(max_page=2):
         """
-        http://www.qydaili.com/free/?action=china&page=1
-        齐云代理
-        :param max_page:
-        :return:
-        """
-        base_url = 'http://www.qydaili.com/free/?action=china&page='
-        for page in range(1, max_page + 1):
-            url = base_url + str(page)
-            r = WebRequest().get(url, timeout=10)
-            proxies = re.findall(
-                r'<td.*?>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td.*?>(\d+)</td>',
-                r.text)
-            for proxy in proxies:
-                yield ':'.join(proxy)
-
-    @staticmethod
-    def freeProxy14(max_page=2):
-        """
         http://www.89ip.cn/index.html
         89免费代理
         :param max_page:
@@ -282,7 +264,12 @@ class ProxyFetcher(object):
                 yield ':'.join(proxy)
 
     @staticmethod
-    def freeProxy15():
+    def freeProxy14():
+        """
+        http://www.xiladaili.com/
+        西拉代理
+        :return:
+        """
         urls = ['http://www.xiladaili.com/putong/',
                 "http://www.xiladaili.com/gaoni/",
                 "http://www.xiladaili.com/http/",
