@@ -69,7 +69,7 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy03(page_count=1):
         """
-        西刺代理 http://www.xicidaili.com
+        西刺代理 http://www.xicidaili.com  网站已关闭
         :return:
         """
         url_list = [
@@ -90,7 +90,7 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy04():
         """
-        guobanjia http://www.goubanjia.com/
+        全网代理 http://www.goubanjia.com/
         :return:
         """
         url = "http://www.goubanjia.com/"
@@ -103,25 +103,22 @@ class ProxyFetcher(object):
                                         and not(contains(@class, 'port'))
                                         ]/text()
                                 """
+
+        # port是class属性值加密得到
+        def _parse_port(port_element):
+            port_list = []
+            for letter in port_element:
+                port_list.append(str("ABCDEFGHIZ".find(letter)))
+            _port = "".join(port_list)
+            return int(_port) >> 0x3
+
         for each_proxy in proxy_list:
             try:
-                # :符号裸放在td下，其他放在div span p中，先分割找出ip，再找port
                 ip_addr = ''.join(each_proxy.xpath(xpath_str))
-
-                # HTML中的port是随机数，真正的端口编码在class后面的字母中。
-                # 比如这个：
-                # <span class="port CFACE">9054</span>
-                # CFACE解码后对应的是3128。
-                port = 0
-                for _ in each_proxy.xpath(".//span[contains(@class, 'port')]"
-                                          "/attribute::class")[0]. \
-                        replace("port ", ""):
-                    port *= 10
-                    port += (ord(_) - ord('A'))
-                port /= 8
-
+                port_str = each_proxy.xpath(".//span[contains(@class, 'port')]/@class")[0].split()[-1]
+                port = _parse_port(port_str.strip())
                 yield '{}:{}'.format(ip_addr, int(port))
-            except Exception as e:
+            except Exception:
                 pass
 
     @staticmethod
