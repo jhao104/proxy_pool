@@ -40,17 +40,19 @@ class RedisClient(object):
         kwargs.pop("username")
         self.__conn = Redis(connection_pool=BlockingConnectionPool(decode_responses=True, **kwargs))
 
-    def get(self):
+    def get(self, proxy_str=None):
         """
         返回一个代理
         :return:
         """
         proxies = self.__conn.hkeys(self.name)
-        proxy = choice(proxies) if proxies else None
-        if proxy:
-            return self.__conn.hget(self.name, proxy)
+        if not proxies:
+            return None
+        if proxy_str is None:
+            proxy = choice(proxies)
         else:
-            return False
+            proxy = proxy_str
+        return self.__conn.hget(self.name, proxy)
 
     def put(self, proxy_obj):
         """
