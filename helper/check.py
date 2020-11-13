@@ -41,8 +41,8 @@ def proxyCheck(proxy_obj):
         proxy_obj.check_count += 1
         proxy_obj.last_status = 1
         proxy_obj.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        if proxy_obj.fail_count > 0:
-            proxy_obj.fail_count -= 1
+        # if proxy_obj.fail_count > 0:
+        #     proxy_obj.fail_count -= 1
         return proxy_obj
     else:
         proxy_obj.check_count += 1
@@ -90,7 +90,7 @@ class Checker(Thread):
                     self.log.info('ProxyCheck - {}  : {} pass'.format(self.name, proxy.proxy.ljust(23)))
                     self.proxy_handler.put(proxy)
                 else:
-                    if proxy.fail_count > self.conf.maxFailCount:
+                    if proxy.fail_count / proxy.check_count > self.conf.maxFailRate:
                         self.log.info('ProxyCheck - {}  : {} fail, count {} delete'.format(self.name,
                                                                                            proxy.proxy.ljust(23),
                                                                                            proxy.fail_count))
