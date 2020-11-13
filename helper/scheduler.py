@@ -35,7 +35,8 @@ def runProxyFetch():
 
 def runProxyCheck():
     proxy_queue = Queue()
-
+    if not ProxyHandler().getAll():
+        runProxyFetch()
     for proxy in ProxyHandler().getAll():
         proxy_queue.put(proxy.to_json)
 
