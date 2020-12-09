@@ -28,7 +28,7 @@ def runProxyFetch():
     proxy_queue = Queue()
 
     for proxy in runFetcher():
-        proxy_queue.put(Proxy(proxy).to_json)
+        proxy_queue.put(Proxy(proxy=proxy[0], source=proxy[1]).to_json)
 
     runChecker("raw", proxy_queue)
 

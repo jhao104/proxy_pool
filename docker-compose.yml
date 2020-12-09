@@ -3,12 +3,18 @@ services:
   proxy_pool:
     build: .
     container_name: proxy_pool
+    volumes:
+      - .:/app
     ports:
       - "5010:5010"
     links:
       - proxy_redis
     environment:
-      DB_CONN: "redis://@proxy_redis:6379/0"
+      DB_CONN: "redis://:123456@192.168.1.232:6379/0"
   proxy_redis:
     image: "redis"
+    ports:
+      - "6379:6379"
+    command: >
+      --requirepass 123456
     container_name: proxy_redis

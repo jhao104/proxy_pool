@@ -51,13 +51,14 @@ class Fetcher(object):
                     else:
                         self.log.info('ProxyFetch - %s: %s success' % (fetch_name, proxy.ljust(23)))
                     if proxy.strip():
-                        proxy_set.add(proxy)
+                        proxy_set.add((proxy, fetch_name))
             except Exception as e:
                 self.log.error("ProxyFetch - {func}: error".format(func=fetch_name))
                 self.log.error(str(e))
         self.log.info("ProxyFetch - all complete!")
         return proxy_set
-
+        # origin proxy_set = {'1.1.1.1', '2.2.2.2'}
+        # now proxy_set = [('1.1.1.1', 'fetch1'), ('2.2.2.2', 'fetch2')]
 
 def runFetcher():
     return Fetcher().fetch()
