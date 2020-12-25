@@ -42,6 +42,7 @@ app.response_class = JsonResponse
 
 api_list = {
     'get': u'get an useful proxy',
+    'get?tag=tag1': u'get an useful proxy by tag',
     'pop': u'get and delete an useful proxy',
     # 'refresh': u'refresh proxy pool',
     'get_all': u'get all proxy from proxy pool',
@@ -55,9 +56,13 @@ def index():
     return api_list
 
 
-@app.route('/get/')
+@app.route('/get/', methods=['GET'])
 def get():
-    proxy = proxy_handler.get()
+    tag = request.args.get('tag')
+    if tag:
+        proxy = proxy_handler.getByTag(tag=tag)
+    else:
+        proxy = proxy_handler.get()
     return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
 
 

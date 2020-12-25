@@ -11,6 +11,9 @@
 -------------------------------------------------
 """
 __author__ = 'JHao'
+import sys
+import  os
+sys.path.append(os.getcwd())
 
 from fetcher.proxyFetcher import ProxyFetcher
 from handler.configHandler import ConfigHandler

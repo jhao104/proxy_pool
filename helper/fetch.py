@@ -12,10 +12,12 @@
 """
 __author__ = 'JHao'
 
+import os
 from handler.logHandler import LogHandler
 from handler.proxyHandler import ProxyHandler
 from fetcher.proxyFetcher import ProxyFetcher
 from handler.configHandler import ConfigHandler
+from qqwry import QQwry
 
 
 class Fetcher(object):
@@ -25,6 +27,14 @@ class Fetcher(object):
         self.log = LogHandler(self.name)
         self.conf = ConfigHandler()
         self.proxy_handler = ProxyHandler()
+        self.loadIp()
+
+    def loadIp(self):
+        if False != os.path.isfile("qqwry.dat"):
+            self.ip = QQwry()
+            self.ip.load_file('qqwry.dat')
+        else:
+            self.ip = False
 
     def fetch(self):
         """
@@ -50,15 +60,22 @@ class Fetcher(object):
                         continue
                     else:
                         self.log.info('ProxyFetch - %s: %s success' % (fetch_name, proxy.ljust(23)))
+
                     if proxy.strip():
-                        proxy_set.add((proxy, fetch_name))
+                        if self.ip:
+                            area = " ".join(self.ip.lookup(proxy.split(':')[0]))
+                        else:
+                            self.loadIp()
+                            area = ''
+                        proxy_set.add((proxy, fetch_name, area))
+                        
             except Exception as e:
                 self.log.error("ProxyFetch - {func}: error".format(func=fetch_name))
                 self.log.error(str(e))
         self.log.info("ProxyFetch - all complete!")
         return proxy_set
         # origin proxy_set = {'1.1.1.1', '2.2.2.2'}
-        # now proxy_set = [('1.1.1.1', 'fetch1'), ('2.2.2.2', 'fetch2')]
+        # now proxy_set = [('1.1.1.1', 'fetch1', 'area'), ('2.2.2.2', 'fetch2', 'area')]
 
 def runFetcher():
     return Fetcher().fetch()

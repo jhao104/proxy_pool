@@ -52,6 +52,17 @@ class RedisClient(object):
         else:
             return False
 
+    def getByTag(self, tag):
+        """
+        返回一个代理
+        :return:
+        """
+        proxy = self.__conn.srandmember('proxy_tag_' + tag)
+        if proxy:
+            return self.__conn.hget(self.name, proxy)
+        else:
+            return False
+
     def put(self, proxy_obj):
         """
         将代理放入hash, 使用changeTable指定hash name
@@ -59,6 +70,16 @@ class RedisClient(object):
         :return:
         """
         data = self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.to_json)
+        return data
+
+    def putTag(self, tag, proxy):
+        """
+        将代理放入hash, 使用proxy_tag_ + tag指定hash name
+        :param tag: Proxy tag
+        :param proxy: Proxy
+        :return:
+        """
+        data = self.__conn.sadd('proxy_tag_' + tag, proxy)
         return data
 
     def pop(self):
@@ -81,6 +102,15 @@ class RedisClient(object):
         :return:
         """
         return self.__conn.hdel(self.name, proxy_str)
+
+    def deleteTag(self, tag, proxy):
+        """
+        从指定标签移除代理
+        :param tag: proxy tag
+        :param proxy: proxy
+        :return:
+        """
+        return self.__conn.srem('proxy_tag_' + tag, proxy)
 
     def exists(self, proxy_str):
         """

@@ -2,3 +2,5 @@
 docs/_build
 *.pyc
 *.log
+csnet_client_linux_amd64
+qqwry.dat

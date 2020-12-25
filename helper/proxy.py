@@ -18,11 +18,12 @@ import json
 class Proxy(object):
 
     def __init__(self, proxy, fail_count=0, region="", proxy_type="",
-                 source="", check_count=0, last_status="", last_time=""):
+                 source="", check_count=0, last_status="", last_time="", proxy_tag=[]):
         self._proxy = proxy
         self._fail_count = fail_count
         self._region = region
         self._type = proxy_type
+        self._tag = proxy_tag
         self._source = source
         self._check_count = check_count
         self._last_status = last_status
@@ -40,6 +41,7 @@ class Proxy(object):
                    fail_count=proxy_dict.get("fail_count", 0),
                    region=proxy_dict.get("region", ""),
                    proxy_type=proxy_dict.get("type", ""),
+                   proxy_tag=proxy_dict.get("tag", ""),
                    source=proxy_dict.get("source", ""),
                    check_count=proxy_dict.get("check_count", 0),
                    last_status=proxy_dict.get("last_status", ""),
@@ -65,6 +67,11 @@ class Proxy(object):
     def type(self):
         """ 透明/匿名/高匿 """
         return self._type
+
+    @property
+    def tag(self):
+        """ 标签 """
+        return self._tag
 
     @property
     def source(self):
@@ -93,6 +100,7 @@ class Proxy(object):
                 "fail_count": self._fail_count,
                 "region": self._region,
                 "type": self._type,
+                "tag": self._tag,
                 "source": self._source,
                 "check_count": self.check_count,
                 "last_status": self.last_status,
@@ -115,6 +123,10 @@ class Proxy(object):
     @type.setter
     def type(self, value):
         self._type = value
+
+    @tag.setter
+    def tag(self, value):
+        self._tag = value
 
     @source.setter
     def source(self, value):

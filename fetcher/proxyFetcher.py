@@ -213,9 +213,10 @@ class ProxyFetcher(object):
     #     :return:
     #     """
     #     urls = ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218']
+    #     proxies = {"http": "http://127.0.0.1:54321"}
     #     request = WebRequest()
     #     for url in urls:
-    #         r = request.get(url, timeout=10)
+    #         r = request.get(url, timeout=10, proxies=proxies)
     #         proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.text)
     #         for proxy in proxies:
     #             yield ':'.join(proxy)
@@ -227,10 +228,14 @@ class ProxyFetcher(object):
     #     :return:
     #     """
     #     urls = ['https://proxy-list.org/english/index.php?p=%s' % n for n in range(1, 10)]
+    #     proxies = {
+    #         "http": "http://127.0.0.1:54321",
+    #         "https": "http://127.0.0.1:54321"
+    #         }
     #     request = WebRequest()
     #     import base64
     #     for url in urls:
-    #         r = request.get(url, timeout=10)
+    #         r = request.get(url, timeout=10, proxies=proxies, verify=False)
     #         proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
     #         for proxy in proxies:
     #             yield base64.b64decode(proxy).decode()

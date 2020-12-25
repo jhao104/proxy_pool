@@ -31,16 +31,24 @@ def proxyCheck(proxy_obj):
     """
 
     def __proxyCheck(proxy):
+        proxy_tag = []
         for func in validators:
-            if not func(proxy):
-                return False
-        return True
+            ret = func(proxy)
+            if ret == True:
+                continue
+            if ret:
+                proxy_tag.extend(ret)
+        if len(proxy_tag) == 0:
+            return False
+        return proxy_tag
 
-    if __proxyCheck(proxy_obj.proxy):
+    ck = __proxyCheck(proxy_obj.proxy)
+    if ck:
         # 检测通过 更新proxy属性
         proxy_obj.check_count += 1
         proxy_obj.last_status = 1
         proxy_obj.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        proxy_obj.tag = ck
         if proxy_obj.fail_count > 0:
             proxy_obj.fail_count -= 1
         return proxy_obj
@@ -83,6 +91,7 @@ class Checker(Thread):
                     else:
                         self.log.info('ProxyCheck - {}  : {} success'.format(self.name, proxy.proxy.ljust(23)))
                         self.proxy_handler.put(proxy)
+                        self.proxy_handler.putTag(proxy)
                 else:
                     self.log.info('ProxyCheck - {}  : {} fail'.format(self.name, proxy.proxy.ljust(23)))
             else:
@@ -95,6 +104,7 @@ class Checker(Thread):
                                                                                            proxy.proxy.ljust(23),
                                                                                            proxy.fail_count))
                         self.proxy_handler.delete(proxy)
+                        self.proxy_handler.deleteTag(proxy)
                     else:
                         self.log.info('ProxyCheck - {}  : {} fail, count {} keep'.format(self.name,
                                                                                          proxy.proxy.ljust(23),

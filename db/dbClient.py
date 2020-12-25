@@ -102,14 +102,23 @@ class DbClient(withMetaclass(Singleton)):
     def get(self, **kwargs):
         return self.client.get(**kwargs)
 
+    def getByTag(self, tag):
+        return self.client.getByTag(tag)
+
     def put(self, key, **kwargs):
         return self.client.put(key, **kwargs)
+
+    def putTag(self, tag, proxy):
+        return self.client.putTag(tag, proxy)
 
     def update(self, key, value, **kwargs):
         return self.client.update(key, value, **kwargs)
 
     def delete(self, key, **kwargs):
         return self.client.delete(key, **kwargs)
+
+    def deleteTag(self, tag, proxy):
+        return self.client.deleteTag(tag, proxy)
 
     def exists(self, key, **kwargs):
         return self.client.exists(key, **kwargs)

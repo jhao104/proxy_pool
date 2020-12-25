@@ -40,7 +40,8 @@ def timeOutValidator(proxy):
                'Accept-Language': 'zh-CN,zh;q=0.8'}
     try:
         r = requests.head(conf.verifyUrl, headers=headers, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
-        if r.status_code == 200:
+        # t = r.text.replace('\r','').replace('\n','').replace('\t','')
+        if r.status_code == 200 and "<!--STATUS OK-->" in r.text:
             return True
     except Exception as e:
         pass
@@ -52,20 +53,38 @@ def customValidator(proxy):
     """
     自定义validator函数，校验代理是否可用
     :param proxy:
-    :return:
+    :return: Boolean
     """
-    # 获取本机IP
-    # origin_ip = requests.get('http://httpbin.org/ip').json().get('origin') 
+    return True
 
+@validator
+def tagValidatorExample(proxy):
+    """
+    带标签功能的代理检验
+    :param proxy:
+    :return: Boolean or List(tags)
+    """
     proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "https://{proxy}".format(proxy=proxy)}
     headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
                'Accept': '*/*',
                'Connection': 'keep-alive',
                'Accept-Language': 'zh-CN,zh;q=0.8'}
     try:
-        r = requests.get('http://httpbin.org/ip', headers=headers, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
-        if r.status_code == 200 and 'origin' in r.json():
-            return True
+        r = requests.get('https://webvpn.cuit.edu.cn/por/login_auth.csp?apiversion=1', headers=headers, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
+        v1 = "login auth success" in r.text
+        r = requests.get('http://jwc.cuit.edu.cn/', headers=headers, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
+        v2 = "datedifference" in r.text
+
+        tags = []
+        if v1:
+            tags.append('cuit_https')
+        if v2:
+            tags.append('cuit_http')
+        if len(tags):
+            return tags
+        else:
+            return False
     except Exception as e:
+        return False
         pass
     return False

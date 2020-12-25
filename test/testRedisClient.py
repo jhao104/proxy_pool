@@ -12,31 +12,38 @@
 """
 __author__ = 'JHao'
 
+import sys
+import  os
+sys.path.append(os.getcwd())
 
 def testRedisClient():
     from db.dbClient import DbClient
     from helper.proxy import Proxy
 
-    uri = "redis://:pwd@127.0.0.1:6379"
+    uri = "redis://:123456@127.0.0.1:6379"
     db = DbClient(uri)
     db.changeTable("use_proxy")
     proxy = Proxy.createFromJson(
         '{"proxy": "27.38.96.101:9797", "fail_count": 0, "region": "", "type": "",'
         ' "source": "freeProxy03", "check_count": 0, "last_status": "", "last_time": ""}')
 
-    print("put: ", db.put(proxy))
+    # print("put: ", db.put(proxy))
 
-    print("get: ", db.get())
+    # print("put: ", db.putTag(tag='test', proxy='1238:7'))
+    # print("del: ", db.deleteTag(tag='test', proxy='1234'))
+    print("get: ", db.getByTag(tag='test'))
 
-    print("exists: ", db.exists("27.38.96.101:9797"))
+    # print("get: ", db.get(last_status=1))
 
-    print("exists: ", db.exists("27.38.96.101:8888"))
+    # print("exists: ", db.exists("27.38.96.101:9797"))
 
-    print("pop: ", db.pop())
+    # print("exists: ", db.exists("27.38.96.101:8888"))
 
-    print("getAll: ", db.getAll())
+    # print("pop: ", db.pop())
 
-    print("getCount", db.getCount())
+    # print("getAll: ", db.getAll())
+
+    # print("getCount", db.getCount())
 
 
 if __name__ == '__main__':

@@ -35,6 +35,16 @@ class ProxyHandler(object):
             return Proxy.createFromJson(proxy)
         return None
 
+    def getByTag(self, tag):
+        """
+        return a useful proxy by tag
+        :return:
+        """
+        proxy = self.db.getByTag(tag)
+        if proxy:
+            return Proxy.createFromJson(proxy)
+        return None
+
     def pop(self):
         """
         return and delete a useful proxy
@@ -52,6 +62,14 @@ class ProxyHandler(object):
         """
         self.db.put(proxy)
 
+    def putTag(self, proxy):
+        """
+        put proxy into proxy tag
+        :return:
+        """
+        for tag in proxy.tag:
+            self.db.putTag(tag=tag, proxy=proxy.proxy)
+
     def delete(self, proxy):
         """
         delete useful proxy
@@ -59,6 +77,14 @@ class ProxyHandler(object):
         :return:
         """
         return self.db.delete(proxy.proxy)
+
+    def deleteTag(self, proxy):
+        """
+        delete proxy from tag table
+        :param proxy:
+        :return:
+        """
+        return self.db.deleteTag(proxy.tag, proxy.proxy)
 
     def getAll(self):
         """
