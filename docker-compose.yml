@@ -10,7 +10,7 @@ services:
     links:
       - proxy_redis
     environment:
-      DB_CONN: "redis://:123456@192.168.1.232:6379/0"
+      DB_CONN: "redis://:123456@proxy_redis:6379/0"
   proxy_redis:
     image: "redis"
     ports:
