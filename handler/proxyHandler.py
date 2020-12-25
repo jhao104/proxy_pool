@@ -84,7 +84,8 @@ class ProxyHandler(object):
         :param proxy:
         :return:
         """
-        return self.db.deleteTag(proxy.tag, proxy.proxy)
+        for tag in proxy.tag:
+            self.db.deleteTag(tag, proxy.proxy)
 
     def getAll(self):
         """

@@ -29,7 +29,7 @@ def runProxyFetch():
     proxy_queue = Queue()
 
     for proxy in runFetcher():
-        # ('1.1.1.1', 'fetch1')
+        # ('1.1.1.1', 'fetch1', 'region')
         proxy_queue.put(Proxy(proxy=proxy[0], source=proxy[1], region=proxy[2]).to_json)
 
     runChecker("raw", proxy_queue)
@@ -38,7 +38,6 @@ def runProxyFetch():
 def runProxyCheck():
     proxy_queue = Queue()
 
-    print(ProxyHandler().getAll())
     for proxy in ProxyHandler().getAll():
         proxy_queue.put(proxy.to_json)
 
