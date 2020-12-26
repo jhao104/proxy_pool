@@ -1,7 +1,8 @@
 version: '2'
 services:
   proxy_pool:
-    build: .
+    # build: .
+    image: "jiyecafe/proxy_pool"
     container_name: proxy_pool
     volumes:
       - .:/app

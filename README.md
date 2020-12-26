@@ -93,9 +93,13 @@ python proxyPool.py server
 ### Docker运行
 
 ```bash
-docker pull jhao104/proxy_pool
+docker pull jiyecafe/proxy_pool
 
 docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy_pool:latest
+
+# 或者自行配置docker-compose.yml
+docker-compose up [-d]
+# 注：若为腾讯云轻量应用服务器，需将proxy_pool构建方式改为image(该类服务器会出现python模块lxml无法安装的问题)
 ```
 
 
@@ -109,6 +113,7 @@ docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy
 | ----| ---- | ---- | ----|
 | / | GET | api介绍 | None |
 | /get | GET | 随机获取一个代理 | None|
+| /get | GET | 根据标签随机获取一个代理 | tag=tag1|
 | /get_all | GET | 获取所有代理 |None|
 | /get_status | GET | 查看代理数量 |None|
 | /delete | GET | 删除代理  |proxy=host:ip|
