@@ -34,6 +34,10 @@ def proxyCheck(proxy_obj):
         proxy_tag = []
         for func in validators:
             ret = func(proxy)
+
+            # 超时检测失败直接当成失败
+            if func == 'timeOutValidator' and ret == False:
+                return False
             if ret == True:
                 continue
             if ret:

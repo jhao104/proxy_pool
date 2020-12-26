@@ -48,14 +48,14 @@ def timeOutValidator(proxy):
     return False
 
 
-@validator
-def customValidator(proxy):
-    """
-    自定义validator函数，校验代理是否可用
-    :param proxy:
-    :return: Boolean
-    """
-    return True
+# @validator
+# def customValidator(proxy):
+#     """
+#     自定义validator函数，校验代理是否可用
+#     :param proxy:
+#     :return: Boolean
+#     """
+#     return True
 
 @validator
 def tagValidatorExample(proxy):

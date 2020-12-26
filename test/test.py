@@ -22,15 +22,15 @@ import base64
 # print(test)
 
 proxies = {
-    "http": "socks5://127.0.0.1:54322",
-    "https": "socks5://127.0.0.1:54322"
+    "http": "http://49.89.86.40:4216",
+    "https": "http://49.89.86.40:4216"
     }
 headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
                'Accept': '*/*',
                'Connection': 'keep-alive',
                'Accept-Language': 'zh-CN,zh;q=0.8',
-               'cookie': 'fp=246340c66c6383077720cfa27f12e2d1'
+               'cookie': 'fp='
                }
-r = requests.get("http://cn-proxy.com/", headers=headers, proxies=proxies)
+r = requests.get("https://webvpn.cuit.edu.cn/por/login_auth.csp?apiversion=1'", headers=headers, proxies=proxies, timeout=2)
 print(r.status_code)
 print(r.headers)

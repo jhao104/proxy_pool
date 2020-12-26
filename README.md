@@ -93,9 +93,13 @@ python proxyPool.py server
 ### Docker运行
 
 ```bash
-docker pull jiyecafe/proxy_pool
-
+#原项目
+docker pull jhao104/proxy_pool
 docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy_pool:latest
+
+# 修改版
+docker pull jiyecafe/proxy_pool
+docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jiyecafe/proxy_pool:latest
 
 # 或者自行配置docker-compose.yml
 docker-compose up [-d]

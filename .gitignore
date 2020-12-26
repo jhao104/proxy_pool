@@ -3,3 +3,4 @@ docs/_build
 *.pyc
 *.log
 qqwry.dat
+csnet*

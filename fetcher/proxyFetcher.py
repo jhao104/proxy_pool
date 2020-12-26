@@ -449,6 +449,32 @@ class ProxyFetcher(object):
                 yield ip.strip()
 
     @staticmethod
+    def freeProxy27():
+        """
+        https://www.freeproxy.world/
+        
+        :return:
+        """
+        urls = [
+            'https://www.freeproxy.world/?type=&anonymity=&country=&speed=&port=&page=%s' % i for i in range(1, 7)
+        ]
+        for url in urls:
+            # print(url)
+            r = WebRequest().get(url, timeout=10)
+            html = etree.HTML(r.text.replace('\n', '').replace('<tr></tr>', ''))
+            infos = html.xpath('//tbody/tr')
+            ips = []
+            for info in infos:
+                if len(info.getchildren()) < 2:
+                    continue
+                proxy_ip = info.cssselect('.show-ip-div')[0].text
+                proxy_port = info.cssselect('a')[0].text
+                ips.append(proxy_ip + ':' + proxy_port)
+            for ip in ips:
+                yield ip.strip()
+            sleep(1)
+
+    @staticmethod
     def freeProxy28():
         """
         http://cn-proxy.com/
@@ -504,14 +530,14 @@ class ProxyFetcher(object):
         for url in urls:
             r = WebRequest().get(url, timeout=10, proxies=proxies)
             ips = list()
-            html = etree.HTML(r.text.replace('\n', ''))
+            html = r.tree
             infos = list()
             for x in html.xpath('//tr'):
                 # print(dir(x))
                 infos += x.cssselect('.row1') + x.cssselect('.row0')
             # print(infos)
             for info in infos:
-                proxy_ip = info.cssselect('a')[0].text
+                proxy_ip = info.cssselect('a')[0].text.replace('\n', '').replace('\r', '')
                 proxy_port = info.cssselect('a')[1].text
                 proxy_type = info.cssselect('a')[2].text
                 ips.append(proxy_ip + ':' + proxy_port)
@@ -577,17 +603,22 @@ class ProxyFetcher(object):
         :return:
         """
         import base64
-        urls = ['http://free-proxy.cz/en/proxylist/main/%s' % i for i in range(1, 6)]
+        urls = ['http://free-proxy.cz/zh/proxylist/country/CN/all/uptime/all/%s' % i for i in range(1, 6)] + ['http://free-proxy.cz/en/proxylist/main/uptime/%s' % i for i in range(1, 6)]
         headers = {
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
-                'Connection': 'keep-alive',
                 'Accept-Encoding': 'gzip, deflate',
-                'Accept-Language': 'zh-CN,zh;q=0.8',
+                'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
                 'Cache-Control': 'max-age=0',
+                'Connection': 'keep-alive',
                 'Upgrade-Insecure-Requests': '1',
+                'Referer': 'http://free-proxy.cz/en/proxylist/main/4',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66',
-               'cookie': 'fpxy_tmp_access=66bf8-f6e05-fcec6;fp=246340c66c6383077720cfa27f12e2d1'
+               'cookie': 'fpxy_tmp_access=a7563-36df0-3c443;fp=246340c66c6383077720cfa27f12e2d1'
                 }
+        """
+        fp:根据浏览器信息算出
+        http://free-proxy.cz/js/fp.js?150 格式化后第85行 var r = i.x64hash128(a.join("~~~"), 31); r就是fp的值
+        """
         for url in urls:
             print(url)
             r = WebRequest().get(url, timeout=10, proxies=proxies, header=headers)

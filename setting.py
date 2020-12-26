@@ -68,22 +68,22 @@ PROXY_FETCHER = [
     "freeProxy24",
     "freeProxy25",
     "freeProxy26",
-   #  "freeProxy27",
+    "freeProxy27",
     "freeProxy28",
     "freeProxy29",
     "freeProxy30",
     "freeProxy31",
     "freeProxy32",
-   #  "freeProxy33",
+    "freeProxy33",
     "freeProxy34"
 ]
 
 # ############# proxy validator #################
 VERIFY_URL = "http://www.baidu.com"
 
-VERIFY_TIMEOUT = 10
+VERIFY_TIMEOUT = 5
 
-MAX_FAIL_COUNT = 0
+MAX_FAIL_COUNT = 1
 
 
 # ############# scheduler config #################
