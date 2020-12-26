@@ -94,3 +94,6 @@ class WebRequest(object):
     def text(self):
         return self.response.text
 
+    @property
+    def json(self):
+        return self.response.json

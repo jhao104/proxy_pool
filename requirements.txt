@@ -8,3 +8,5 @@ click==7.0
 gunicorn==19.9.0
 redis
 qqwry-py3
+pysocks
+cssselect
