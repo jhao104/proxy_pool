@@ -97,3 +97,7 @@ class WebRequest(object):
     @property
     def json(self):
         return self.response.json
+
+    @property
+    def cookies(self):
+        return self.response.cookies

@@ -24,9 +24,11 @@ import re
 # print(" ".join(area))
 
 
-print(re.search(r'\(\w+\)', "{$(\'.1d\').0(1e)").group()[1:-1])
-
-exit(-1)
+# import urllib.parse
+# s='%3c%61%20%68%72%65%66%3d%22%68%74%74%70%3a%2f%2f%77%77%77%2e%66%72%65%65%70%72%6f%78%79%6c%69%73%74%73%2e%6e%65%74%2f%7a%68%2f%31%38%35%2e%34%2e%31%33%35%2e%37%37%2e%68%74%6d%6c%22%3e%31%38%35%2e%34%2e%31%33%35%2e%37%37%3c%2f%61%3e'
+# s=urllib.parse.unquote(s)
+# print(s)
+# exit(-1)
 proxies = {
     "http": "http://127.0.0.1:54321",
     "https": "http://127.0.0.1:54321"
@@ -39,3 +41,4 @@ headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/201
 r = requests.get("http://www.us-proxy.org/", headers=headers, proxies=proxies, timeout=5)
 print(r.status_code)
 print(r.headers)
+print(r.cookies.get_dict())

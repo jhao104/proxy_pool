@@ -719,3 +719,80 @@ class ProxyFetcher(object):
             for ip in ips:
                 yield ip.strip()
         sleep(1)
+
+    @staticmethod
+    def freeProxy38():
+        """
+        http://www.freeproxylists.net/
+        vpn needed
+        沙雕人机验证不能显示。。。
+        :return:
+        """
+        urls = [
+            'http://www.freeproxylists.net/zh/?c=&pt=&pr=&a%5B%5D=0&a%5B%5D=1&a%5B%5D=2&u=50',
+            'http://www.freeproxylists.net/zh/?u=50&page=2'
+        ]
+        headers = {
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
+                'Accept-Encoding': 'gzip, deflate',
+                'Accept-Language': 'zh-CN,zh;q=0.9,en;q=0.8,en-GB;q=0.7,en-US;q=0.6',
+                'Cache-Control': 'max-age=0',
+                'Connection': 'keep-alive',
+                'Upgrade-Insecure-Requests': '1',
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'Referer': 'http://www.freeproxylists.net/zh/',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66'
+                }
+        # proxies = {
+        #     "http": "http://127.0.0.1:8888",
+        #     "https": "http://127.0.0.1:8888"
+        # }
+        cookies = {}
+        import urllib.parse
+        for url in urls:
+            r = WebRequest().get(url, header=headers, timeout=10, proxies=proxies, cookies=cookies)
+            cookies = r.cookies.get_dict()
+            # print(r.text)
+            infos = etree.HTML(r.text.replace('<script type="text/javascript">IPDecode("', '').replace('")</script>', '')).cssselect('.DataGrid')[0].cssselect('tr')
+            infos.pop(0)
+            ips = []
+            for info in infos:
+                if len(info.cssselect('td')) < 3:
+                    continue
+                proxy_link = urllib.parse.unquote(info.cssselect('td')[0].text)
+                proxy_ip = proxy_link[proxy_link.index('>') + 1: -4]
+                proxy_port = info.cssselect('td')[1].text
+                ips.append("{0}:{1}".format(proxy_ip, proxy_port))
+                pass
+            for ip in ips:
+                yield ip.strip()
+
+    @staticmethod
+    def freeProxy39():
+        """
+        https://www.proxynova.com/
+        vpn needed
+        :return:
+        """
+        urls = [
+            'https://www.proxynova.com/proxy-server-list/country-cn/',
+            'https://www.proxynova.com/proxy-server-list/'
+        ]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10, proxies=proxies)
+            # print(r.text)
+            infos = etree.HTML(r.text.replace('<script>document.write(\'', '').replace('\');</script>', '').replace('\n', '')).cssselect('tr')
+            print(len(infos))
+            infos.pop(0)
+            ips = []
+            for info in infos:
+                if len(info.cssselect('td')) < 3:
+                    continue
+                proxy_ip = info.cssselect('td')[0].cssselect('abbr')[0].text.replace(' ', '')
+                proxy_port = info.cssselect('td')[1].text.replace(' ', '')
+                proxy = "{0}:{1}".format(proxy_ip, proxy_port)
+                ips.append(proxy)
+                pass
+            for ip in ips:
+                yield ip.strip()
+        pass
