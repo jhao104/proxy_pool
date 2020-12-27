@@ -486,8 +486,8 @@ class ProxyFetcher(object):
             'http://cn-proxy.com/archives/218'
         ]
         proxies={
-            "http": "socks5://127.0.0.1:54322",
-            "https": "socks5://127.0.0.1:54322"
+            "http": "socks5://127.0.0.1:54321",
+            "https": "socks5://127.0.0.1:54321"
             }
         for url in urls:
             r = WebRequest().get(url, timeout=10, proxies=proxies)
@@ -510,7 +510,7 @@ class ProxyFetcher(object):
             'https://free-proxy-list.net/anonymous-proxy.html',
         ]
         for url in urls:
-            r = WebRequest().get(url, timeout=10, proxies=proxies)
+            r = WebRequest().get(url, timeout=10, proxies=proxies, verify=True)
             ips = re.findall(
                 r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
             for ip in ips:
@@ -656,3 +656,66 @@ class ProxyFetcher(object):
                 ips.append(base64.b64decode(info.cssselect('li')[0].text).decode('ascii'))
             for ip in ips:
                 yield ip.strip()
+
+    @staticmethod
+    def freeProxy35():
+        """
+        https://spys.one/en/
+        vpn needed
+        :return:
+        """
+        urls = [
+            'https://spys.one/en/free-proxy-list/',
+            'https://spys.one/en/https-ssl-proxy/',
+            'https://spys.one/en/anonymous-proxy-list/',
+            'https://spys.one/en/socks-proxy-list/',
+            'https://spys.one/en/http-proxy-list/'
+        ]
+        from fetcher.parse.spys import ParseSpys
+        parse = ParseSpys()
+        for url in urls:
+            ips = parse.start(url)
+            for ip in ips:
+                yield ip.strip()
+
+    @staticmethod
+    def freeProxy36():
+        """
+        https://www.proxy-list.download/
+
+        :return:
+        """
+        urls = [
+            'https://www.proxy-list.download/api/v1/get?type=http',
+            'https://www.proxy-list.download/api/v1/get?type=https',
+            # 'https://www.proxy-list.download/api/v1/get?type=socks4',
+            # 'https://www.proxy-list.download/api/v1/get?type=socks5'
+        ]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10)
+            ips = re.findall(
+                r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
+            for ip in ips:
+                yield ip.strip()
+        sleep(1)
+
+    @staticmethod
+    def freeProxy37():
+        """
+        https://premproxy.com/
+        vpn needed
+        :return:
+        """
+        urls = [
+            'https://premproxy.com/list/01.htm',
+            'https://premproxy.com/socks-list/01.htm'
+        ]
+        from fetcher.parse.prem import ParsePrem
+        parse = ParsePrem()
+        for url in urls:
+            ips = parse.start(url)
+            if not ips:
+                continue
+            for ip in ips:
+                yield ip.strip()
+        sleep(1)
