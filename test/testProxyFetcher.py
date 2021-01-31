@@ -22,7 +22,7 @@ from handler.configHandler import ConfigHandler
 def testProxyFetcher():
     conf = ConfigHandler()
     # proxy_getter_functions = conf.fetchers
-    proxy_getter_functions = ['freeProxy38']
+    proxy_getter_functions = ['freeProxy33']
     proxy_counter = {_: 0 for _ in proxy_getter_functions}
     for proxyGetter in proxy_getter_functions:
         for proxy in getattr(ProxyFetcher, proxyGetter.strip())():

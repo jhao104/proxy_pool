@@ -602,8 +602,13 @@ class ProxyFetcher(object):
         TIPS: IP会被封禁，会出现谷歌验证，有点麻烦
         :return:
         """
+        
+        proxies = {
+            "http": "http://45.119.83.40:3128",
+            "https": "http://45.119.83.40:3128"
+        }
         import base64
-        urls = ['http://free-proxy.cz/zh/proxylist/country/CN/all/uptime/all/%s' % i for i in range(1, 6)] + ['http://free-proxy.cz/en/proxylist/main/uptime/%s' % i for i in range(1, 6)]
+        urls = ['http://free-proxy.cz/zh/proxylist/country/CN/all/uptime/all'] + ['http://free-proxy.cz/zh/proxylist/country/CN/all/uptime/all/%s' % i for i in range(2, 6)] + ['http://free-proxy.cz/en/proxylist/main/uptime/%s' % i for i in range(1, 6)]
         headers = {
                 'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
                 'Accept-Encoding': 'gzip, deflate',
@@ -613,7 +618,7 @@ class ProxyFetcher(object):
                 'Upgrade-Insecure-Requests': '1',
                 'Referer': 'http://free-proxy.cz/en/proxylist/main/4',
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36 Edg/87.0.664.66',
-               'cookie': 'fpxy_tmp_access=a7563-36df0-3c443;fp=246340c66c6383077720cfa27f12e2d1'
+            #    'cookie': 'fp=665bb65834e2f06b9c80afd86ac61898'
                 }
         """
         fp:根据浏览器信息算出
@@ -621,7 +626,7 @@ class ProxyFetcher(object):
         """
         for url in urls:
             print(url)
-            r = WebRequest().get(url, timeout=10, proxies=proxies, header=headers)
+            r = WebRequest().get(url, timeout=5, proxies=proxies, header=headers)
             html = etree.HTML(r.text.replace('<script type="text/javascript">document.write(Base64.decode("', '').replace('"))</script>', ''))
             ips = list()
             infos = html.xpath('//*[@id="proxy_list"]/tbody')[0].cssselect('tr')
@@ -793,6 +798,42 @@ class ProxyFetcher(object):
                 proxy = "{0}:{1}".format(proxy_ip, proxy_port)
                 ips.append(proxy)
                 pass
+            for ip in ips:
+                yield ip.strip()
+        pass
+
+    @staticmethod
+    def freeProxy40():
+        """
+        https://www.duplichecker.com/
+        
+        :return:
+        """
+        urls = [
+            'https://www.duplichecker.com/free-proxy-list.php',
+        ]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10)
+            # print(r.text)
+            ips = re.findall(
+                r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
+            for ip in ips:
+                yield ip.strip()
+        pass
+
+    @staticmethod
+    def freeProxy41():
+        """
+        https://hidemy.name/
+        vpn needed
+        :return:
+        """
+        urls = ['https://hidemy.name/en/proxy-list/?start=%s' % i for i in (range(0, 577, 64))]
+        for url in urls:
+            r = WebRequest().get(url, timeout=10, proxies=proxies)
+            # print(r.text)
+            ips = re.findall(
+                r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text.replace('</td><td>', ':'))
             for ip in ips:
                 yield ip.strip()
         pass

@@ -22,8 +22,8 @@ import re
 # q.load_file('qqwry.dat')
 # area = q.lookup('182.150.123.72')
 # print(" ".join(area))
-
-
+print(['https://hidemy.name/en/proxy-list/?start=%s' % i for i in (range(0, 577, 64))])
+exit(-1)
 # import urllib.parse
 # s='%3c%61%20%68%72%65%66%3d%22%68%74%74%70%3a%2f%2f%77%77%77%2e%66%72%65%65%70%72%6f%78%79%6c%69%73%74%73%2e%6e%65%74%2f%7a%68%2f%31%38%35%2e%34%2e%31%33%35%2e%37%37%2e%68%74%6d%6c%22%3e%31%38%35%2e%34%2e%31%33%35%2e%37%37%3c%2f%61%3e'
 # s=urllib.parse.unquote(s)
