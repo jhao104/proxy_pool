@@ -12,7 +12,6 @@
 """
 __author__ = 'JHao'
 
-from helper.ishttps import runHttpsChecker
 import click
 
 from setting import BANNER, VERSION
