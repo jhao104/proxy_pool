@@ -12,6 +12,7 @@
 """
 __author__ = 'JHao'
 
+from helper.ishttps import runHttpsChecker
 import click
 
 from setting import BANNER, VERSION
@@ -41,7 +42,6 @@ def server():
     click.echo("VERSION: %s\n" % VERSION)
     from api.proxyApi import runFlask
     runFlask()
-
 
 if __name__ == '__main__':
     cli()
