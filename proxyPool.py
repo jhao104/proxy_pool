@@ -42,6 +42,5 @@ def server():
     from api.proxyApi import runFlask
     runFlask()
 
-
 if __name__ == '__main__':
     cli()

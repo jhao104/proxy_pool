@@ -25,7 +25,7 @@ BANNER = r"""
 ****************************************************************
 """
 
-VERSION = "2.1.1"
+VERSION = "2.2.0"
 
 # ############### server config ###############
 HOST = "0.0.0.0"
@@ -37,7 +37,7 @@ PORT = 5010
 # example:
 #      Redis: redis://:password@ip:port/db
 #      Ssdb:  ssdb://:password@ip:port
-DB_CONN = 'redis://:pwd@127.0.0.1:6379/0'
+DB_CONN = 'redis://:@127.0.0.1:6379/0'
 
 # proxy table name
 TABLE_NAME = 'use_proxy'
@@ -76,3 +76,5 @@ MAX_FAIL_COUNT = 0
 # Otherwise it will detect the timezone from the system automatically.
 
 # TIMEZONE = "Asia/Shanghai"
+
+DEBUGMODE = True
