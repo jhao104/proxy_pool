@@ -54,12 +54,20 @@ class ConfigHandler(withMetaclass(Singleton)):
         return os.getenv("VERIFY_TIMEOUT", setting.VERIFY_TIMEOUT)
 
     @LazyProperty
+    def proxyCheckCount(self):
+        return os.getenv("PROXY_CHECK_COUNT", setting.PROXY_CHECK_COUNT)
+
+    @LazyProperty
     def maxFailCount(self):
         return os.getenv("MAX_FAIL_COUNT", setting.MAX_FAIL_COUNT)
 
     @LazyProperty
     def maxFailRate(self):
         return os.getenv("MAX_FAIL_RATE", setting.MAX_FAIL_RATE)
+
+    @LazyProperty
+    def poolSizeMin(self):
+        return os.getenv("POOL_SIZE_MIN", setting.POOL_SIZE_MIN)
 
     @LazyProperty
     def timezone(self):

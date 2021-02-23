@@ -8,7 +8,7 @@
 -------------------------------------------------
    Change Activity:
                    2019/08/05: proxyScheduler
-                   2021/02/23: runProxyCheck时,剩余代理为0时执行抓取
+                   2021/02/23: runProxyCheck时,剩余代理少于POOL_SIZE_MIN时执行抓取
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -37,7 +37,7 @@ def _runProxyFetch():
 def _runProxyCheck():
     proxy_queue = Queue()
     proxy_handler = ProxyHandler()
-    if proxy_handler.db.getCount() == 0:
+    if proxy_handler.db.getCount() < proxy_handler.conf.poolSizeMin:
         _runProxyFetch()
     else:
         for proxy in proxy_handler.getAll():
