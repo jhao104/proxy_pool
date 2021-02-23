@@ -7,7 +7,8 @@
    date：          2019/8/5
 -------------------------------------------------
    Change Activity:
-                   2019/8/5: proxyScheduler
+                   2019/08/05: proxyScheduler
+                   2021/02/23: runProxyCheck时,剩余代理为0时执行抓取
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -24,7 +25,7 @@ from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
 
 
-def runProxyFetch():
+def _runProxyFetch():
     proxy_queue = Queue()
 
     for proxy in runFetcher():
@@ -33,25 +34,26 @@ def runProxyFetch():
     runChecker("raw", proxy_queue)
 
 
-def runProxyCheck():
+def _runProxyCheck():
     proxy_queue = Queue()
-    if not ProxyHandler().getAll():
-        runProxyFetch()
-    for proxy in ProxyHandler().getAll():
-        proxy_queue.put(proxy.to_json)
+    proxy_handler = ProxyHandler()
+    if proxy_handler.db.getCount() == 0:
+        _runProxyFetch()
+    else:
+        for proxy in proxy_handler.getAll():
+            proxy_queue.put(proxy.to_json)
+        runChecker("use", proxy_queue)
 
-    runChecker("use", proxy_queue)
 
-
-def runScheduler():
-    runProxyFetch()
+def run():
+    _runProxyFetch()
 
     timezone = ConfigHandler().timezone
     scheduler_log = LogHandler("scheduler")
     scheduler = BlockingScheduler(logger=scheduler_log, timezone=timezone)
 
-    scheduler.add_job(runProxyFetch, 'interval', minutes=4, id="proxy_fetch", name="proxy采集")
-    scheduler.add_job(runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查")
+    scheduler.add_job(_runProxyFetch, 'interval', minutes=4, id="proxy_fetch", name="proxy采集")
+    scheduler.add_job(_runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查")
 
     executors = {
         'default': {'type': 'threadpool', 'max_workers': 20},
@@ -68,4 +70,4 @@ def runScheduler():
 
 
 if __name__ == '__main__':
-    runScheduler()
+    run()
