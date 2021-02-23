@@ -58,5 +58,9 @@ class ConfigHandler(withMetaclass(Singleton)):
         return os.getenv("MAX_FAIL_COUNT", setting.MAX_FAIL_COUNT)
 
     @LazyProperty
+    def maxFailRate(self):
+        return os.getenv("MAX_FAIL_RATE", setting.MAX_FAIL_RATE)
+
+    @LazyProperty
     def timezone(self):
         return os.getenv("TIMEZONE", getattr(setting, 'TIMEZONE', None))

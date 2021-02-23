@@ -35,6 +35,24 @@ class ProxyHandler(object):
             return Proxy.createFromJson(proxy)
         return None
 
+    def update_check_count(self, proxy_str):
+        proxy = self.db.get(proxy_str)
+        if not proxy:
+            return None
+        proxy = Proxy.createFromJson(proxy)
+        proxy.check_count += 1
+        self.db.update(proxy)
+        return proxy
+
+    def update_fail_count(self, proxy_str):
+        proxy = self.db.get(proxy_str)
+        if not proxy:
+            return None
+        proxy = Proxy.createFromJson(proxy)
+        proxy.fail_count += 1
+        self.db.update(proxy)
+        return proxy
+
     def pop(self):
         """
         return and delete a useful proxy
