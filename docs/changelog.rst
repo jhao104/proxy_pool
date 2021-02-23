@@ -10,6 +10,7 @@ ChangeLog
 2. 修复 **66代理** 采集; (2020-11-04)
 3. 修复 **全网代理** 采集, 解决HTML端口加密问题; (2020-11-04)
 4. 新增 **代理盒子** 免费源; (2020-11-04)
+5. 新增`POOL_SIZE_MIN`配置项, runProxyCheck时, 剩余代理少于POOL_SIZE_MIN触发抓取; (2020-11-04)
 
 .. _#493: https://github.com/jhao104/proxy_pool/issues/493
 

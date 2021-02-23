@@ -45,7 +45,7 @@ def _runProxyCheck():
         runChecker("use", proxy_queue)
 
 
-def run():
+def runScheduler():
     _runProxyFetch()
 
     timezone = ConfigHandler().timezone
@@ -70,4 +70,4 @@ def run():
 
 
 if __name__ == '__main__':
-    run()
+    runScheduler()
