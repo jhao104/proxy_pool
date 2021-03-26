@@ -15,8 +15,9 @@
 -------------------------------------------------
 """
 __author__ = 'JHao'
-
+from redis.exceptions import TimeoutError, ConnectionError, ResponseError
 from redis.connection import BlockingConnectionPool
+from handler.logHandler import LogHandler
 from random import choice
 from redis import Redis
 
@@ -39,7 +40,10 @@ class SsdbClient(object):
         """
         self.name = ""
         kwargs.pop("username")
-        self.__conn = Redis(connection_pool=BlockingConnectionPool(decode_responses=True, **kwargs))
+        self.__conn = Redis(connection_pool=BlockingConnectionPool(decode_responses=True,
+                                                                   timeout=5,
+                                                                   socket_timeout=5,
+                                                                   **kwargs))
 
     def get(self):
         """
@@ -128,3 +132,17 @@ class SsdbClient(object):
         :return:
         """
         self.name = name
+
+    def test(self):
+        log = LogHandler('ssdb_client')
+        try:
+            self.getCount()
+        except TimeoutError as e:
+            log.error('ssdb connection time out: %s' % str(e), exc_info=True)
+            return e
+        except ConnectionError as e:
+            log.error('ssdb connection error: %s' % str(e), exc_info=True)
+            return e
+        except ResponseError as e:
+            log.error('ssdb connection error: %s' % str(e), exc_info=True)
+            return e

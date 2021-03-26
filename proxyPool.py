@@ -13,7 +13,7 @@
 __author__ = 'JHao'
 
 import click
-
+from helper.launcher import startServer, startScheduler
 from setting import BANNER, VERSION
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
@@ -29,18 +29,14 @@ def cli():
 def schedule():
     """ 启动调度程序 """
     click.echo(BANNER)
-    click.echo("VERSION: %s\n" % VERSION)
-    from helper.scheduler import runScheduler
-    runScheduler()
+    startScheduler()
 
 
 @cli.command(name="server")
 def server():
     """ 启动api服务 """
     click.echo(BANNER)
-    click.echo("VERSION: %s\n" % VERSION)
-    from api.proxyApi import runFlask
-    runFlask()
+    startServer()
 
 
 if __name__ == '__main__':

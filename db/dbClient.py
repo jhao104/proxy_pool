@@ -53,9 +53,7 @@ class DbClient(withMetaclass(Singleton)):
         init
         :return:
         """
-        self.db_conn = db_conn
         self.parseDbConn(db_conn)
-        self.__printConfig()
         self.__initDbClient()
 
     @classmethod
@@ -79,8 +77,6 @@ class DbClient(withMetaclass(Singleton)):
             __type = "ssdbClient"
         elif "REDIS" == self.db_type:
             __type = "redisClient"
-        elif "MONGODB" == self.db_type:
-            __type = "mongodbClient"
         else:
             pass
         assert __type, 'type error, Not support DB type: {}'.format(self.db_type)
@@ -89,15 +85,6 @@ class DbClient(withMetaclass(Singleton)):
                                                                                      username=self.db_user,
                                                                                      password=self.db_pwd,
                                                                                      db=self.db_name)
-
-    def __printConfig(self):
-        print("============ DATABASE CONFIGURE =========================")
-        print("DB_TYPE: %s" % self.db_type)
-        print("DB_HOST: %s" % self.db_host)
-        print("DB_PORT: %s" % self.db_port)
-        print("DB_NAME: %s" % self.db_name)
-        print("DB_USER: %s" % self.db_user)
-        print("=========================================================")
 
     def get(self, **kwargs):
         return self.client.get(**kwargs)
@@ -128,3 +115,6 @@ class DbClient(withMetaclass(Singleton)):
 
     def getCount(self):
         return self.client.getCount()
+
+    def test(self):
+        return self.client.test()
