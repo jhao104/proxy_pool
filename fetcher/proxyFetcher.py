@@ -87,36 +87,15 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy04():
         """
-        全网代理 http://www.goubanjia.com/
+        神鸡代理 http://www.shenjidaili.com/
         :return:
         """
-        url = "http://www.goubanjia.com/"
+        url = "http://www.shenjidaili.com/product/open/"
         tree = WebRequest().get(url).tree
-        proxy_list = tree.xpath('//td[@class="ip"]')
-        # 此网站有隐藏的数字干扰，或抓取到多余的数字或.符号
-        # 需要过滤掉<p style="display:none;">的内容
-        xpath_str = """.//*[not(contains(@style, 'display: none'))
-                                        and not(contains(@style, 'display:none'))
-                                        and not(contains(@class, 'port'))
-                                        ]/text()
-                                """
-
-        # port是class属性值加密得到
-        def _parse_port(port_element):
-            port_list = []
-            for letter in port_element:
-                port_list.append(str("ABCDEFGHIZ".find(letter)))
-            _port = "".join(port_list)
-            return int(_port) >> 0x3
-
-        for each_proxy in proxy_list:
-            try:
-                ip_addr = ''.join(each_proxy.xpath(xpath_str))
-                port_str = each_proxy.xpath(".//span[contains(@class, 'port')]/@class")[0].split()[-1]
-                port = _parse_port(port_str.strip())
-                yield '{}:{}'.format(ip_addr, int(port))
-            except Exception:
-                pass
+        for table in tree.xpath("//table[@class='table table-hover text-white text-center table-borderless']"):
+            for tr in table.xpath("./tr")[1:]:
+                proxy = ''.join(tr.xpath("./td[1]/text()"))
+                yield proxy.strip()
 
     @staticmethod
     def freeProxy05(page_count=1):
@@ -280,5 +259,5 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy03():
+    for _ in p.freeProxy04():
         print(_)
