@@ -46,7 +46,7 @@ class ProxyFetcher(object):
                     if port:
                         yield '%s:%s' % (ip, port)
                 except Exception as e:
-                    pass
+                    print(e)
 
     @staticmethod
     def freeProxy02():
@@ -62,25 +62,27 @@ class ProxyFetcher(object):
             yield proxy
 
     @staticmethod
-    def freeProxy03(page_count=1):
+    def freeProxy03():
         """
-        西刺代理 http://www.xicidaili.com  网站已关闭
-        :return:
+        pzzqz https://pzzqz.com/
         """
-        url_list = [
-            'http://www.xicidaili.com/nn/',  # 高匿
-            'http://www.xicidaili.com/nt/',  # 透明
-        ]
-        for each_url in url_list:
-            for i in range(1, page_count + 1):
-                page_url = each_url + str(i)
-                tree = WebRequest().get(page_url).tree
-                proxy_list = tree.xpath('.//table[@id="ip_list"]//tr[position()>1]')
-                for proxy in proxy_list:
-                    try:
-                        yield ':'.join(proxy.xpath('./td/text()')[0:2])
-                    except Exception as e:
-                        pass
+        from requests import Session
+        from lxml import etree
+        session = Session()
+        try:
+            index_resp = session.get("https://pzzqz.com/", timeout=20, verify=False).text
+            x_csrf_token = re.findall('X-CSRFToken": "(.*?)"', index_resp)
+            if x_csrf_token:
+                data = {"http": "on", "ping": "3000", "country": "cn", "ports": ""}
+                proxy_resp = session.post("https://pzzqz.com/", verify=False,
+                                          headers={"X-CSRFToken": x_csrf_token[0]}, json=data).json()
+                tree = etree.HTML(proxy_resp["proxy_html"])
+                for tr in tree.xpath("//tr"):
+                    ip = "".join(tr.xpath("./td[1]/text()"))
+                    port = "".join(tr.xpath("./td[2]/text()"))
+                    yield "%s:%s" % (ip, port)
+        except Exception as e:
+            print(e)
 
     @staticmethod
     def freeProxy04():
@@ -278,5 +280,5 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy01():
+    for _ in p.freeProxy03():
         print(_)
