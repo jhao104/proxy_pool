@@ -26,30 +26,25 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy01():
         """
-        无忧代理 http://www.data5u.com/
-        几乎没有能用的
+        米扑代理 https://proxy.mimvp.com/
         :return:
         """
         url_list = [
-            'http://www.data5u.com/',
-            'http://www.data5u.com/free/gngn/index.shtml',
-            'http://www.data5u.com/free/gnpt/index.shtml'
+            'https://proxy.mimvp.com/freeopen',
+            'https://proxy.mimvp.com/freeopen?proxy=in_tp'
         ]
-        key = 'ABCDEFGHIZ'
+        port_img_map = {'DMxMjg': '3128', 'Dgw': '80', 'DgwODA': '8080',
+                        'DgwOA': '808', 'DgwMDA': '8000', 'Dg4ODg': '8888',
+                        'DgwODE': '8081', 'Dk5OTk': '9999'}
         for url in url_list:
             html_tree = WebRequest().get(url).tree
-            ul_list = html_tree.xpath('//ul[@class="l2"]')
-            for ul in ul_list:
+            for tr in html_tree.xpath(".//table[@class='mimvp-tbl free-proxylist-tbl']/tbody/tr"):
                 try:
-                    ip = ul.xpath('./span[1]/li/text()')[0]
-                    classnames = ul.xpath('./span[2]/li/attribute::class')[0]
-                    classname = classnames.split(' ')[1]
-                    port_sum = 0
-                    for c in classname:
-                        port_sum *= 10
-                        port_sum += key.index(c)
-                    port = port_sum >> 3
-                    yield '{}:{}'.format(ip, port)
+                    ip = ''.join(tr.xpath('./td[2]/text()'))
+                    port_img = ''.join(tr.xpath('./td[3]/img/@src')).split("port=")[-1]
+                    port = port_img_map.get(port_img[14:].replace('O0O', ''))
+                    if port:
+                        yield '%s:%s' % (ip, port)
                 except Exception as e:
                     print(e)
 
@@ -67,25 +62,27 @@ class ProxyFetcher(object):
             yield proxy
 
     @staticmethod
-    def freeProxy03(page_count=1):
+    def freeProxy03():
         """
-        西刺代理 http://www.xicidaili.com  网站已关闭
-        :return:
+        pzzqz https://pzzqz.com/
         """
-        url_list = [
-            'http://www.xicidaili.com/nn/',  # 高匿
-            'http://www.xicidaili.com/nt/',  # 透明
-        ]
-        for each_url in url_list:
-            for i in range(1, page_count + 1):
-                page_url = each_url + str(i)
-                tree = WebRequest().get(page_url).tree
-                proxy_list = tree.xpath('.//table[@id="ip_list"]//tr[position()>1]')
-                for proxy in proxy_list:
-                    try:
-                        yield ':'.join(proxy.xpath('./td/text()')[0:2])
-                    except Exception as e:
-                        pass
+        from requests import Session
+        from lxml import etree
+        session = Session()
+        try:
+            index_resp = session.get("https://pzzqz.com/", timeout=20, verify=False).text
+            x_csrf_token = re.findall('X-CSRFToken": "(.*?)"', index_resp)
+            if x_csrf_token:
+                data = {"http": "on", "ping": "3000", "country": "cn", "ports": ""}
+                proxy_resp = session.post("https://pzzqz.com/", verify=False,
+                                          headers={"X-CSRFToken": x_csrf_token[0]}, json=data).json()
+                tree = etree.HTML(proxy_resp["proxy_html"])
+                for tr in tree.xpath("//tr"):
+                    ip = "".join(tr.xpath("./td[1]/text()"))
+                    port = "".join(tr.xpath("./td[2]/text()"))
+                    yield "%s:%s" % (ip, port)
+        except Exception as e:
+            print(e)
 
     @staticmethod
     def freeProxy04():
@@ -279,3 +276,9 @@ class ProxyFetcher(object):
             ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
             for ip in ips:
                 yield ip.strip()
+
+
+if __name__ == '__main__':
+    p = ProxyFetcher()
+    for _ in p.freeProxy03():
+        print(_)
