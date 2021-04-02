@@ -47,7 +47,7 @@ TABLE_NAME = 'use_proxy'
 PROXY_FETCHER = [
     "freeProxy01",
     "freeProxy02",
-    # "freeProxy03",
+    "freeProxy03",
     "freeProxy04",
     "freeProxy05",
     "freeProxy06",
@@ -59,7 +59,7 @@ PROXY_FETCHER = [
 ]
 
 # ############# proxy validator #################
-VERIFY_URL = "http://www.baidu.com"
+VERIFY_URL = "https://www.qq.com"
 
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 10

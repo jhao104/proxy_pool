@@ -195,7 +195,7 @@ PROXY_FETCHER = [
   | 米扑代理     |  √    |     ★     |   *     | [地址](https://proxy.mimvp.com/) | `freeProxy01` |
   | 66代理      |   √    |    ★★     |   *    | [地址](http://www.66ip.cn/)     |  `freeProxy02`  |
   | Pzzqz       |   √   |     ★     |   *     | [地址](https://pzzqz.com/)        | `freeProxy03`  |
-  | 全网代理     |  √    |   ★       |   *     | [地址](http://www.goubanjia.com/)   | `freeProxy04` |
+  | 神鸡代理     |   √   |    ★★★    |   *     | [地址](http://www.shenjidaili.com/)   | `freeProxy04` |
   | 快代理      |  √     |   ☆       |   *   | [地址](https://www.kuaidaili.com/)| `freeProxy05` |
   | 代理盒子    |  √     |  ★★★      |   *   | [地址](https://proxy.coderbusy.com/)| `freeProxy06` |
   | 云代理      |  √     |  ★        |   *   | [地址](http://www.ip3366.net/)|  `freeProxy07`   |
