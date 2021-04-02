@@ -26,32 +26,27 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy01():
         """
-        无忧代理 http://www.data5u.com/
-        几乎没有能用的
+        米扑代理 https://proxy.mimvp.com/
         :return:
         """
         url_list = [
-            'http://www.data5u.com/',
-            'http://www.data5u.com/free/gngn/index.shtml',
-            'http://www.data5u.com/free/gnpt/index.shtml'
+            'https://proxy.mimvp.com/freeopen',
+            'https://proxy.mimvp.com/freeopen?proxy=in_tp'
         ]
-        key = 'ABCDEFGHIZ'
+        port_img_map = {'DMxMjg': '3128', 'Dgw': '80', 'DgwODA': '8080',
+                        'DgwOA': '808', 'DgwMDA': '8000', 'Dg4ODg': '8888',
+                        'DgwODE': '8081', 'Dk5OTk': '9999'}
         for url in url_list:
             html_tree = WebRequest().get(url).tree
-            ul_list = html_tree.xpath('//ul[@class="l2"]')
-            for ul in ul_list:
+            for tr in html_tree.xpath(".//table[@class='mimvp-tbl free-proxylist-tbl']/tbody/tr"):
                 try:
-                    ip = ul.xpath('./span[1]/li/text()')[0]
-                    classnames = ul.xpath('./span[2]/li/attribute::class')[0]
-                    classname = classnames.split(' ')[1]
-                    port_sum = 0
-                    for c in classname:
-                        port_sum *= 10
-                        port_sum += key.index(c)
-                    port = port_sum >> 3
-                    yield '{}:{}'.format(ip, port)
+                    ip = ''.join(tr.xpath('./td[2]/text()'))
+                    port_img = ''.join(tr.xpath('./td[3]/img/@src')).split("port=")[-1]
+                    port = port_img_map.get(port_img[14:].replace('O0O', ''))
+                    if port:
+                        yield '%s:%s' % (ip, port)
                 except Exception as e:
-                    print(e)
+                    pass
 
     @staticmethod
     def freeProxy02():
@@ -279,3 +274,9 @@ class ProxyFetcher(object):
             ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
             for ip in ips:
                 yield ip.strip()
+
+
+if __name__ == '__main__':
+    p = ProxyFetcher()
+    for _ in p.freeProxy01():
+        print(_)

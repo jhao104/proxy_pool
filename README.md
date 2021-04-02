@@ -192,7 +192,7 @@ PROXY_FETCHER = [
    
   |   代理名称   |  状态  |  更新速度 |  可用率  |  地址 |    代码   |
   | ---------   |  ---- | --------  | ------  | ----- |   ------- |
-  | 无忧代理     |  √    |     ★     |   *    | [地址](http://www.data5u.com/) | `freeProxy01` |
+  | 米扑代理     |  √    |     ★     |   *    | [地址](https://proxy.mimvp.com/) | `freeProxy01` |
   | 66代理      |   √    |    ★★    |   *    |  [地址](http://www.66ip.cn/) |  `freeProxy02`  |
   | ~~西刺代理~~ | ~~已关闭~~ | ——   |   ——   | ~~[地址](http://www.xicidaili.com)~~| ~~`freeProxy03`~~|
   | 全网代理     |  √    |   ★       |   *   | [地址](http://www.goubanjia.com/)| `freeProxy04` |
