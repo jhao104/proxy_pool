@@ -94,3 +94,11 @@ class WebRequest(object):
     def text(self):
         return self.response.text
 
+    @property
+    def json(self):
+        try:
+            return self.response.json()
+        except Exception as e:
+            self.log.error(str(e))
+            return {}
+

@@ -119,20 +119,20 @@ class ProxyFetcher(object):
                 yield ':'.join(tr.xpath('./td/text()')[0:2])
 
     @staticmethod
-    def freeProxy06():
+    def freeProxy06(page=2):
         """
-        代理盒子 https://proxy.coderbusy.com/
+        极速代理 https://www.superfastip.com/
         :return:
         """
-        urls = ['https://proxy.coderbusy.com/zh-hans/ops/country/cn.html']
-        for url in urls:
-            tree = WebRequest().get(url).tree
-            proxy_list = tree.xpath('.//table//tr')
-            for tr in proxy_list[1:]:
-                proxy = '{}:{}'.format("".join(tr.xpath("./td[1]/text()")).strip(),
-                                       "".join(tr.xpath("./td[2]//text()")).strip())
-                if proxy:
-                    yield proxy
+        url = "https://api.superfastip.com/ip/freeip?page={page}"
+        for i in range(page):
+            page_url = url.format(page=i + 1)
+            try:
+                resp_json = WebRequest().get(page_url).json
+                for each in resp_json.get("freeips", []):
+                    yield "%s:%s" % (each.get("ip", ""), each.get("port", ""))
+            except Exception as e:
+                print(e)
 
     @staticmethod
     def freeProxy07():
@@ -259,5 +259,5 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy04():
+    for _ in p.freeProxy06():
         print(_)
