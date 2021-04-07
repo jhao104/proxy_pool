@@ -151,18 +151,15 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy08():
         """
-        IP海 http://www.iphai.com/free/ng
+        小幻代理 https://ip.ihuan.me/
         :return:
         """
         urls = [
-            'http://www.iphai.com/free/ng',
-            'http://www.iphai.com/free/np',
-            'http://www.iphai.com/free/wg',
-            'http://www.iphai.com/free/wp'
+            'https://ip.ihuan.me/address/5Lit5Zu9.html',
         ]
         for url in urls:
             r = WebRequest().get(url, timeout=10)
-            proxies = re.findall(r'<td>\s*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s*?</td>[\s\S]*?<td>\s*?(\d+)\s*?</td>',
+            proxies = re.findall(r'>\s*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s*?</a></td><td>(\d+)</td>',
                                  r.text)
             for proxy in proxies:
                 yield ":".join(proxy)
@@ -259,5 +256,5 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy06():
+    for _ in p.freeProxy08():
         print(_)
