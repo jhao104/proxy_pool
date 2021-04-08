@@ -167,7 +167,7 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy09(page_count=1):
         """
-        http://ip.jiangxianli.com/?page=
+        http://ip.jiangxianli.com/
         免费代理库
         :return:
         """
@@ -243,10 +243,7 @@ class ProxyFetcher(object):
         西拉代理
         :return:
         """
-        urls = ['http://www.xiladaili.com/putong/',
-                "http://www.xiladaili.com/gaoni/",
-                "http://www.xiladaili.com/http/",
-                "http://www.xiladaili.com/https/"]
+        urls = ['http://www.xiladaili.com/']
         for url in urls:
             r = WebRequest().get(url, timeout=10)
             ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
@@ -256,5 +253,5 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy08():
+    for _ in p.freeProxy13():
         print(_)

@@ -199,10 +199,10 @@ PROXY_FETCHER = [
   | 快代理       |  ✔    |     ☆     |   *     | [地址](https://www.kuaidaili.com/)  | `freeProxy05`  |
   | 极速代理     |  ✔    |    ★★★    |   *     | [地址](https://proxy.coderbusy.com/)| `freeProxy06`  |
   | 云代理       |  ✔    |     ★     |   *     | [地址](http://www.ip3366.net/)      |  `freeProxy07` |
-  | 小幻代理     |  ✔     |    ★★    |    *    | [地址](https://ip.ihuan.me/)        | `freeProxy08`   |
-  | 免费代理库  |  √     |   ☆       |   *   | [地址](http://ip.jiangxianli.com/)| `freeProxy09` |
-  | 89代理     |   √    |    ☆      |   *   | [地址](http://cn-proxy.com/)| `freeProxy13` |
-  | 西拉代理    |  √     |   ★★      |   *   | [地址](https://proxy-list.org/chinese/index.php)| `freeProxy14` |
+  | 小幻代理     |  ✔    |     ★★    |    *    | [地址](https://ip.ihuan.me/)        | `freeProxy08`   |
+  | 免费代理库   |  ✔    |      ☆    |    *    | [地址](http://ip.jiangxianli.com/)  |   `freeProxy09` |
+  | 89代理      |  ✔    |      ☆     |   *    | [地址](https://www.89ip.cn/)         | `freeProxy13` |
+  | 西拉代理    |  ✔     |     ★★    |   *     | [地址](http://www.xiladaili.com/)   | `freeProxy14` |
 
   
   如果还有其他好的免费代理网站, 可以在提交在[issues](https://github.com/jhao104/proxy_pool/issues/71), 下次更新时会考虑在项目中支持。
