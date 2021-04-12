@@ -28,7 +28,7 @@ class Fetcher(object):
 
     def fetch(self):
         """
-        fetch proxy into db with proxyFetcher
+        fetch proxy with proxyFetcher
         :return:
         """
         proxy_set = set()
@@ -37,10 +37,10 @@ class Fetcher(object):
             self.log.info("ProxyFetch - {func}: start".format(func=fetch_name))
             fetcher = getattr(ProxyFetcher, fetch_name, None)
             if not fetcher:
-                self.log.error("ProxyFetch - {func}: class method not exists!")
+                self.log.error("ProxyFetch - {func}: class method not exists!".format(func=fetch_name))
                 continue
             if not callable(fetcher):
-                self.log.error("ProxyFetch - {func}: must be class method")
+                self.log.error("ProxyFetch - {func}: must be class method".format(func=fetch_name))
                 continue
 
             try:
