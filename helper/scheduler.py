@@ -18,8 +18,8 @@ from apscheduler.executors.pool import ProcessPoolExecutor
 
 from util.six import Queue
 from helper.proxy import Proxy
-from helper.fetch import runFetcher
-from helper.check import runChecker
+from helper.fetch import Fetcher
+from helper.check import Checker
 from handler.logHandler import LogHandler
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
@@ -27,11 +27,12 @@ from handler.configHandler import ConfigHandler
 
 def _runProxyFetch():
     proxy_queue = Queue()
+    proxy_fetcher = Fetcher()
 
-    for proxy in runFetcher():
-        proxy_queue.put(Proxy(proxy).to_json)
+    for proxy in proxy_fetcher.run():
+        proxy_queue.put(proxy)
 
-    runChecker("raw", proxy_queue)
+    Checker("raw", proxy_queue)
 
 
 def _runProxyCheck():
@@ -41,8 +42,8 @@ def _runProxyCheck():
         _runProxyFetch()
     else:
         for proxy in proxy_handler.getAll():
-            proxy_queue.put(proxy.to_json)
-        runChecker("use", proxy_queue)
+            proxy_queue.put(proxy)
+        Checker("use", proxy_queue)
 
 
 def runScheduler():
