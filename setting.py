@@ -7,7 +7,7 @@
    date：          2019/2/15
 -------------------------------------------------
    Change Activity:
-                   2019/2/15:
+                  2019/2/15:
 -------------------------------------------------
 """
 
@@ -28,7 +28,7 @@ BANNER = r"""
 VERSION = "2.1.1"
 
 # ############### server config ###############
-HOST = "0.0.0.0"
+HOST = "127.0.0.1"
 
 PORT = 5010
 
@@ -37,7 +37,8 @@ PORT = 5010
 # example:
 #      Redis: redis://:password@ip:port/db
 #      Ssdb:  ssdb://:password@ip:port
-DB_CONN = 'redis://:pwd@127.0.0.1:6379/0'
+# DB_CONN = 'redis://:pwd@127.0.0.1:6379/0'
+DB_CONN = 'mongodb://127.0.0.1:27017/proxy'
 
 # proxy table name
 TABLE_NAME = 'use_proxy'
@@ -45,17 +46,17 @@ TABLE_NAME = 'use_proxy'
 
 # ###### config the proxy fetch function ######
 PROXY_FETCHER = [
-    "freeProxy01",
-    "freeProxy02",
-    # "freeProxy03",
-    "freeProxy04",
-    "freeProxy05",
-    "freeProxy06",
-    "freeProxy07",
-    # "freeProxy08",
-    "freeProxy09",
-    "freeProxy13",
-    "freeProxy14"
+   "freeProxy01",
+   "freeProxy02",
+   # "freeProxy03",
+   "freeProxy04",
+   "freeProxy05",
+   "freeProxy06",
+   "freeProxy07",
+   # "freeProxy08",
+   "freeProxy09",
+   "freeProxy13",
+   "freeProxy14"
 ]
 
 # ############# proxy validator #################

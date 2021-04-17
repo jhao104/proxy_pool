@@ -35,7 +35,10 @@ class Proxy(object):
         :param proxy_json:
         :return:
         """
-        proxy_dict = json.loads(proxy_json)
+        if not isinstance(proxy_json, dict):
+            proxy_dict = json.loads(proxy_json)
+        else:
+            proxy_dict = proxy_json
         return cls(proxy=proxy_dict.get("proxy", ""),
                    fail_count=proxy_dict.get("fail_count", 0),
                    region=proxy_dict.get("region", ""),

@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 """
 -------------------------------------------------
-   File Name：     proxy_pool
-   Description :   proxy pool 启动入口
-   Author :        JHao
-   date：          2020/6/19
+    File Name：     proxy_pool
+    Description :   proxy pool 启动入口
+    Author :        JHao
+    date：          2020/6/19
 -------------------------------------------------
-   Change Activity:
-                   2020/6/19:
+    Change Activity:
+                2020/6/19:
 -------------------------------------------------
 """
 __author__ = 'JHao'

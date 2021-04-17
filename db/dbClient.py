@@ -80,7 +80,9 @@ class DbClient(withMetaclass(Singleton)):
         elif "REDIS" == self.db_type:
             __type = "redisClient"
         elif "MONGODB" == self.db_type:
-            __type = "mongodbClient"
+            __type = "MongodbClient"
+        elif "SQLITE" == self.db_type:
+            __type = 'sqliteClient'
         else:
             pass
         assert __type, 'type error, Not support DB type: {}'.format(self.db_type)

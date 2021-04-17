@@ -2,15 +2,15 @@
 # !/usr/bin/env python
 """
 -------------------------------------------------
-   File Name：     ProxyApi.py
-   Description :   WebApi
-   Author :       JHao
-   date：          2016/12/4
+    File Name：     ProxyApi.py
+    Description :   WebApi
+    Author :       JHao
+    date：          2016/12/4
 -------------------------------------------------
-   Change Activity:
-                   2016/12/04: WebApi
-                   2019/08/14: 集成Gunicorn启动方式
-                   2020/06/23: 新增pop接口
+    Change Activity:
+                2016/12/04: WebApi
+                2019/08/14: 集成Gunicorn启动方式
+                2020/06/23: 新增pop接口
 -------------------------------------------------
 """
 __author__ = 'JHao'

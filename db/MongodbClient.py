@@ -17,23 +17,24 @@ from pymongo import MongoClient
 
 
 class MongodbClient(object):
-    def __init__(self, name, host, port, **kwargs):
-        self.name = name
+    def __init__(self, host, port, **kwargs):
+        self.name = ""
+        self._db_name = kwargs.pop('db')
         self.client = MongoClient(host, port, **kwargs)
-        self.db = self.client.proxy
+        self.db = self.client[self._db_name]
 
     def changeTable(self, name):
         self.name = name
 
-    def get(self, proxy):
-        data = self.db[self.name].find_one({'proxy': proxy})
-        return data['num'] if data != None else None
+    def get(self):
+        data = self.db[self.name].find_one()
+        return data
 
-    def put(self, proxy, num=1):
-        if self.db[self.name].find_one({'proxy': proxy}):
+    def put(self, proxy_obj):
+        if self.db[self.name].find_one({'proxy': proxy_obj.proxy}):
             return None
         else:
-            self.db[self.name].insert({'proxy': proxy, 'num': num})
+            self.db[self.name].insert(proxy_obj.to_dict)
 
     def pop(self):
         data = list(self.db[self.name].aggregate([{'$sample': {'size': 1}}]))
@@ -48,10 +49,10 @@ class MongodbClient(object):
         self.db[self.name].remove({'proxy': value})
 
     def getAll(self):
-        return {p['proxy']: p['num'] for p in self.db[self.name].find()}
+        return {p['proxy'] for p in self.db[self.name].find()}
 
     def clean(self):
-        self.client.drop_database('proxy')
+        self.client.drop_database(self._db_name)
 
     def delete_all(self):
         self.db[self.name].remove()
