@@ -27,7 +27,7 @@ ProxyPool 爬虫代理IP池
 
 * 测试地址: http://118.24.52.95:5010 (勿压谢谢)
 
-* 付费代理推荐: [luminati-china](https://brightdata.grsm.io/proxyPool). 国外的厂, 最便宜的价格`$0.6/GB`. 计费方式也比较灵活, 生产使用下来可用率有98%以上. 需要高质量代理的小伙伴可以考虑下.
+* 付费代理推荐: [luminati-china](https://brightdata.grsm.io/proxyPool). 国外的厂, 最便宜的价格`$0.6/GB`. 计费方式也比较灵活, 生产使用下来可用率有98%以上. 需要高质量稳定代理的小伙伴可以考虑下.
 
 
 ### 运行项目
