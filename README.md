@@ -110,10 +110,12 @@ docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy
 | api | method | Description | arg|
 | ----| ---- | ---- | ----|
 | / | GET | api介绍 | None |
-| /get | GET | 随机获取一个代理 | None|
-| /get_all | GET | 获取所有代理 |None|
+| /get | GET | 随机获取一个代理(http/https) | None|
+| /get_all | GET | 获取所有代理(http/https) |None|
 | /get_status | GET | 查看代理数量 |None|
 | /delete | GET | 删除代理  |proxy=host:ip|
+| /get_https | GET | 随机获取一个https代理 | None
+| /get_https_all | GET | 获取所有https代理 | None
 
 * 爬虫使用
 

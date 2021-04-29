@@ -46,7 +46,9 @@ api_list = {
     # 'refresh': u'refresh proxy pool',
     'get_all': u'get all proxy from proxy pool',
     'delete?proxy=127.0.0.1:8080': u'delete an unable proxy',
-    'get_status': u'proxy number'
+    'get_status': u'proxy number',
+    'get_https': u'get an useful https proxy',
+    'get_https_all': u'get all usefull https proxies'
 }
 
 
@@ -91,10 +93,26 @@ def getStatus():
     status = proxy_handler.getCount()
     return status
 
+@app.route('/get_https/')
+def getHttps():
+    proxy = proxy_handler.get()
+    while(proxy.type != "https"):
+        proxy = proxy_handler.get()
+    return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
+
+@app.route('/get_https_all/')
+def getAllHttps():
+    proxyList = proxy_handler.getAll()
+    httpsList = []
+    for proxy in proxyList:
+        #print(proxy,proxy.type,type(proxy.type))
+        if proxy.type == "https":
+            httpsList.append(proxy)
+    return jsonify([_.to_dict for _ in httpsList])
 
 def runFlask():
     if platform.system() == "Windows":
-        app.run(host=conf.serverHost, port=conf.serverPort)
+        app.run(host=conf.serverHost, port=conf.serverPort,debug=conf.debugMode)
     else:
         import gunicorn.app.base
 

@@ -20,6 +20,7 @@ from util.six import Queue
 from helper.proxy import Proxy
 from helper.fetch import runFetcher
 from helper.check import runChecker
+from helper.ishttps import _runHttpsChecker
 from handler.logHandler import LogHandler
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
@@ -47,6 +48,7 @@ def _runProxyCheck():
 
 def runScheduler():
     _runProxyFetch()
+    _runHttpsChecker()
 
     timezone = ConfigHandler().timezone
     scheduler_log = LogHandler("scheduler")
@@ -54,7 +56,7 @@ def runScheduler():
 
     scheduler.add_job(_runProxyFetch, 'interval', minutes=4, id="proxy_fetch", name="proxy采集")
     scheduler.add_job(_runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查")
-
+    scheduler.add_job(_runHttpsChecker,'interval',minutes=2, id="https_check", name="https检查")
     executors = {
         'default': {'type': 'threadpool', 'max_workers': 20},
         'processpool': ProcessPoolExecutor(max_workers=5)
