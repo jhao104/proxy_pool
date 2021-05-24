@@ -17,33 +17,28 @@ import json
 
 class Proxy(object):
 
-    def __init__(self, proxy, fail_count=0, region="", proxy_type="",
+    def __init__(self, proxy, fail_count=0, region="", anonymous="",
                  source="", check_count=0, last_status="", last_time=""):
         self._proxy = proxy
         self._fail_count = fail_count
         self._region = region
-        self._type = proxy_type
-        self._source = source
+        self._anonymous = anonymous
+        self._source = source.split('/')
         self._check_count = check_count
         self._last_status = last_status
         self._last_time = last_time
 
     @classmethod
     def createFromJson(cls, proxy_json):
-        """
-        根据proxy属性json创建Proxy实例
-        :param proxy_json:
-        :return:
-        """
-        proxy_dict = json.loads(proxy_json)
-        return cls(proxy=proxy_dict.get("proxy", ""),
-                   fail_count=proxy_dict.get("fail_count", 0),
-                   region=proxy_dict.get("region", ""),
-                   proxy_type=proxy_dict.get("type", ""),
-                   source=proxy_dict.get("source", ""),
-                   check_count=proxy_dict.get("check_count", 0),
-                   last_status=proxy_dict.get("last_status", ""),
-                   last_time=proxy_dict.get("last_time", "")
+        _dict = json.loads(proxy_json)
+        return cls(proxy=_dict.get("proxy", ""),
+                   fail_count=_dict.get("fail_count", 0),
+                   region=_dict.get("region", ""),
+                   anonymous=_dict.get("anonymous", ""),
+                   source=_dict.get("source", ""),
+                   check_count=_dict.get("check_count", 0),
+                   last_status=_dict.get("last_status", ""),
+                   last_time=_dict.get("last_time", "")
                    )
 
     @property
@@ -62,14 +57,14 @@ class Proxy(object):
         return self._region
 
     @property
-    def type(self):
-        """ 透明/匿名/高匿 """
-        return self._type
+    def anonymous(self):
+        """ 匿名 """
+        return self._anonymous
 
     @property
     def source(self):
         """ 代理来源 """
-        return self._source
+        return '/'.join(self._source)
 
     @property
     def check_count(self):
@@ -89,11 +84,11 @@ class Proxy(object):
     @property
     def to_dict(self):
         """ 属性字典 """
-        return {"proxy": self._proxy,
-                "fail_count": self._fail_count,
-                "region": self._region,
-                "type": self._type,
-                "source": self._source,
+        return {"proxy": self.proxy,
+                "fail_count": self.fail_count,
+                "region": self.region,
+                "anonymous": self.anonymous,
+                "source": self.source,
                 "check_count": self.check_count,
                 "last_status": self.last_status,
                 "last_time": self.last_time}
@@ -103,22 +98,9 @@ class Proxy(object):
         """ 属性json格式 """
         return json.dumps(self.to_dict, ensure_ascii=False)
 
-    # --- proxy method ---
     @fail_count.setter
     def fail_count(self, value):
         self._fail_count = value
-
-    @region.setter
-    def region(self, value):
-        self._region = value
-
-    @type.setter
-    def type(self, value):
-        self._type = value
-
-    @source.setter
-    def source(self, value):
-        self._source = value
 
     @check_count.setter
     def check_count(self, value):
@@ -131,3 +113,8 @@ class Proxy(object):
     @last_time.setter
     def last_time(self, value):
         self._last_time = value
+
+    def add_source(self, source_str):
+        if source_str:
+            self._source.append(source_str)
+            self._source = list(set(self._source))
