@@ -52,6 +52,9 @@ https://github.com/jhao104/proxy_pool/releases 下载对应zip文件
 pip install -r requirements.txt
 ```
 
+##### 安装Redis
+参考 [How To Install and Secure Redis on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-18-04).
+
 ##### 更新配置:
 
 
