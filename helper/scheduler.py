@@ -37,7 +37,7 @@ def __runProxyFetch():
 def __runProxyCheck():
     proxy_queue = Queue()
     proxy_handler = ProxyHandler()
-    if proxy_handler.db.getCount() < proxy_handler.conf.poolSizeMin:
+    if proxy_handler.db.getCount().get("total", 0) < proxy_handler.conf.poolSizeMin:
         __runProxyFetch()
     else:
         for proxy in proxy_handler.getAll():
