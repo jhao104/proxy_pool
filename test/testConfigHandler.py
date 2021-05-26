@@ -28,7 +28,7 @@ def testConfig():
     assert isinstance(conf.fetchers, list)
     print(conf.fetchers)
 
-    for _ in range(10):
+    for _ in range(2):
         print(conf.fetchers)
         sleep(5)
 

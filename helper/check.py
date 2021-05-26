@@ -2,12 +2,13 @@
 """
 -------------------------------------------------
    File Name：     check
-   Description :
+   Description :   执行代理校验
    Author :        JHao
    date：          2019/8/6
 -------------------------------------------------
    Change Activity:
-                   2019/08/06:
+                   2019/08/06: 执行代理校验
+                   2021/05/25: 分别校验http和https
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -15,32 +16,58 @@ __author__ = 'JHao'
 from util.six import Empty
 from threading import Thread
 from datetime import datetime
-from helper.validators import validators
 from handler.logHandler import LogHandler
+from helper.validator import ProxyValidator
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
 
 
-def _validator(proxy_obj):
-    """ 检测代理是否可用 """
+class DoValidator(object):
+    """ 执行校验 """
 
-    def _do_validate(proxy):
-        for func in validators:
-            if not func(proxy):
+    @classmethod
+    def validator(cls, proxy):
+        """
+        校验入口
+        Args:
+            proxy: Proxy Object
+        Returns:
+            Proxy Object
+        """
+        http_r = cls.httpValidator(proxy)
+        https_r = False if not http_r else cls.httpsValidator(proxy)
+
+        proxy.check_count += 1
+        proxy.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        proxy.last_status = True if http_r else False
+        if http_r:
+            if proxy.fail_count > 0:
+                proxy.fail_count -= 1
+            proxy.https = True if https_r else False
+        else:
+            proxy.fail_count += 1
+        return proxy
+
+    @classmethod
+    def httpValidator(cls, proxy):
+        for func in ProxyValidator.http_validator:
+            if not func(proxy.proxy):
                 return False
         return True
 
-    rs = _do_validate(proxy_obj.proxy)
-    proxy_obj.check_count += 1
-    proxy_obj.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    if rs:
-        proxy_obj.last_status = 1
-        if proxy_obj.fail_count > 0:
-            proxy_obj.fail_count -= 1
-    else:
-        proxy_obj.last_status = 0
-        proxy_obj.fail_count += 1
-    return proxy_obj
+    @classmethod
+    def httpsValidator(cls, proxy):
+        for func in ProxyValidator.https_validator:
+            if not func(proxy.proxy):
+                return False
+        return True
+
+    @classmethod
+    def preValidator(cls, proxy):
+        for func in ProxyValidator.pre_validator:
+            if not func(proxy):
+                return False
+        return True
 
 
 class _ThreadChecker(Thread):
@@ -62,14 +89,14 @@ class _ThreadChecker(Thread):
             except Empty:
                 self.log.info("{}ProxyCheck - {}: complete".format(self.work_type.title(), self.name))
                 break
-            proxy = _validator(proxy)
+            proxy = DoValidator.validator(proxy)
             if self.work_type == "raw":
-                self._if_raw(proxy)
+                self.__ifRaw(proxy)
             else:
-                self._if_use(proxy)
+                self.__ifUse(proxy)
             self.target_queue.task_done()
 
-    def _if_raw(self, proxy):
+    def __ifRaw(self, proxy):
         if proxy.last_status:
             if self.proxy_handler.exists(proxy):
                 self.log.info('RawProxyCheck - {}: {} exist'.format(self.name, proxy.proxy.ljust(23)))
@@ -79,7 +106,7 @@ class _ThreadChecker(Thread):
         else:
             self.log.info('RawProxyCheck - {}: {} fail'.format(self.name, proxy.proxy.ljust(23)))
 
-    def _if_use(self, proxy):
+    def __ifUse(self, proxy):
         if proxy.last_status:
             self.log.info('UseProxyCheck - {}: {} pass'.format(self.name, proxy.proxy.ljust(23)))
             self.proxy_handler.put(proxy)

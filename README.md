@@ -107,13 +107,15 @@ docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy
 
 启动web服务后, 默认配置下会开启 http://127.0.0.1:5010 的api接口服务:
 
-| api | method | Description | arg|
+| api | method | Description | params|
 | ----| ---- | ---- | ----|
 | / | GET | api介绍 | None |
-| /get | GET | 随机获取一个代理 | None|
-| /get_all | GET | 获取所有代理 |None|
-| /get_status | GET | 查看代理数量 |None|
-| /delete | GET | 删除代理  |proxy=host:ip|
+| /get | GET | 随机获取一个代理| 可选参数: `?type=https` 过滤支持https的代理|
+| /pop | GET | 获取并删除一个代理| 可选参数: `?type=https` 过滤支持https的代理|
+| /all | GET | 获取所有代理 |可选参数: `?type=https` 过滤支持https的代理|
+| /count | GET | 查看代理数量 |None|
+| /delete | GET | 删除代理  |`?proxy=host:ip`|
+
 
 * 爬虫使用
 

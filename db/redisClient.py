@@ -9,6 +9,7 @@
    Change Activity:
                    2019/08/09: 封装Redis相关操作
                    2020/06/23: 优化pop方法, 改用hscan命令
+                   2021/05/26: 区别http/https代理
 ------------------------------------------------------
 """
 __author__ = 'JHao'
@@ -18,6 +19,7 @@ from redis.connection import BlockingConnectionPool
 from handler.logHandler import LogHandler
 from random import choice
 from redis import Redis
+import json
 
 
 class RedisClient(object):
@@ -45,17 +47,19 @@ class RedisClient(object):
                                                                    socket_timeout=5,
                                                                    **kwargs))
 
-    def get(self):
+    def get(self, https):
         """
         返回一个代理
         :return:
         """
-        proxies = self.__conn.hkeys(self.name)
-        proxy = choice(proxies) if proxies else None
-        if proxy:
-            return self.__conn.hget(self.name, proxy)
+        if https:
+            items = self.__conn.hvals(self.name)
+            proxies = list(filter(lambda x: json.loads(x).get("https"), items))
+            return choice(proxies) if proxies else None
         else:
-            return False
+            proxies = self.__conn.hkeys(self.name)
+            proxy = choice(proxies) if proxies else None
+            return self.__conn.hget(self.name, proxy) if proxy else None
 
     def put(self, proxy_obj):
         """
@@ -66,18 +70,15 @@ class RedisClient(object):
         data = self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.to_json)
         return data
 
-    def pop(self):
+    def pop(self, https):
         """
         弹出一个代理
         :return: dict {proxy: value}
         """
-        proxies = self.__conn.hkeys(self.name)
-        for proxy in proxies:
-            proxy_info = self.__conn.hget(self.name, proxy)
-            self.__conn.hdel(self.name, proxy)
-            return proxy_info
-        else:
-            return False
+        proxy = self.get(https)
+        if proxy:
+            self.__conn.hdel(self.name, json.loads(proxy).get("proxy", ""))
+        return proxy if proxy else None
 
     def delete(self, proxy_str):
         """
@@ -103,13 +104,16 @@ class RedisClient(object):
         """
         return self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.to_json)
 
-    def getAll(self):
+    def getAll(self, https):
         """
         字典形式返回所有代理, 使用changeTable指定hash name
         :return:
         """
-        item_dict = self.__conn.hgetall(self.name)
-        return item_dict
+        items = self.__conn.hvals(self.name)
+        if https:
+            return list(filter(lambda x: json.loads(x).get("https"), items))
+        else:
+            return items
 
     def clear(self):
         """
@@ -123,7 +127,8 @@ class RedisClient(object):
         返回代理数量
         :return:
         """
-        return self.__conn.hlen(self.name)
+        proxies = self.getAll(https=False)
+        return {'total': len(proxies), 'https': len(list(filter(lambda x: json.loads(x).get("https"), proxies)))}
 
     def changeTable(self, name):
         """
@@ -146,3 +151,5 @@ class RedisClient(object):
         except ResponseError as e:
             log.error('redis connection error: %s' % str(e), exc_info=True)
             return e
+
+

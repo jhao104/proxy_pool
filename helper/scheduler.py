@@ -17,7 +17,6 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.executors.pool import ProcessPoolExecutor
 
 from util.six import Queue
-from helper.proxy import Proxy
 from helper.fetch import Fetcher
 from helper.check import Checker
 from handler.logHandler import LogHandler
@@ -25,7 +24,7 @@ from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
 
 
-def _runProxyFetch():
+def __runProxyFetch():
     proxy_queue = Queue()
     proxy_fetcher = Fetcher()
 
@@ -35,11 +34,11 @@ def _runProxyFetch():
     Checker("raw", proxy_queue)
 
 
-def _runProxyCheck():
+def __runProxyCheck():
     proxy_queue = Queue()
     proxy_handler = ProxyHandler()
     if proxy_handler.db.getCount() < proxy_handler.conf.poolSizeMin:
-        _runProxyFetch()
+        __runProxyFetch()
     else:
         for proxy in proxy_handler.getAll():
             proxy_queue.put(proxy)
@@ -47,15 +46,14 @@ def _runProxyCheck():
 
 
 def runScheduler():
-    _runProxyFetch()
+    __runProxyFetch()
 
     timezone = ConfigHandler().timezone
     scheduler_log = LogHandler("scheduler")
     scheduler = BlockingScheduler(logger=scheduler_log, timezone=timezone)
 
-    scheduler.add_job(_runProxyFetch, 'interval', minutes=4, id="proxy_fetch", name="proxy采集")
-    scheduler.add_job(_runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查")
-
+    scheduler.add_job(__runProxyFetch, 'interval', minutes=4, id="proxy_fetch", name="proxy采集")
+    scheduler.add_job(__runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查")
     executors = {
         'default': {'type': 'threadpool', 'max_workers': 20},
         'processpool': ProcessPoolExecutor(max_workers=5)

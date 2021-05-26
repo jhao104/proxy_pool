@@ -18,7 +18,7 @@ import json
 class Proxy(object):
 
     def __init__(self, proxy, fail_count=0, region="", anonymous="",
-                 source="", check_count=0, last_status="", last_time=""):
+                 source="", check_count=0, last_status="", last_time="", https=False):
         self._proxy = proxy
         self._fail_count = fail_count
         self._region = region
@@ -27,6 +27,7 @@ class Proxy(object):
         self._check_count = check_count
         self._last_status = last_status
         self._last_time = last_time
+        self._https = https
 
     @classmethod
     def createFromJson(cls, proxy_json):
@@ -38,7 +39,8 @@ class Proxy(object):
                    source=_dict.get("source", ""),
                    check_count=_dict.get("check_count", 0),
                    last_status=_dict.get("last_status", ""),
-                   last_time=_dict.get("last_time", "")
+                   last_time=_dict.get("last_time", ""),
+                   https=_dict.get("https", False)
                    )
 
     @property
@@ -73,7 +75,7 @@ class Proxy(object):
 
     @property
     def last_status(self):
-        """ 最后一次检测结果  1 -> 可用; 0 -> 不可用"""
+        """ 最后一次检测结果  True -> 可用; False -> 不可用"""
         return self._last_status
 
     @property
@@ -82,9 +84,15 @@ class Proxy(object):
         return self._last_time
 
     @property
+    def https(self):
+        """ 是否支持https """
+        return self._https
+
+    @property
     def to_dict(self):
         """ 属性字典 """
         return {"proxy": self.proxy,
+                "https": self.https,
                 "fail_count": self.fail_count,
                 "region": self.region,
                 "anonymous": self.anonymous,
@@ -113,6 +121,10 @@ class Proxy(object):
     @last_time.setter
     def last_time(self, value):
         self._last_time = value
+
+    @https.setter
+    def https(self, value):
+        self._https = value
 
     def add_source(self, source_str):
         if source_str:

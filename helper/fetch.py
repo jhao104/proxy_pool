@@ -13,6 +13,7 @@
 __author__ = 'JHao'
 
 from helper.proxy import Proxy
+from helper.check import DoValidator
 from handler.logHandler import LogHandler
 from handler.proxyHandler import ProxyHandler
 from fetcher.proxyFetcher import ProxyFetcher
@@ -57,4 +58,5 @@ class Fetcher(object):
                 self.log.error(str(e))
         self.log.info("ProxyFetch - all complete!")
         for _ in proxy_dict.values():
-            yield _
+            if DoValidator.preValidator(_.proxy):
+                yield _

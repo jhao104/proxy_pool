@@ -20,21 +20,19 @@ def testRedisClient():
     uri = "redis://:pwd@127.0.0.1:6379"
     db = DbClient(uri)
     db.changeTable("use_proxy")
-    proxy = Proxy.createFromJson(
-        '{"proxy": "27.38.96.101:9797", "fail_count": 0, "region": "", "type": "",'
-        ' "source": "freeProxy03", "check_count": 0, "last_status": "", "last_time": ""}')
+    proxy = Proxy.createFromJson('{"proxy": "118.190.79.36:8090", "https": false, "fail_count": 0, "region": "", "anonymous": "", "source": "freeProxy14", "check_count": 4, "last_status": true, "last_time": "2021-05-26 10:58:04"}')
 
     print("put: ", db.put(proxy))
 
-    print("get: ", db.get())
+    print("get: ", db.get(https=None))
 
     print("exists: ", db.exists("27.38.96.101:9797"))
 
     print("exists: ", db.exists("27.38.96.101:8888"))
 
-    print("pop: ", db.pop())
+    print("pop: ", db.pop(https=None))
 
-    print("getAll: ", db.getAll())
+    print("getAll: ", db.getAll(https=None))
 
     print("getCount", db.getCount())
 
