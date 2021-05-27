@@ -1,4 +1,4 @@
-.. extend_fetcher
+.. ext_fetcher
 
 扩展代理源
 -----------
