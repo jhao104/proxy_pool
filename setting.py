@@ -85,4 +85,4 @@ POOL_SIZE_MIN = 20
 # Please uncomment the following line and set a timezone for the scheduler.
 # Otherwise it will detect the timezone from the system automatically.
 
-# TIMEZONE = "Asia/Shanghai"
+TIMEZONE = "Asia/Shanghai"
