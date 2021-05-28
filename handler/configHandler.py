@@ -75,5 +75,5 @@ class ConfigHandler(withMetaclass(Singleton)):
 
     @LazyProperty
     def timezone(self):
-        return os.getenv("TIMEZONE", getattr(setting, 'TIMEZONE', None))
+        return os.getenv("TIMEZONE", setting.TIMEZONE)
 
