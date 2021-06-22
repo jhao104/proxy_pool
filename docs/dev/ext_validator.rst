@@ -22,7 +22,8 @@
 .. _httpTimeOutValidator: https://github.com/jhao104/proxy_pool/blob/release-2.3.0/helper/validator.py#L58
 .. _httpsTimeOutValidator: https://github.com/jhao104/proxy_pool/blob/release-2.3.0/helper/validator.py#L71
 
-每种校验可以定义多个方法，只有 **所有** 方法都返回 ``True`` 的情况下才视为通过，校验方法执行顺序为: 先执行 **httpValidator** ， 前者通过后再执行 **httpsValidator** 。
+每种校验可以定义多个方法，只有 **所有** 方法都返回 ``True`` 的情况下才视为该校验通过，校验方法执行顺序为: 先执行 **httpValidator** ， 前者通过后再执行 **httpsValidator** 。
+只有 `preValidator` 校验通过的代理才会进入可用性校验， `httpValidator` 校验通过后认为代理可用准备更新入代理池, `httpValidator` 校验通过后视为代理支持https更新代理的 `https` 属性为 `True` 。
 
 扩展校验
 >>>>>>>>>
