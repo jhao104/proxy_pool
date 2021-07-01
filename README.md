@@ -25,7 +25,7 @@ ProxyPool 爬虫代理IP池
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
-* 测试地址: http://118.24.52.95:5010 (勿压谢谢)
+* 测试地址: http://demo.spiderpy.cn (勿压谢谢)
 
 * 付费代理推荐: [luminati-china](https://brightdata.grsm.io/proxyPool). 国外的厂, 最便宜的价格`$0.6/GB`. 计费方式也比较灵活, 生产使用下来可用率有98%以上. 需要高质量稳定代理的小伙伴可以考虑下. 注册登录联系客服,有赠金和详细教程.
 
