@@ -25,7 +25,7 @@ BANNER = r"""
 ****************************************************************
 """
 
-VERSION = "2.2.0"
+VERSION = "2.3.0"
 
 # ############### server config ###############
 HOST = "0.0.0.0"
@@ -48,7 +48,7 @@ PROXY_FETCHER = [
     "freeProxy01",
 #     "freeProxy02", # Not working.
     "freeProxy03",
-    "freeProxy04",
+    # "freeProxy04",
     "freeProxy05",
 #     "freeProxy06", # Not working.
     "freeProxy07",
@@ -67,19 +67,19 @@ PROXY_FETCHER = [
 ]
 
 # ############# proxy validator #################
-VERIFY_URL = "https://www.alexamaster.net/api/v1/plugin_surf_open.php?long_query=new&master_id=161671"
+# 代理验证目标网站
+HTTP_URL = "http://httpbin.org"
+
+HTTPS_URL = "https://www.qq.com"
 
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 3
-
-# 代理校验规则基于的最近校验次数
-PROXY_CHECK_COUNT = 10
 
 # 近PROXY_CHECK_COUNT次校验中允许的最大失败次数,超过则剔除代理
 MAX_FAIL_COUNT = 3
 
 # 近PROXY_CHECK_COUNT次校验中允许的最大失败率,超过则剔除代理
-MAX_FAIL_RATE = 0.1
+# MAX_FAIL_RATE = 0.1
 
 # proxyCheck时代理数量少于POOL_SIZE_MIN触发抓取
 POOL_SIZE_MIN = 20
@@ -93,4 +93,4 @@ POOL_SIZE_MIN = 20
 # Please uncomment the following line and set a timezone for the scheduler.
 # Otherwise it will detect the timezone from the system automatically.
 
-# TIMEZONE = "Asia/Shanghai"
+TIMEZONE = "Asia/Shanghai"

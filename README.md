@@ -25,9 +25,9 @@ ProxyPool 爬虫代理IP池
 
 * 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
 
-* 测试地址: http://118.24.52.95:5010 (勿压谢谢)
+* 测试地址: http://demo.spiderpy.cn (勿压谢谢)
 
-* 付费代理推荐: [luminati-china](https://brightdata.grsm.io/proxyPool). 国外的厂, 最便宜的价格`$0.6/GB`. 计费方式也比较灵活, 生产使用下来可用率有98%以上. 需要高质量稳定代理的小伙伴可以考虑下.
+* 付费代理推荐: [luminati-china](https://brightdata.grsm.io/proxyPool). 国外的厂, 最便宜的价格`$0.6/GB`. 计费方式也比较灵活, 生产使用下来可用率有98%以上. 需要高质量稳定代理的小伙伴可以考虑下. 注册登录联系客服,有赠金和详细教程.
 
 
 ### 运行项目
@@ -51,9 +51,6 @@ https://github.com/jhao104/proxy_pool/releases 下载对应zip文件
 ```bash
 pip install -r requirements.txt
 ```
-
-##### 安装Redis
-参考 [How To Install and Secure Redis on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-and-secure-redis-on-ubuntu-18-04).
 
 ##### 更新配置:
 
@@ -110,13 +107,15 @@ docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy
 
 启动web服务后, 默认配置下会开启 http://127.0.0.1:5010 的api接口服务:
 
-| api | method | Description | arg|
+| api | method | Description | params|
 | ----| ---- | ---- | ----|
 | / | GET | api介绍 | None |
-| /get | GET | 随机获取一个代理 | None|
-| /get_all | GET | 获取所有代理 |None|
-| /get_status | GET | 查看代理数量 |None|
-| /delete | GET | 删除代理  |proxy=host:ip|
+| /get | GET | 随机获取一个代理| 可选参数: `?type=https` 过滤支持https的代理|
+| /pop | GET | 获取并删除一个代理| 可选参数: `?type=https` 过滤支持https的代理|
+| /all | GET | 获取所有代理 |可选参数: `?type=https` 过滤支持https的代理|
+| /count | GET | 查看代理数量 |None|
+| /delete | GET | 删除代理  |`?proxy=host:ip`|
+
 
 * 爬虫使用
 
@@ -226,7 +225,7 @@ PROXY_FETCHER = [
 
 　　这里感谢以下contributor的无私奉献：
 
-　　[@kangnwh](https://github.com/kangnwh)| [@bobobo80](https://github.com/bobobo80)| [@halleywj](https://github.com/halleywj)| [@newlyedward](https://github.com/newlyedward)| [@wang-ye](https://github.com/wang-ye)| [@gladmo](https://github.com/gladmo)| [@bernieyangmh](https://github.com/bernieyangmh)| [@PythonYXY](https://github.com/PythonYXY)| [@zuijiawoniu](https://github.com/zuijiawoniu)| [@netAir](https://github.com/netAir)| [@scil](https://github.com/scil)| [@tangrela](https://github.com/tangrela)| [@highroom](https://github.com/highroom)| [@luocaodan](https://github.com/luocaodan)| [@vc5](https://github.com/vc5)| [@1again](https://github.com/1again)| [@obaiyan](https://github.com/obaiyan) [@zsbh](https://github.com/zsbh)
+　　[@kangnwh](https://github.com/kangnwh) | [@bobobo80](https://github.com/bobobo80) | [@halleywj](https://github.com/halleywj) | [@newlyedward](https://github.com/newlyedward) | [@wang-ye](https://github.com/wang-ye) | [@gladmo](https://github.com/gladmo) | [@bernieyangmh](https://github.com/bernieyangmh) | [@PythonYXY](https://github.com/PythonYXY) | [@zuijiawoniu](https://github.com/zuijiawoniu) | [@netAir](https://github.com/netAir) | [@scil](https://github.com/scil) | [@tangrela](https://github.com/tangrela) | [@highroom](https://github.com/highroom) | [@luocaodan](https://github.com/luocaodan) | [@vc5](https://github.com/vc5) | [@1again](https://github.com/1again) | [@obaiyan](https://github.com/obaiyan) | [@zsbh](https://github.com/zsbh) | [@jiannanya](https://github.com/jiannanya)
 
 
 ### Release Notes
