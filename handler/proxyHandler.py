@@ -7,7 +7,8 @@
    date：          2016/12/3
 -------------------------------------------------
    Change Activity:
-                   2016/12/3:
+                   2016/12/03:
+                   2020/05/26: 区分http和https
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -25,22 +26,22 @@ class ProxyHandler(object):
         self.db = DbClient(self.conf.dbConn)
         self.db.changeTable(self.conf.tableName)
 
-    def get(self):
+    def get(self, https=False):
         """
-        return a useful proxy
-        :return:
+        return a proxy
+        Args:
+            https: True/False
+        Returns:
         """
-        proxy = self.db.get()
-        if proxy:
-            return Proxy.createFromJson(proxy)
-        return None
+        proxy = self.db.get(https)
+        return Proxy.createFromJson(proxy) if proxy else None
 
-    def pop(self):
+    def pop(self, https):
         """
         return and delete a useful proxy
         :return:
         """
-        proxy = self.db.pop()
+        proxy = self.db.pop(https)
         if proxy:
             return Proxy.createFromJson(proxy)
         return None
@@ -60,13 +61,13 @@ class ProxyHandler(object):
         """
         return self.db.delete(proxy.proxy)
 
-    def getAll(self):
+    def getAll(self, https=False):
         """
         get all proxy from pool as Proxy list
         :return:
         """
-        proxies_dict = self.db.getAll()
-        return [Proxy.createFromJson(value) for _, value in proxies_dict.items()]
+        proxies = self.db.getAll(https)
+        return [Proxy.createFromJson(_) for _ in proxies]
 
     def exists(self, proxy):
         """
