@@ -54,5 +54,15 @@ def customValidator(proxy):
     :param proxy:
     :return:
     """
-
-    return True
+    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "https://{proxy}".format(proxy=proxy)}
+    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
+               'Accept': '*/*',
+               'Connection': 'keep-alive',
+               'Accept-Language': 'zh-CN,zh;q=0.8'}
+    try:
+        r = requests.get(conf.verifyUrl, headers=headers, proxies=proxies, timeout=3)
+        if r.json()['status']=='success' and r.json()['points']>0: # Not low quality and not zero point.
+            return True
+    except Exception as e:
+        pass
+    return False

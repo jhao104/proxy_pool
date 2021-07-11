@@ -13,7 +13,10 @@
 __author__ = 'JHao'
 
 import re
+import requests
 from time import sleep
+from datetime import date, timedelta
+import pandas as pd
 
 from util.webRequest import WebRequest
 
@@ -179,44 +182,44 @@ class ProxyFetcher(object):
                     continue
                 yield ":".join(tr.xpath("./td/text()")[0:2]).strip()
 
-    # @staticmethod
-    # def freeProxy10():
-    #     """
-    #     墙外网站 cn-proxy
-    #     :return:
-    #     """
-    #     urls = ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218']
-    #     request = WebRequest()
-    #     for url in urls:
-    #         r = request.get(url, timeout=10)
-    #         proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.text)
-    #         for proxy in proxies:
-    #             yield ':'.join(proxy)
+    @staticmethod
+    def freeProxy10():
+        """
+        墙外网站 cn-proxy
+        :return:
+        """
+        urls = ['http://cn-proxy.com/', 'http://cn-proxy.com/archives/218']
+        request = WebRequest()
+        for url in urls:
+            r = request.get(url, timeout=10)
+            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\w\W]<td>(\d+)</td>', r.text)
+            for proxy in proxies:
+                yield ':'.join(proxy)
 
-    # @staticmethod
-    # def freeProxy11():
-    #     """
-    #     https://proxy-list.org/english/index.php
-    #     :return:
-    #     """
-    #     urls = ['https://proxy-list.org/english/index.php?p=%s' % n for n in range(1, 10)]
-    #     request = WebRequest()
-    #     import base64
-    #     for url in urls:
-    #         r = request.get(url, timeout=10)
-    #         proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
-    #         for proxy in proxies:
-    #             yield base64.b64decode(proxy).decode()
+    @staticmethod
+    def freeProxy11():
+        """
+        https://proxy-list.org/english/index.php
+        :return:
+        """
+        urls = ['https://proxy-list.org/english/index.php?p=%s' % n for n in range(1, 10)]
+        request = WebRequest()
+        import base64
+        for url in urls:
+            r = request.get(url, timeout=10)
+            proxies = re.findall(r"Proxy\('(.*?)'\)", r.text)
+            for proxy in proxies:
+                yield base64.b64decode(proxy).decode()
 
-    # @staticmethod
-    # def freeProxy12():
-    #     urls = ['https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1']
-    #     request = WebRequest()
-    #     for url in urls:
-    #         r = request.get(url, timeout=10)
-    #         proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
-    #         for proxy in proxies:
-    #             yield ':'.join(proxy)
+    @staticmethod
+    def freeProxy12():
+        urls = ['https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-1']
+        request = WebRequest()
+        for url in urls:
+            r = request.get(url, timeout=10)
+            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
+            for proxy in proxies:
+                yield ':'.join(proxy)
 
     @staticmethod
     def freeProxy13(max_page=2):
@@ -249,7 +252,72 @@ class ProxyFetcher(object):
             ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
             for ip in ips:
                 yield ip.strip()
-
+                
+    @staticmethod
+    def freeProxy14():
+        """
+        http://www.xiladaili.com/
+        西拉代理
+        :return:
+        """
+        urls = ['http://www.xiladaili.com/']
+        for url in urls:
+            r = WebRequest().get(url, timeout=10)
+            ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
+            for ip in ips:
+                yield ip.strip()
+                
+    @staticmethod
+    def freeProxy15():  # 命名不和已有重复即可
+        proxies = requests.get('https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt').text.split()
+        for proxy in proxies:
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
+        
+    @staticmethod
+    def freeProxy15():  # 命名不和已有重复即可
+        proxies = requests.get('https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt').text.split()
+        for proxy in proxies:
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
+        
+    @staticmethod
+    def freeProxy16():  # 命名不和已有重复即可
+        ip_list=[]
+        for day in range(0, 30, 1):
+            dd=date.today()-timedelta(days=day)
+            ip_url='https://webanetlabs.net/proxylist2021/spisok_proksi_na_'+dd.strftime("%d.%m.%Y")+'.html'
+            source=requests.get(ip_url)
+            if source.status_code==200:
+                ip_list+=re.findall(r'[0-9]+(?:\.[0-9]+){3}:[0-9]+', source.text)
+        for proxy in ip_list:
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
+        
+    @staticmethod
+    def freeProxy17():  # 命名不和已有重复即可
+        http_ips=requests.get('https://www.proxy-list.download/api/v1/get?type=http').text.split()
+        https_ips=requests.get('https://www.proxy-list.download/api/v1/get?type=https').text.split()
+        for proxy in http_ips+https_ips:
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
+        
+    @staticmethod
+    def freeProxy18():  # 命名不和已有重复即可
+        ip_list=['46.4.73.88:'+str(x) for x in range(20001, 20501)]
+        for proxy in ip_list:
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
+        
+    @staticmethod
+    def freeProxy19():  # 命名不和已有重复即可
+        ip_list=[]
+        for pg_num in range(1, 7):
+            df_ips=pd.read_html(requests.get('https://list.proxylistplus.com/Fresh-HTTP-Proxy-List-'+str(pg_num)).text)[2]
+            ip_list+=[s[0]+':'+str(s[1]) for s in df_ips[['IP Address.1', 'Port']].values]
+        for proxy in ip_list:
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
 
 if __name__ == '__main__':
     p = ProxyFetcher()
