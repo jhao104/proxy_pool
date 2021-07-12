@@ -27,7 +27,7 @@ ProxyPool 爬虫代理IP池
 
 * 测试地址: http://demo.spiderpy.cn (勿压谢谢)
 
-* 付费代理推荐: [luminati-china](https://brightdata.grsm.io/proxyPool). 国外的厂, 最便宜的价格`$0.6/GB`. 计费方式也比较灵活, 生产使用下来可用率有98%以上. 需要高质量稳定代理的小伙伴可以考虑下. 注册登录联系客服,有赠金和详细教程.
+* 付费代理推荐: [luminati-china](https://brightdata.grsm.io/proxyPool). 国外的亮数据BrightData（以前叫luminati）被认为是代理市场领导者，覆盖全球的7200万IP，大部分是真人住宅IP，成功率扛扛的。付费套餐多种，100刀的也有，需要高质量代理ip的可以注册后联系中文客服，开通后有5美金赠送和教程指引。.
 
 
 ### 运行项目
