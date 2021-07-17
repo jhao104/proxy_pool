@@ -70,7 +70,7 @@ PROXY_FETCHER = [
 # 代理验证目标网站
 HTTP_URL = "http://httpbin.org"
 
-HTTPS_URL = "https://www.qq.com"
+HTTPS_URL = "https://web.archive.org/web/20201028232110/https://shop.k9sforwarriors.org/products/bumper-sticker-5-x-5"
 
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 3
@@ -82,7 +82,7 @@ MAX_FAIL_COUNT = 3
 # MAX_FAIL_RATE = 0.1
 
 # proxyCheck时代理数量少于POOL_SIZE_MIN触发抓取
-POOL_SIZE_MIN = 20
+POOL_SIZE_MIN = 500
 
 # ############# scheduler config #################
 

@@ -304,7 +304,8 @@ class ProxyFetcher(object):
         
     @staticmethod
     def freeProxy18():  # 命名不和已有重复即可
-        ip_list=['46.4.73.88:'+str(x) for x in range(20001, 20501)]
+        json_results=requests.get('https://proxylist.geonode.com/api/proxy-list?limit=2000&page=1&sort_by=lastChecked&sort_type=desc&protocols=https').json()
+        ip_list=[s['ip']+':'+s['port'] for s in json_results['data']]
         for proxy in ip_list:
             yield proxy
         # 确保每个proxy都是 host:ip正确的格式返回
