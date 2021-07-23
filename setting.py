@@ -74,7 +74,7 @@ HTTP_URL = "http://httpbin.org"
 HTTPS_URL = "https://web.archive.org/web/20201028232110/https://shop.k9sforwarriors.org/products/bumper-sticker-5-x-5"
 
 # 代理验证时超时时间
-VERIFY_TIMEOUT = 3
+VERIFY_TIMEOUT = 5
 
 # 近PROXY_CHECK_COUNT次校验中允许的最大失败次数,超过则剔除代理
 MAX_FAIL_COUNT = 3

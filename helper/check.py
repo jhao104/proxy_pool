@@ -20,7 +20,7 @@ from handler.logHandler import LogHandler
 from helper.validator import ProxyValidator
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
-
+from proxy_checker import ProxyChecker
 
 class DoValidator(object):
     """ 执行校验 """
@@ -36,6 +36,21 @@ class DoValidator(object):
         """
         http_r = cls.httpValidator(proxy)
         https_r = False if not http_r else cls.httpsValidator(proxy)
+        
+        checker = ProxyChecker()
+        check_results=checker.check_proxy(proxy.proxy)     
+        if check_results != False:
+            proxy.country = check_results['country']
+            proxy.country_code = check_results['country_code']
+            proxy.protocols = check_results['protocols']
+            proxy.anonymity = check_results['anonymity']
+            proxy.timeout = check_results['timeout']
+        else:
+            proxy.country = False
+            proxy.country_code = False
+            proxy.protocols = False
+            proxy.anonymity = False
+            proxy.timeout = False
 
         proxy.check_count += 1
         proxy.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

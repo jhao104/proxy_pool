@@ -88,12 +88,15 @@ def delete():
     status = proxy_handler.delete(Proxy(proxy))
     return {"code": 0, "src": status}
 
+@app.route('/clear/')
+def clear():
+    _ = proxy_handler.clear()
+    return {"code": 0, "#proxies deleted": proxy_handler.getCount()}
 
 @app.route('/count/')
 def getCount():
     status = proxy_handler.getCount()
     return status
-
 
 def runFlask():
     if platform.system() == "Windows":
