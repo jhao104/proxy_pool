@@ -319,6 +319,14 @@ class ProxyFetcher(object):
         for proxy in ip_list:
             yield proxy
         # 确保每个proxy都是 host:ip正确的格式返回
+        
+    @staticmethod
+    def freeProxy20():  # 命名不和已有重复即可
+        proxy_list=requests.get('https://api.proxyscrape.com/?request=displayproxies&proxytype=all').text.split()
+        for proxy in proxy_list:
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
+
 
 if __name__ == '__main__':
     p = ProxyFetcher()
