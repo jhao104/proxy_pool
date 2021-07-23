@@ -107,14 +107,14 @@ class DbClient(withMetaclass(Singleton)):
     def getAll(self, https):
         return self.client.getAll(https)
 
-    def clear(self):
-        return self.client.clear()
-
     def changeTable(self, name):
         self.client.changeTable(name)
 
     def getCount(self):
         return self.client.getCount()
+
+    def clear(self):
+        return self.client.clear()
 
     def test(self):
         return self.client.test()

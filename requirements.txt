@@ -7,3 +7,4 @@ click==7.0
 gunicorn==19.9.0
 lxml
 redis
+proxy-checker

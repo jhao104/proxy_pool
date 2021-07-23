@@ -60,6 +60,13 @@ class ProxyHandler(object):
         :return:
         """
         return self.db.delete(proxy.proxy)
+    
+    def clear(self):
+        """
+        get all proxy from pool as Proxy list
+        :return:
+        """
+        return self.db.clear()
 
     def getAll(self, https=False):
         """

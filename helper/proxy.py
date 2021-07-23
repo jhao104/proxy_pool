@@ -18,7 +18,9 @@ import json
 class Proxy(object):
 
     def __init__(self, proxy, fail_count=0, region="", anonymous="",
-                 source="", check_count=0, last_status="", last_time="", https=False):
+                 source="", check_count=0, last_status="", last_time="", https=False,
+                 country=False, country_code=False, protocols=False, anonymity=False, timeout=False,
+                ):
         self._proxy = proxy
         self._fail_count = fail_count
         self._region = region
@@ -28,6 +30,12 @@ class Proxy(object):
         self._last_status = last_status
         self._last_time = last_time
         self._https = https
+        # From proxy-checker
+        self._country = country
+        self._country_code = country_code
+        self._protocols = protocols
+        self._anonymity = anonymity
+        self._timeout = timeout
 
     @classmethod
     def createFromJson(cls, proxy_json):
@@ -40,7 +48,13 @@ class Proxy(object):
                    check_count=_dict.get("check_count", 0),
                    last_status=_dict.get("last_status", ""),
                    last_time=_dict.get("last_time", ""),
-                   https=_dict.get("https", False)
+                   https=_dict.get("https", False),
+                   # From proxy-checker
+                   country=_dict.get("country", False),
+                   country_code=_dict.get("country_code", False),
+                   protocols=_dict.get("protocols", False),
+                   anonymity=_dict.get("anonymity", False),
+                   timeout=_dict.get("timeout", False),
                    )
 
     @property
@@ -87,6 +101,30 @@ class Proxy(object):
     def https(self):
         """ 是否支持https """
         return self._https
+    
+    
+    # From proxy-checker
+    @property
+    def country(self):
+        """ 是否支持https """
+        return self._country
+    @property
+    def country_code(self):
+        """ 是否支持https """
+        return self._country_code
+    @property
+    def protocols(self):
+        """ 是否支持https """
+        return self._protocols
+    @property
+    def anonymity(self):
+        """ 是否支持https """
+        return self._anonymity
+    @property
+    def timeout(self):
+        """ 是否支持https """
+        return self._timeout
+
 
     @property
     def to_dict(self):
@@ -99,7 +137,14 @@ class Proxy(object):
                 "source": self.source,
                 "check_count": self.check_count,
                 "last_status": self.last_status,
-                "last_time": self.last_time}
+                "last_time": self.last_time,
+                # From proxy-checker
+                "country": self.country,
+                "country_code": self.country_code,
+                "protocols": self.protocols,
+                "anonymity": self.anonymity,
+                "timeout": self.timeout,
+               }
 
     @property
     def to_json(self):
@@ -125,6 +170,23 @@ class Proxy(object):
     @https.setter
     def https(self, value):
         self._https = value
+
+    # Set check-proxy values
+    @country.setter
+    def country(self, value):
+        self._country = value
+    @country_code.setter
+    def country_code(self, value):
+        self._country_code = value
+    @protocols.setter
+    def protocols(self, value):
+        self._protocols = value
+    @anonymity.setter
+    def anonymity(self, value):
+        self._anonymity = value
+    @timeout.setter
+    def timeout(self, value):
+        self._timeout = value
 
     def add_source(self, source_str):
         if source_str:
