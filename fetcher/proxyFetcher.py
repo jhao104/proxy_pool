@@ -356,10 +356,9 @@ class ProxyFetcher(object):
             yield proxy
         # 确保每个proxy都是 host:ip正确的格式返回
         
-        
     @staticmethod
     def freeProxy23():  # 命名不和已有重复即可
-        proxy_list=open('slow_rotate.txt').read().split()
+        proxy_list=requests.get('https://raw.githubusercontent.com/ma-ji/proxy_pool/master/fetcher/slow_rotate.txt').text.split()
         for proxy in set(proxy_list):
             yield proxy
         # 确保每个proxy都是 host:ip正确的格式返回
