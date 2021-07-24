@@ -266,14 +266,7 @@ class ProxyFetcher(object):
             ips = re.findall(r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}", r.text)
             for ip in ips:
                 yield ip.strip()
-                
-    @staticmethod
-    def freeProxy15():  # 命名不和已有重复即可
-        proxies = requests.get('https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt').text.split()
-        for proxy in proxies:
-            yield proxy
-        # 确保每个proxy都是 host:ip正确的格式返回
-        
+       
     @staticmethod
     def freeProxy15():  # 命名不和已有重复即可
         proxies = requests.get('https://raw.githubusercontent.com/clarketm/proxy-list/master/proxy-list-raw.txt').text.split()
@@ -332,6 +325,41 @@ class ProxyFetcher(object):
         proxy_list=requests.get('https://www.proxyscan.io/download?type=https').text.split()
         proxy_list+=requests.get('https://www.proxyscan.io/download?type=socks4').text.split()
         proxy_list+=requests.get('https://www.proxyscan.io/download?type=socks5').text.split()
+        for proxy in set(proxy_list):
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
+        
+    @staticmethod
+    def freeProxy22():  # 命名不和已有重复即可
+        proxy_list=[s[0]+':'+str(int(s[1])) for s in 
+                    pd.read_html(requests.get('https://www.socks-proxy.net/').text)[0][['IP Address', 'Port']].values 
+                    if str(s[0])!='nan']
+        proxy_list+=[s[0]+':'+str(int(s[1])) for s in 
+                    pd.read_html(requests.get('https://www.sslproxies.org/').text)[0][['IP Address', 'Port']].values 
+                    if str(s[0])!='nan']
+        proxy_list+=[s[0]+':'+str(int(s[1])) for s in 
+                    pd.read_html(requests.get('https://free-proxy-list.net/').text)[0][['IP Address', 'Port']].values 
+                    if str(s[0])!='nan']
+        proxy_list+=[s[0]+':'+str(int(s[1])) for s in 
+                    pd.read_html(requests.get('https://www.us-proxy.org/').text)[0][['IP Address', 'Port']].values 
+                    if str(s[0])!='nan']
+        proxy_list+=[s[0]+':'+str(int(s[1])) for s in 
+                    pd.read_html(requests.get('https://free-proxy-list.net/uk-proxy.html').text)[0][['IP Address', 'Port']].values 
+                    if str(s[0])!='nan']
+        proxy_list+=[s[0]+':'+str(int(s[1])) for s in 
+                    pd.read_html(requests.get('https://www.sslproxies.org/').text)[0][['IP Address', 'Port']].values 
+                    if str(s[0])!='nan']
+        proxy_list+=[s[0]+':'+str(int(s[1])) for s in 
+                    pd.read_html(requests.get('https://free-proxy-list.net/anonymous-proxy.html').text)[0][['IP Address', 'Port']].values 
+                    if str(s[0])!='nan']
+        for proxy in set(proxy_list):
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
+        
+        
+    @staticmethod
+    def freeProxy23():  # 命名不和已有重复即可
+        proxy_list=open('slow_rotate.txt').read().split()
         for proxy in set(proxy_list):
             yield proxy
         # 确保每个proxy都是 host:ip正确的格式返回
