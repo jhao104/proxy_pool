@@ -335,10 +335,6 @@ class ProxyFetcher(object):
         for proxy in set(proxy_list):
             yield proxy
         # 确保每个proxy都是 host:ip正确的格式返回
-        
-        
-https://www.proxyscan.io/download?type=socks4
-
 
 if __name__ == '__main__':
     p = ProxyFetcher()
