@@ -49,7 +49,7 @@ PROXY_FETCHER = [
 #     "freeProxy02", # Not working.
     "freeProxy03",
     # "freeProxy04",
-    "freeProxy05",
+#     "freeProxy05",
 #     "freeProxy06", # Not working.
     "freeProxy07",
 #     "freeProxy08", # Not working.
