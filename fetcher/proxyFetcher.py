@@ -326,6 +326,18 @@ class ProxyFetcher(object):
         for proxy in proxy_list:
             yield proxy
         # 确保每个proxy都是 host:ip正确的格式返回
+        
+    @staticmethod
+    def freeProxy21():  # 命名不和已有重复即可
+        proxy_list=requests.get('https://www.proxyscan.io/download?type=https').text.split()
+        proxy_list+=requests.get('https://www.proxyscan.io/download?type=socks4').text.split()
+        proxy_list+=requests.get('https://www.proxyscan.io/download?type=socks5').text.split()
+        for proxy in set(proxy_list):
+            yield proxy
+        # 确保每个proxy都是 host:ip正确的格式返回
+        
+        
+https://www.proxyscan.io/download?type=socks4
 
 
 if __name__ == '__main__':
