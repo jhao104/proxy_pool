@@ -135,18 +135,19 @@ class ProxyFetcher(object):
                 print(e)
 
     @staticmethod
-    def freeProxy07():
+    def freeProxy07(page_count=7):
         """
         云代理 http://www.ip3366.net/free/
         :return:
         """
-        urls = ['http://www.ip3366.net/free/?stype=1',
-                "http://www.ip3366.net/free/?stype=2"]
+        urls = ['http://www.ip3366.net/free/?stype=1&page=%s',
+                "http://www.ip3366.net/free/?stype=2&page=%s"]
         for url in urls:
-            r = WebRequest().get(url, timeout=10)
-            proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
-            for proxy in proxies:
-                yield ":".join(proxy)
+            for i in range(1,page_count + 1):
+                r = WebRequest().get(url, timeout=10)
+                proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
+                for proxy in proxies:
+                    yield ":".join(proxy)
 
     @staticmethod
     def freeProxy08():
@@ -155,7 +156,8 @@ class ProxyFetcher(object):
         :return:
         """
         urls = [
-            'https://ip.ihuan.me/address/5Lit5Zu9.html',
+            'https://ip.ihuan.me/address/5Lit5Zu9.html?page=%s' % page
+            for page in ['b97827cc','4ce63706','5crfe930','f3k1d581','881aaf7b5']
         ]
         for url in urls:
             r = WebRequest().get(url, timeout=10)
@@ -165,7 +167,7 @@ class ProxyFetcher(object):
                 yield ":".join(proxy)
 
     @staticmethod
-    def freeProxy09(page_count=1):
+    def freeProxy09(page_count=8):
         """
         http://ip.jiangxianli.com/
         免费代理库
@@ -219,7 +221,7 @@ class ProxyFetcher(object):
     #             yield ':'.join(proxy)
 
     @staticmethod
-    def freeProxy13(max_page=2):
+    def freeProxy13(max_page=8):
         """
         http://www.89ip.cn/index.html
         89免费代理
@@ -250,8 +252,27 @@ class ProxyFetcher(object):
             for ip in ips:
                 yield ip.strip()
 
+    @staticmethod
+    def freeProxy15(page_count=2):
+        """
+         https://www.freeproxy.world/
+         :return:
+         """
+        urls = ['http://www.freeproxy.world/?type=http&anonymity=&country=CN&speed=&port=&page=%s']
+        for url in urls:
+            for page in range(1,page_count + 1):
+                r = WebRequest().get(url % page, timeout=10).tree
+                for tr in r.xpath(".//table[@class='layui-table']/tbody/tr"):
+                    try:
+                        ip = ''.join(tr.xpath('./td[1]/text()')).strip()
+                        port = ''.join(tr.xpath('./td[2]/a/text()')).strip()
+                        if port:
+                            yield '%s:%s' % (ip, port)
+                    except Exception as e:
+                        print(e)
+
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy13():
+    for _ in p.freeProxy15():
         print(_)
