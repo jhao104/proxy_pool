@@ -14,11 +14,14 @@ __author__ = 'JHao'
 
 from re import findall
 from requests import head
+import requests
 from util.six import withMetaclass
 from util.singleton import Singleton
 from handler.configHandler import ConfigHandler
+from handler.logHandler import LogHandler
 
 conf = ConfigHandler()
+log = LogHandler("validator")
 
 HEADER = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/20100101 Firefox/34.0',
           'Accept': '*/*',
@@ -30,6 +33,7 @@ class ProxyValidator(withMetaclass(Singleton)):
     pre_validator = []
     http_validator = []
     https_validator = []
+    anonymous_validator = []
 
     @classmethod
     def addPreValidator(cls, func):
@@ -46,6 +50,11 @@ class ProxyValidator(withMetaclass(Singleton)):
         cls.https_validator.append(func)
         return func
 
+    @classmethod
+    def addAnonymousValidator(cls, func):
+        cls.anonymous_validator.append(func)
+        return func
+
 
 @ProxyValidator.addPreValidator
 def formatValidator(proxy):
@@ -59,7 +68,7 @@ def formatValidator(proxy):
 def httpTimeOutValidator(proxy):
     """ http检测超时 """
 
-    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "https://{proxy}".format(proxy=proxy)}
+    proxies = {"http": "http://{p}".format(p=proxy), "https": "https://{p}".format(p=proxy)}
 
     try:
         r = head(conf.httpUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout)
@@ -72,7 +81,7 @@ def httpTimeOutValidator(proxy):
 def httpsTimeOutValidator(proxy):
     """https检测超时"""
 
-    proxies = {"http": "http://{proxy}".format(proxy=proxy), "https": "https://{proxy}".format(proxy=proxy)}
+    proxies = {"http": "http://{p}".format(p=proxy), "https": "https://{p}".format(p=proxy)}
     try:
         r = head(conf.httpsUrl, headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout, verify=False)
         return True if r.status_code == 200 else False
@@ -84,3 +93,16 @@ def httpsTimeOutValidator(proxy):
 def customValidatorExample(proxy):
     """自定义validator函数，校验代理是否可用, 返回True/False"""
     return True
+
+@ProxyValidator.addAnonymousValidator
+def anonymousValidator(proxy):
+    """检测是否是匿名代理, 返回True/False. 用http://httpbin.org/ip"""
+
+    proxies = {"http": "http://{p}".format(p=proxy), "https": "https://{p}".format(p=proxy)}
+
+    try:
+        r = requests.get("http://httpbin.org/ip", headers=HEADER, proxies=proxies, timeout=conf.verifyTimeout)
+        return r.status_code == 200 and "," not in r.json().get("origin")
+    except Exception as e:
+        log.error("Validating for anonymous exception.", exc_info=True)
+        return False

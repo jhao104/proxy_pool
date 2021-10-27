@@ -36,6 +36,7 @@ class DoValidator(object):
         """
         http_r = cls.httpValidator(proxy)
         https_r = False if not http_r else cls.httpsValidator(proxy)
+        anonymous_r = False if not http_r else cls.anonymousValidator(proxy)
 
         proxy.check_count += 1
         proxy.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -44,6 +45,7 @@ class DoValidator(object):
             if proxy.fail_count > 0:
                 proxy.fail_count -= 1
             proxy.https = True if https_r else False
+            proxy.anonymous = True if anonymous_r else False
         else:
             proxy.fail_count += 1
         return proxy
@@ -68,6 +70,13 @@ class DoValidator(object):
             if not func(proxy):
                 return False
         return True
+
+    @classmethod
+    def anonymousValidator(cls, proxy):
+        for func in ProxyValidator.anonymous_validator:
+            if func(proxy.proxy):
+                return True
+        return False
 
 
 class _ThreadChecker(Thread):

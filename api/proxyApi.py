@@ -41,10 +41,10 @@ class JsonResponse(Response):
 app.response_class = JsonResponse
 
 api_list = [
-    {"url": "/get", "params": "type: ''https'|''", "desc": "get a proxy"},
-    {"url": "/pop", "params": "", "desc": "get and delete a proxy"},
+    {"url": "/get", "params": "type: 'https|anonymous|anonymous_https|'", "desc": "get a proxy"},
+    {"url": "/pop", "params": "type: 'https|anonymous|anonymous_https|'", "desc": "get and delete a proxy"},
     {"url": "/delete", "params": "proxy: 'e.g. 127.0.0.1:8080'", "desc": "delete an unable proxy"},
-    {"url": "/all", "params": "type: ''https'|''", "desc": "get all proxy from proxy pool"},
+    {"url": "/all", "params": "type: 'https|anonymous|anonymous_https|'", "desc": "get all proxy from proxy pool"},
     {"url": "/count", "params": "", "desc": "return proxy count"}
     # 'refresh': 'refresh proxy pool',
 ]
@@ -57,15 +57,19 @@ def index():
 
 @app.route('/get/')
 def get():
-    https = request.args.get("type", "").lower() == 'https'
-    proxy = proxy_handler.get(https)
+    arg_type = request.args.get("type", "").lower()
+    https = 'https' in arg_type
+    anonymous = 'anonymous' in arg_type
+    proxy = proxy_handler.get(https, anonymous)
     return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
 
 
 @app.route('/pop/')
 def pop():
-    https = request.args.get("type", "").lower() == 'https'
-    proxy = proxy_handler.pop(https)
+    arg_type = request.args.get("type", "").lower()
+    https = 'https' in arg_type
+    anonymous = 'anonymous' in arg_type
+    proxy = proxy_handler.pop(https, anonymous)
     return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
 
 
@@ -77,8 +81,10 @@ def refresh():
 
 @app.route('/all/')
 def getAll():
-    https = request.args.get("type", "").lower() == 'https'
-    proxies = proxy_handler.getAll(https)
+    arg_type = request.args.get("type", "").lower()
+    https = 'https' in arg_type
+    anonymous = 'anonymous' in arg_type
+    proxies = proxy_handler.getAll(https, anonymous)
     return jsonify([_.to_dict for _ in proxies])
 
 

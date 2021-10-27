@@ -17,7 +17,7 @@ import json
 
 class Proxy(object):
 
-    def __init__(self, proxy, fail_count=0, region="", anonymous="",
+    def __init__(self, proxy, fail_count=0, region="", anonymous=False,
                  source="", check_count=0, last_status="", last_time="", https=False):
         self._proxy = proxy
         self._fail_count = fail_count
@@ -35,7 +35,7 @@ class Proxy(object):
         return cls(proxy=_dict.get("proxy", ""),
                    fail_count=_dict.get("fail_count", 0),
                    region=_dict.get("region", ""),
-                   anonymous=_dict.get("anonymous", ""),
+                   anonymous=_dict.get("anonymous", False),
                    source=_dict.get("source", ""),
                    check_count=_dict.get("check_count", 0),
                    last_status=_dict.get("last_status", ""),
@@ -60,7 +60,7 @@ class Proxy(object):
 
     @property
     def anonymous(self):
-        """ 匿名 """
+        """ 是否支持匿名 """
         return self._anonymous
 
     @property
@@ -125,6 +125,10 @@ class Proxy(object):
     @https.setter
     def https(self, value):
         self._https = value
+
+    @anonymous.setter
+    def anonymous(self, value):
+        self._anonymous = value
 
     def add_source(self, source_str):
         if source_str:

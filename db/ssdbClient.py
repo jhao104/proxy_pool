@@ -47,14 +47,13 @@ class SsdbClient(object):
                                                                    socket_timeout=5,
                                                                    **kwargs))
 
-    def get(self, https):
+    def get(self, https, anonymous):
         """
         从hash中随机返回一个代理
         :return:
         """
-        if https:
-            items_dict = self.__conn.hgetall(self.name)
-            proxies = list(filter(lambda x: json.loads(x).get("https"), items_dict.values()))
+        if https or anonymous:
+            proxies = self.getAll(https, anonymous)
             return choice(proxies) if proxies else None
         else:
             proxies = self.__conn.hkeys(self.name)
@@ -70,12 +69,12 @@ class SsdbClient(object):
         result = self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.to_json)
         return result
 
-    def pop(self, https):
+    def pop(self, https, anonymous):
         """
         顺序弹出一个代理
         :return: proxy
         """
-        proxy = self.get(https)
+        proxy = self.get(https, anonymous)
         if proxy:
             self.__conn.hdel(self.name, json.loads(proxy).get("proxy", ""))
         return proxy if proxy else None
@@ -104,16 +103,13 @@ class SsdbClient(object):
         """
         self.__conn.hset(self.name, proxy_obj.proxy, proxy_obj.to_json)
 
-    def getAll(self, https):
+    def getAll(self, https, anonymous):
         """
         字典形式返回所有代理, 使用changeTable指定hash name
         :return:
         """
         item_dict = self.__conn.hgetall(self.name)
-        if https:
-            return list(filter(lambda x: json.loads(x).get("https"), item_dict.values()))
-        else:
-            return item_dict.values()
+        return list(filter(lambda x: (not https or json.loads(x).get("https")) and (not anonymous or json.loads(x).get("anonymous")), item_dict.values))
 
     def clear(self):
         """
@@ -127,8 +123,12 @@ class SsdbClient(object):
         返回代理数量
         :return:
         """
-        proxies = self.getAll(https=False)
-        return {'total': len(proxies), 'https': len(list(filter(lambda x: json.loads(x).get("https"), proxies)))}
+        proxies = self.getAll(https=False, anonymous=False)
+        return {'total': len(proxies), 
+        'https': len(list(filter(lambda x: json.loads(x).get("https"), proxies))),
+        'anonymous': len(list(filter(lambda x: json.loads(x).get("anonymous"), proxies))),
+        'anonymous_https': len(list(filter(lambda x: json.loads(x).get("anonymous") and json.loads(x).get("https"), proxies)))
+        }
 
     def changeTable(self, name):
         """
