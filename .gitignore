@@ -2,3 +2,4 @@
 docs/_build
 *.pyc
 *.log
+.venv
