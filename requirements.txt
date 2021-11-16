@@ -2,7 +2,6 @@ APScheduler==3.2.0
 werkzeug==0.15.5
 Flask==1.0
 requests==2.20.0
-PyExecJS==1.5.1
 click==7.0
 gunicorn==19.9.0
 lxml
