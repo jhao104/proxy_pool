@@ -65,16 +65,13 @@ class Fetcher(object):
         self.log.info("ProxyFetch : start")
 
         for fetch_source in self.conf.fetchers:
-            self.log.info(
-                "ProxyFetch - {func}: start".format(func=fetch_source))
+            self.log.info("ProxyFetch - {func}: start".format(func=fetch_source))
             fetcher = getattr(ProxyFetcher, fetch_source, None)
             if not fetcher:
-                self.log.error(
-                    "ProxyFetch - {func}: class method not exists!".format(func=fetch_source))
+                self.log.error("ProxyFetch - {func}: class method not exists!".format(func=fetch_source))
                 continue
             if not callable(fetcher):
-                self.log.error(
-                    "ProxyFetch - {func}: must be class method".format(func=fetch_source))
+                self.log.error("ProxyFetch - {func}: must be class method".format(func=fetch_source))
                 continue
             thread_list.append(_ThreadFetcher(fetch_source, proxy_dict))
 
