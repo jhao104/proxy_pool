@@ -48,14 +48,13 @@ PROXY_FETCHER = [
     "freeProxy01",
     "freeProxy02",
     "freeProxy03",
-    # "freeProxy04",
+    "freeProxy04",
     "freeProxy05",
     "freeProxy06",
     "freeProxy07",
     "freeProxy08",
     "freeProxy09",
-    "freeProxy13",
-    "freeProxy14"
+    "freeProxy10"
 ]
 
 # ############# proxy validator #################
@@ -79,8 +78,8 @@ POOL_SIZE_MIN = 20
 # ############# scheduler config #################
 
 # Set the timezone for the scheduler forcely (optional)
-# If it is running on a VM, and 
-#   "ValueError: Timezone offset does not match system offset" 
+# If it is running on a VM, and
+#   "ValueError: Timezone offset does not match system offset"
 #   was raised during scheduling.
 # Please uncomment the following line and set a timezone for the scheduler.
 # Otherwise it will detect the timezone from the system automatically.
