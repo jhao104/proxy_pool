@@ -97,7 +97,7 @@ python proxyPool.py server
 ```bash
 docker pull jhao104/proxy_pool
 
-docker run --env DB_CONN=redis://:password@ip:port/db -p 5010:5010 jhao104/proxy_pool:latest
+docker run --env DB_CONN=redis://:password@ip:port/0 -p 5010:5010 jhao104/proxy_pool:2.4.0
 ```
 
 
