@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag docker pull jhao104/proxy_pool:$(date +%s)
+      run: docker build . --file Dockerfile --tag jhao104/proxy_pool:$(date +%s)
