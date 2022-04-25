@@ -20,6 +20,7 @@ class ProxyMain:
         self.PM = ProxyManager()
         self.PR = ProxyRecheck(self.record, self.valid, self.unvalid)
 
+
     def startproxy(self):
         """
         启动一条代理进程
@@ -68,7 +69,7 @@ class ProxyMain:
         定时检查代理可用性
         :return:
         """
-        t = threading.Thread(target=self.PR.run(), args=())
+        t = threading.Thread(target=self.PR.run)
         t.start()
 
     def pprint(self):
@@ -85,4 +86,6 @@ class ProxyMain:
 
 
 if __name__ == '__main__':
-    pass
+    pm = ProxyMain()
+    pm.recheck()
+    pm.startproxy()

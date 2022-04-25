@@ -15,7 +15,7 @@
 """
 __author__ = 'JHao'
 
-import platform
+import platform, threading
 from werkzeug.wrappers import Response
 from flask import Flask, jsonify, request
 
@@ -33,7 +33,7 @@ proxy_handler = ProxyHandler()
 
 # 启动代理管理器PM
 proxyMain = ProxyMain()
-# proxyMain.recheck()
+proxyMain.recheck()
 logout("proxyApi", f"ProxyMain()启动成功，并开始巡检")
 
 
