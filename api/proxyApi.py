@@ -24,15 +24,17 @@ from helper.proxy import Proxy
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
 from server2user.proxyMain import ProxyMain
+from server2user.logout import logout
+
 
 app = Flask(__name__)
 conf = ConfigHandler()
 proxy_handler = ProxyHandler()
 
-# 执行代理调度模块
+# 启动代理管理器PM
 proxyMain = ProxyMain()
-proxyMain.recheck()
-print("代理调度模块启动")
+# proxyMain.recheck()
+logout("proxyApi", f"ProxyMain()启动成功，并开始巡检")
 
 
 class JsonResponse(Response):

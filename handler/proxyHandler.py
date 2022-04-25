@@ -16,6 +16,7 @@ __author__ = 'JHao'
 from helper.proxy import Proxy
 from db.dbClient import DbClient
 from handler.configHandler import ConfigHandler
+from flask import jsonify
 
 
 class ProxyHandler(object):
@@ -90,4 +91,9 @@ class ProxyHandler(object):
 
 
 if __name__ == '__main__':
-    ProxyHandler().get()
+    proxies = ProxyHandler().getAll()
+    res = [_.to_dict for _ in proxies]
+    for i in res:
+        print(type(i))
+        print(i)
+
