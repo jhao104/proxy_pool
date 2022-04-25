@@ -1,5 +1,5 @@
 import requests, json, time
-from fetcher.testVmess import testVmess
+from fetcher.testVmess import testVmess2
 import setting
 from server2user.logout import logout
 from handler.proxyHandler import ProxyHandler
@@ -81,7 +81,7 @@ class ProxyRecheck():
                 # a.添加至recordList
                 recordList.append(new)
                 # b. 测试代理是否可用, 可用则添加至validList，不可用则添加至unvalidList以便后续删除
-                if testVmess(new['server'], new['port'], new['uuid'], new['alterId'], new['cipher'], new['network'], new.get('ws-path', None)):
+                if testVmess2(new['server'], new['port'], new['uuid'], new['alterId'], new['cipher'], new['network'], new.get('ws-path', None)):
                     validList.append(new)
                 else:
                     unvalidList.append(new)
@@ -104,7 +104,7 @@ class ProxyRecheck():
         logout("proxyRecheck", f"输入unvalidList:{unvalidList}")
 
         for proxy in validList:
-            if testVmess(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None)):
+            if testVmess2(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None)):
                 continue
             else:
                 try:
@@ -113,7 +113,7 @@ class ProxyRecheck():
                     logout("proxyRecheck", f"error-checkproxy-{e}")
                 unvalidList.append(proxy)
 
-        print("当次巡检完成")
+        logout("proxyRecheck", "当次巡检完成")
         logout("proxyRecheck", f"输出validList:{validList}")
         logout("proxyRecheck", f"输出unvalidList:{unvalidList}")
         logout("proxyRecheck", "="*30)
@@ -149,9 +149,9 @@ class ProxyRecheck():
                 logout("proxyRecheck", f"删除代理{Proxy(proxy)}请求结果--{status}")
 
             except Exception as e:
-                print(e)
+                logout("proxyRecheck", f"{e}")
 
-        print("移除不可用代理完成")
+        logout("proxyRecheck", "移除不可用代理完成")
         logout("proxyRecheck", f"输出unvalidList:{unvalidList}")
         logout("proxyRecheck", "="*30)
 
