@@ -1,5 +1,5 @@
 import random
 
-dd = {'12': "2"}
+dd = {"1", "2"}
 a = 12
-print(dd[f"{a}"])
+print(dd)

@@ -145,7 +145,7 @@ class ProxyRecheck():
                          proxy.get('ws-path', None)
                          )
             try:
-                status = self.dbOperate.delete(Proxy(proxy))
+                status = self.dbOperate.delete(str(Proxy(proxy)))
                 logout("proxyRecheck", f"删除代理{Proxy(proxy)}请求结果--{status}")
 
             except Exception as e:

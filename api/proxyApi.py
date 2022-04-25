@@ -122,6 +122,15 @@ def proxy_close():
     return proxyMain.closeproxy(pid)
 
 
+# 查看当前所有代理状态
+@app.route('/proxieslist/')
+def proxieslist():
+    # 1.获取可用代理参数
+    # 2.启动代理
+    # 3.成功后返回pid，IP以及端口号；不成功返回信息
+    return proxyMain.pprint()
+
+
 def runFlask():
     if platform.system() == "Windows":
         app.run(host=conf.serverHost, port=conf.serverPort)
