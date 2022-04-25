@@ -23,10 +23,16 @@ from util.six import iteritems
 from helper.proxy import Proxy
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
+from server2user.proxyMain import ProxyMain
 
 app = Flask(__name__)
 conf = ConfigHandler()
 proxy_handler = ProxyHandler()
+
+# 执行代理调度模块
+proxyMain = ProxyMain()
+proxyMain.recheck()
+print("代理调度模块启动")
 
 
 class JsonResponse(Response):
@@ -93,6 +99,25 @@ def delete():
 def getCount():
     status = proxy_handler.getCount()
     return status
+
+
+# 请求-开启代理
+@app.route('/proxyStart/')
+def proxy_start():
+    # 1.获取可用代理参数
+    # 2.启动代理
+    # 3.成功后返回pid，IP以及端口号；不成功返回信息
+    return proxyMain.startproxy()
+
+
+# 请求-关闭代理
+@app.route('/proxyClose/', methods=['GET'])
+def proxy_close():
+    # 1.接收pid参数
+    pid = request.args.get('pid')
+    # 2.根据pid关闭对应代理进程
+    # *3.返回结果
+    return proxyMain.closeproxy(pid)
 
 
 def runFlask():

@@ -28,16 +28,17 @@ BANNER = r"""
 VERSION = "2.4.0"
 
 # ############### server config ###############
-HOST = "0.0.0.0"
+HOST = "127.0.0.1"
 
-PORT = 5010
+PORT = 50101
 
 # ############### database config ###################
 # db connection uri
 # example:
 #      Redis: redis://:password@ip:port/db
 #      Ssdb:  ssdb://:password@ip:port
-DB_CONN = 'redis://:pwd@127.0.0.1:6379/0'
+DB_CONN = 'redis://:meiya@2020@127.0.0.1:6379/0'
+# DB_CONN = 'redis://:@127.0.0.1:6379/0'
 
 # proxy table name
 TABLE_NAME = 'use_proxy'
@@ -46,22 +47,20 @@ TABLE_NAME = 'use_proxy'
 # ###### config the proxy fetch function ######
 PROXY_FETCHER = [
     "freeProxy01",
-    "freeProxy02",
-    "freeProxy03",
-    "freeProxy04",
-    "freeProxy05",
-    "freeProxy06",
-    "freeProxy07",
-    "freeProxy08",
-    "freeProxy09",
-    "freeProxy10"
+    # "freeProxy02",
+    # "freeProxy03",
+    # "freeProxy04",
+    # "freeProxy05",
+    # "freeProxy06",
+    # "freeProxy07",
+    # "freeProxy08"
 ]
 
 # ############# proxy validator #################
 # 代理验证目标网站
-HTTP_URL = "http://httpbin.org"
+HTTP_URL = "http://www.twitter.com"
 
-HTTPS_URL = "https://www.qq.com"
+HTTPS_URL = "http://www.twitter.com"
 
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 10
@@ -85,3 +84,14 @@ POOL_SIZE_MIN = 20
 # Otherwise it will detect the timezone from the system automatically.
 
 TIMEZONE = "Asia/Shanghai"
+
+# ############# 其他补充 #################
+
+poolUrl = "http://127.0.0.1:50101/all"
+deleteUrl = "http://127.0.0.1:50101/delete"
+# 测试代理是否可用的url
+testUrl = [
+    'https://zh.wikipedia.org/wiki/Hello',
+    'https://zh.wikipedia.org/wiki/IPhone',
+    'https://zh.wikipedia.org/wiki/IBM_3090'
+]

@@ -84,3 +84,10 @@ class ProxyHandler(object):
         """
         total_use_proxy = self.db.getCount()
         return {'count': total_use_proxy}
+
+    def test11(self):
+        return self.all()
+
+
+if __name__ == '__main__':
+    ProxyHandler().get()

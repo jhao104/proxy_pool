@@ -29,6 +29,7 @@ def __runProxyFetch():
     proxy_fetcher = Fetcher()
 
     for proxy in proxy_fetcher.run():
+        # print(f"返回的proxy為--{proxy}")
         proxy_queue.put(proxy)
 
     Checker("raw", proxy_queue)

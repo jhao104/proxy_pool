@@ -84,5 +84,10 @@ class Fetcher(object):
 
         self.log.info("ProxyFetch - all complete!")
         for _ in proxy_dict.values():
-            if DoValidator.preValidator(_.proxy):
-                yield _
+            # if DoValidator.preValidator(_.proxy):
+            #     yield _
+            yield _
+
+
+if __name__ == '__main__':
+    print([i for i in Fetcher().run()])

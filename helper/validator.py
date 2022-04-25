@@ -52,6 +52,7 @@ def formatValidator(proxy):
     """检查代理格式"""
     verify_regex = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}"
     _proxy = findall(verify_regex, proxy)
+    print(f"{proxy}正則匹配返回的標準代理格式-{_proxy}")
     return True if len(_proxy) == 1 and _proxy[0] == proxy else False
 
 
