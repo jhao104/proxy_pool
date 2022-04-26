@@ -1,5 +1,13 @@
-import random
+pid = 12858
+pid2 = "12858"
 
-dd = {"1", "2"}
-a = 12
-print(dd)
+dic = {
+    "12858": True
+}
+
+if __name__ == '__main__':
+    print(dic.keys())
+    for key in dic.keys():
+        if key == str(pid):
+            print(True)
+            print(dic[str(pid)])

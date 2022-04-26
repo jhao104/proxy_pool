@@ -93,6 +93,8 @@ def getAll():
 @app.route('/delete/', methods=['GET'])
 def delete():
     proxy = request.args.get('proxy')
+
+    logout("proxyApi", f"delete数据模块接收--{proxy}")
     status = proxy_handler.delete(Proxy(proxy))
     return {"code": 0, "src": status}
 
