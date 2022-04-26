@@ -67,7 +67,7 @@ class ProxyManager:
 
             # 启动进程
             proc_vmess_test = subprocess.Popen("./tools/v2ray-cli/v2ray")
-            pid =proc_vmess_test.pid
+            pid = proc_vmess_test.pid
             time.sleep(3)
 
             # 测试可用性
@@ -77,19 +77,24 @@ class ProxyManager:
             try:
                 flag = requests.get('https://www.google.com', timeout=5).status_code
             except Exception as e:
-                logout("proxyManage", f"v2ray.get--{str(ip)}:{str(port)}--{listenport}-- {e}")
-                return False
+                logout("proxyManage", f"v2ray-requests.get-ERROR--{str(ip)}:{str(port)}--{listenport}-- {e}")
+                return False, None
+
+            if int(flag) == 200:
+                logout("proxyManage", f"v2ray.get--{str(ip)}:{str(port)}--{listenport}-SUCCESSFUL")
+                return True, pid
 
         except Exception as e:
-            print(e)
+            logout("proxyManage", f"v2ray.get-ERROR--{str(ip)}:{str(port)}--{listenport}-- {e}")
+            # 关闭进程
+            logout("proxyManage", f'pid--{pid}')
+            subprocess.call(["kill", "-9", str(pid)])
             time.sleep(3)
 
         finally:
             # 关闭全局代理
             socks.set_default_proxy()
             socket.socket = socks.socksocket
-            logout("proxyManage", f"v2ray.get--{str(ip)}:{str(port)}--{listenport}-- successful")
-            return True, pid
 
     def closeproxy(self, pid):
         """
@@ -99,7 +104,7 @@ class ProxyManager:
         """
         try:
             subprocess.call(["kill", "-9", str(pid)])
-            time.sleep(3)
+            time.sleep(5)
             return True
         except Exception as e:
             logout("proxyManage", f"closeProxy--{e}")

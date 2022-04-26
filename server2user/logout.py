@@ -4,6 +4,7 @@ import logging
 from logging import handlers
 import os, sys
 
+from loguru import logger
 
 # 日志模块
 def logout(logName, *args):
@@ -17,21 +18,18 @@ def logout(logName, *args):
         print(save_path)
         os.makedirs(save_path, exist_ok=True)
         log_file = '{}/log/{}-{}.log'.format(save_path, logName, dt.strftime('%Y-%m-%d'))
-
-        logger = logging.getLogger('Debug{}'.format(uuid.uuid1()))
-        logger.setLevel(logging.DEBUG)
-        f_handler = handlers.TimedRotatingFileHandler(log_file, when='midnight', interval=1, backupCount=7,
-                                                      encoding="utf-8")
-        f_handler.setFormatter(
-            logging.Formatter("%(asctime)s - %(levelname)s - %(processName)s[%(process)d]  - %(message)s"))
+        logger.add(log_file)
+        # logger = logging.getLogger('Debug{}'.format(uuid.uuid1()))
+        # logger.setLevel(logging.DEBUG)
+        # f_handler = handlers.TimedRotatingFileHandler(log_file, when='midnight', interval=1, backupCount=7, encoding="utf-8")
+        # f_handler.setFormatter(logging.Formatter("%(asctime)s - %(levelname)s - %(processName)s[%(process)d]  - %(message)s"))
 
         # 输出到控制台
-        sh_handler = logging.StreamHandler(sys.stdout)
-        sh_handler.setFormatter(
-            logging.Formatter("%(asctime)s - %(name)s - pid[%(process)d] - %(levelname)s - %(message)s"))
+        # sh_handler = logging.StreamHandler(sys.stdout)
+        # sh_handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - pid[%(process)d] - %(levelname)s - %(message)s"))
 
-        logger.addHandler(f_handler)
-        logger.addHandler(sh_handler)
+        # logger.addHandler(f_handler)
+        # logger.addHandler(sh_handler)
 
         if isinstance(args, tuple):
             logger.debug(' '.join(args))
@@ -41,5 +39,6 @@ def logout(logName, *args):
         print("{} {}".format(dt.strftime('[%Y-%m-%d %H:%M:%S %f]'), *args))
 
     finally:
-        logger.removeHandler(f_handler)
-        logger.removeHandler(sh_handler)
+        # logger.removeHandler(f_handler)
+        # logger.removeHandler(sh_handler)
+        pass
