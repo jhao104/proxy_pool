@@ -92,20 +92,28 @@ class ProxyRecheck():
             for proxy in validList:
 
                 ### 该部分未测试 ###
-
+                logout("proxyRecheck", f"测试用--proxy--{proxy}")
                 connectFail_count = 0  # 重试次数累计
+                logout("proxyRecheck", f"测试用--connectFail_count--{connectFail_count}")
+
                 while connectFail_count < 3:
                     if testVmess2(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None)):
+                        logout("proxyRecheck", f"测试用inWhile--testVmess2--Successful")
                         break
                     else:
+                        logout("proxyRecheck", f"测试用inWhile--testVmess2--fail--connectFail_count--{connectFail_count}")
                         connectFail_count += 1
 
                 if connectFail_count > 2:
+                    logout("proxyRecheck", f"测试用--加入删除列表--当前connectFail_count--{connectFail_count}")
                     temp.append(proxy)
+                    logout("proxyRecheck", f"测试用--加入删除列表--temp--{temp}")
 
+            logout("proxyRecheck", f"测试用--巡检结束--开始删除--temp--{temp}")
             for delproxy in temp:
                 validList.remove(delproxy)
                 unvalidList.append(delproxy)
+                logout("proxyRecheck", f"测试用--删完完成--validList--{validList}--unvalidList--{unvalidList}")
 
         except Exception as e:
             logout("proxyRecheck", f"error-checkproxy-{e}")

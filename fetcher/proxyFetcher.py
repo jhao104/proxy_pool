@@ -122,3 +122,57 @@ class ProxyFetcher(object):
             except Exception as e:
                 logout("proxyFetcher", f"网页请求失败ERROR-{e}")
 
+    @staticmethod
+    def freeProxy02():
+        """
+        vmess代理池
+        """
+
+        html_r = [
+            {"name": "🇦🇺AU_66", "server": "cdn-cn.nekocloud.cn", "type": "vmess", "country": "🇦🇺AU", "port": 19057,\
+             "uuid": "76cb50a4-9fd8-352e-99f4-a7bb5959b07b", "alterId": 0, "cipher": "auto", "network": "ws",\
+             "ws-path": "/catnet", "http-opts": {}, "h2-opts": {}, "skip-cert-verify": True},
+            {"name": "🇦🇺AU_67", "server": "cdn-cn.nekocloud.cn", "type": "vmess", "country": "🇦🇺AU", "port": 19046,\
+             "uuid": "76cb50a4-9fd8-352e-99f4-a7bb5959b07b", "alterId": 0, "cipher": "auto", "network": "ws",\
+             "ws-path": "/catnet", "http-opts": {}, "h2-opts": {}, "skip-cert-verify": True}
+        ]
+
+        for proxy in html_r:
+            try:
+
+                # 代理过滤1:只获取Vmess代理
+                if not proxy['type'] == 'vmess':
+                    continue
+
+                # 代理过滤2：pass1-telnet端口不通
+                if not telnet(proxy['server'], proxy['port']):
+                    continue
+
+                # 代理过滤3：实际不可用
+                if not testVmess(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None)):
+                    continue
+
+                # yield "%s, %s, %s, %s" % (proxy['server'], proxy['port'], proxy['password'], proxy['cipher'])
+                # yield '%s:%s' % (proxy['server'], proxy['port'])
+                yield '{"server": "%s",' \
+                      '"port": "%s",' \
+                      '"uuid": "%s",' \
+                      '"alterId": "%s",' \
+                      '"cipher": "%s",' \
+                      '"network": "%s",' \
+                      '"ws-path": "%s"}' % \
+                      (proxy['server'],
+                       proxy['port'],
+                       proxy['uuid'],
+                       proxy['alterId'],
+                       proxy['cipher'],
+                       proxy['network'],
+                       # proxy['ws-path']
+                       proxy.get('ws-path', None)
+                       )
+                # yield f"{proxy}"
+
+            except Exception as e:
+                logout("proxyFetcher", f"网页解析-{line}-失败ERROR-{e}")
+                pass
+

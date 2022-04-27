@@ -171,11 +171,11 @@ def testVmess2(ip, port, uuid, alterId, cipher, network, ws_path):
         try:
             flag = requests.get(random.choice(testUrl), timeout=3).status_code
         except Exception as e:
-            logout("testVmess", f"v2ray.get--{str(ip)}:{str(port)}-- {e}")
+            logout("testVmess2", f"v2ray.get--{str(ip)}:{str(port)}-- {e}")
         time.sleep(5)
 
         # 关闭进程
-        logout("testVmess", f'pid--{proc_vmess_test.pid}')
+        logout("testVmess2", f'pid--{proc_vmess_test.pid}')
         subprocess.call(["kill", "-9", str(proc_vmess_test.pid)])
 
         # 关闭全局代理到10800
@@ -184,14 +184,14 @@ def testVmess2(ip, port, uuid, alterId, cipher, network, ws_path):
 
         # 根据情况返回结果
         if int(flag) == 200:
-            logout("testVmess", f"v2ray--{str(ip)}:{str(port)}-- connecting successfully ...")
+            logout("testVmess2", f"v2ray--{str(ip)}:{str(port)}-- connecting successfully ...")
             return True
         else:
-            logout("testVmess", f"v2ray--{str(ip)}:{str(port)}-- connecting fail !")
+            logout("testVmess2", f"v2ray--{str(ip)}:{str(port)}-- connecting fail !")
             return False
 
     except Exception as e:
-        logout("testVmess", f"testVmess解析模块ERROR-- {e}")
+        logout("testVmess2", f"testVmess解析模块ERROR-- {e}")
         return False
 
 

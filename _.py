@@ -1,13 +1,5 @@
-pid = 12858
-pid2 = "12858"
+import json
 
-dic = {
-    "12858": True
-}
+a = '{"name":"🇦🇺AU_66","server":"129.154.54.75","type":"vmess","country":"🇦🇺AU","port":33004,"uuid":"4f14695c-31b9-45bf-ca34-1d82170fc100","alterId":0,"cipher":"auto","network":"ws","ws-path":"/","http-opts":{},"h2-opts":{},"skip-cert-verify":true}'
 
-if __name__ == '__main__':
-    print(dic.keys())
-    for key in dic.keys():
-        if key == str(pid):
-            print(True)
-            print(dic[str(pid)])
+print(type(json.loads(a)))
