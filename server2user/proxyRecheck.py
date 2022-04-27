@@ -10,22 +10,21 @@ class ProxyRecheck():
     """
     代理管理器，负责该服务与代理池服务交互
     """
-    def __init__(self, validList, unvalidList):
+    def __init__(self):
         """
         更新代理池的数据至本地，并巡查当前代理列表的代理是否可用
         :param unvalidList: 可用的代理
         :param unvalidList: 不可用的代理
-        :return: True or False
         """
-        self.validList = validList
-        self.unvalidList = unvalidList
+        self.validList = []
+        self.unvalidList = []
         self.dbOperate = ProxyHandler()
 
         logout("proxyRecheck", f"解说validList:{self.validList}")
         logout("proxyRecheck", f"接收unvalidList:{self.unvalidList}")
         logout("proxyRecheck", "proxyRecheck启动初始化完成")
 
-    def getproxy(self, validList, unvalidList):
+    def getproxy(self):
         """
         更新代理池的数据至本地，并巡查当前代理列表的代理是否可用
         :param unvalidList: 可用的代理
@@ -34,8 +33,8 @@ class ProxyRecheck():
         """
         logout("proxyRecheck", "\n")
         logout("proxyRecheck", "="*30)
-        logout("proxyRecheck", f"输入validList:{validList}")
-        logout("proxyRecheck", f"输入unvalidList:{unvalidList}")
+        logout("proxyRecheck", f"输入validList:{self.validList}")
+        logout("proxyRecheck", f"输入unvalidList:{self.unvalidList}")
 
         # 1.从数据库里获取当前最新代理数据
         temp = []
@@ -64,16 +63,16 @@ class ProxyRecheck():
         for new in temp:
             # a. 测试代理是否可用, 可用则添加至validList，不可用则添加至unvalidList以便后续删除
             if testVmess2(new['server'], new['port'], new['uuid'], new['alterId'], new['cipher'], new['network'], new.get('ws-path', None)):
-                validList.append(new)
+                self.validList.append(new)
             else:
-                unvalidList.append(new)
+                self.unvalidList.append(new)
 
         logout("proxyRecheck", "当次新增完成")
-        logout("proxyRecheck", f"输出validList:{validList}")
-        logout("proxyRecheck", f"输出unvalidList:{unvalidList}")
+        logout("proxyRecheck", f"输出validList:{self.validList}")
+        logout("proxyRecheck", f"输出unvalidList:{self.unvalidList}")
         logout("proxyRecheck", "="*30)
 
-    def checkproxy(self, validList, unvalidList):
+    def checkproxy(self):
         """
         巡检当前可用代理列表里的代理最新状态
         :param unvalidList: 可用的代理
@@ -82,14 +81,14 @@ class ProxyRecheck():
         """
         logout("proxyRecheck", "\n")
         logout("proxyRecheck", "="*30)
-        logout("proxyRecheck", f"输入validList:{validList}")
-        logout("proxyRecheck", f"输入unvalidList:{unvalidList}")
+        logout("proxyRecheck", f"输入validList:{self.validList}")
+        logout("proxyRecheck", f"输入unvalidList:{self.unvalidList}")
 
         temp = []  # 待删除列表
 
         try:
 
-            for proxy in validList:
+            for proxy in self.validList:
 
                 ### 该部分未测试 ###
                 logout("proxyRecheck", f"测试用--proxy--{proxy}")
@@ -111,19 +110,19 @@ class ProxyRecheck():
 
             logout("proxyRecheck", f"测试用--巡检结束--开始删除--temp--{temp}")
             for delproxy in temp:
-                validList.remove(delproxy)
-                unvalidList.append(delproxy)
-                logout("proxyRecheck", f"测试用--删完完成--validList--{validList}--unvalidList--{unvalidList}")
+                self.validList.remove(delproxy)
+                self.unvalidList.append(delproxy)
+                logout("proxyRecheck", f"测试用--删完完成--validList--{self.validList}--unvalidList--{self.unvalidList}")
 
         except Exception as e:
             logout("proxyRecheck", f"error-checkproxy-{e}")
 
         logout("proxyRecheck", "当次巡检完成")
-        logout("proxyRecheck", f"输出validList:{validList}")
-        logout("proxyRecheck", f"输出unvalidList:{unvalidList}")
+        logout("proxyRecheck", f"输出validList:{self.validList}")
+        logout("proxyRecheck", f"输出unvalidList:{self.unvalidList}")
         logout("proxyRecheck", "="*30)
 
-    def deletevalidproxy(self, unvalidList):
+    def deletevalidproxy(self):
         """
         移除代理池中不可用的代理
         :param unvalidList: 不可用的代理
@@ -131,11 +130,11 @@ class ProxyRecheck():
         """
         logout("proxyRecheck", "\n")
         logout("proxyRecheck", "="*30)
-        logout("proxyRecheck", f"输入unvalidList:{unvalidList}")
+        logout("proxyRecheck", f"输入unvalidList:{self.unvalidList}")
 
         temp = []  # 待删除列表
 
-        for proxy in unvalidList:
+        for proxy in self.unvalidList:
             logout("proxyRecheck", f"即将删除代理{str(proxy)}")
             re_proxy = '{"server": "%s",' \
                        '"port": "%s",' \
@@ -164,22 +163,25 @@ class ProxyRecheck():
 
         # 从失效代理列表中移除已经成功删除的代理数据
         for delproxy in temp:
-            unvalidList.remove(delproxy)
+            self.unvalidList.remove(delproxy)
 
         logout("proxyRecheck", "移除不可用代理完成")
-        logout("proxyRecheck", f"输出unvalidList:{unvalidList}")
+        logout("proxyRecheck", f"输出unvalidList:{self.unvalidList}")
         logout("proxyRecheck", "="*30)
 
     def run(self):
         """
         总循环
         """
+
+
         while True:
             try:
                 logout("proxyRecheck", "\n")
-                self.checkproxy(self.validList, self.unvalidList)
-                self.getproxy(self.validList, self.unvalidList)
-                self.deletevalidproxy(self.unvalidList)
+                logout("proxyRecheck", f"valid-id-{id(self.validList)}--unvailid-id-{id(self.unvalidList)}")
+                self.checkproxy()
+                self.getproxy()
+                self.deletevalidproxy()
                 time.sleep(120)
             except Exception as e:
                 logout("proxyRecheck", f"RECHECK模块错误{e}")
@@ -189,4 +191,4 @@ class ProxyRecheck():
 if __name__ == '__main__':
 
     PR = ProxyRecheck([], [])
-    PR.getproxy([], [])
+    PR.getproxy()

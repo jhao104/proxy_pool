@@ -40,6 +40,19 @@ PORT = 50101
 DB_CONN = 'redis://:meiya@2020@127.0.0.1:6379/0'
 # DB_CONN = 'redis://:@127.0.0.1:6379/0'
 
+# redis = {
+#     "ip": "127.0.0.1",
+#     "port": 6379,
+#     "password": "meiya@2020",
+#     "db": 1
+# }
+redis = {
+    "ip": "127.0.0.1",
+    "port": 6379,
+    "password": None,
+    "db": 1
+}
+
 # proxy table name
 TABLE_NAME = 'use_proxy'
 
@@ -91,7 +104,9 @@ poolUrl = "http://127.0.0.1:50101/all"
 deleteUrl = "http://127.0.0.1:50101/delete"
 # 测试代理是否可用的url
 testUrl = [
-    'https://zh.wikipedia.org/wiki/Hello',
-    'https://zh.wikipedia.org/wiki/IPhone',
-    'https://zh.wikipedia.org/wiki/IBM_3090'
+    'http://www.line.com/',
+    'https://zh.m.wikipedia.org/',
+    'https://www.kakaocorp.com/page/',
+    'https://twitter.com/',
+    'https://www.tumblr.com/'
 ]

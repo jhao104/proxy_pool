@@ -74,7 +74,7 @@ def testVmess(ip, port, uuid, alterId, cipher, network, ws_path):
         socket.socket = socks.socksocket
         flag = False
         try:
-            flag = requests.get(random.choice(testUrl), timeout=3).status_code
+            flag = requests.get(random.choice(testUrl), timeout=5).status_code
         except Exception as e:
             logout("testVmess", f"v2ray.get--{str(ip)}:{str(port)}-- {e}")
         time.sleep(5)
@@ -169,7 +169,7 @@ def testVmess2(ip, port, uuid, alterId, cipher, network, ws_path):
         socket.socket = socks.socksocket
         flag = False
         try:
-            flag = requests.get(random.choice(testUrl), timeout=3).status_code
+            flag = requests.get(random.choice(testUrl), timeout=5).status_code
         except Exception as e:
             logout("testVmess2", f"v2ray.get--{str(ip)}:{str(port)}-- {e}")
         time.sleep(5)

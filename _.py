@@ -1,5 +1,7 @@
-import json
+import redis
 
-a = '{"name":"🇦🇺AU_66","server":"129.154.54.75","type":"vmess","country":"🇦🇺AU","port":33004,"uuid":"4f14695c-31b9-45bf-ca34-1d82170fc100","alterId":0,"cipher":"auto","network":"ws","ws-path":"/","http-opts":{},"h2-opts":{},"skip-cert-verify":true}'
+r = redis.Redis(host='localhost', port=6379, db=1, password=None)
 
-print(type(json.loads(a)))
+r.hset("test1", "bk", "pp")
+# print(r.hget("test1"))
+print(r.hgetall("test1"))

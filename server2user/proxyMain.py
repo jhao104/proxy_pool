@@ -111,11 +111,11 @@ class ProxyMain:
         """
         logout("proxyMain", "="*50)
         logout("proxyMain", f"usingTable-{len(self.using)}-{self.using}")
-        logout("proxyMain", f"validTable-{len(self.valid)}-{self.valid}")
-        logout("proxyMain", f"unvalidTable-{len(self.unvalid)}-{self.unvalid}")
+        logout("proxyMain", f"validTable-id-{id(self.valid)}-{len(self.valid)}-{self.valid}")
+        logout("proxyMain", f"unvalidTable-id-{id(self.unvalid)}-{len(self.unvalid)}-{self.unvalid}")
         logout("proxyMain", f"lsportTable-{len(self.listenport)}-{self.listenport}")
         logout("proxyMain", "=" * 50)
-        return f"usingTable-{len(self.using)}-{self.using}\nvalidTable-{len(self.valid)}-{self.valid}\nunvalidTable-{len(self.unvalid)}-{self.unvalid}\nlistenportTable-{len(self.listenport)}-{self.listenport}"
+        return f"usingTable-{len(self.using)}-{self.using}\nvalidTable-id-{id(self.valid)}-{len(self.valid)}-{self.valid}\nunvalidTable-id-{id(self.unvalid)}-{len(self.unvalid)}-{self.unvalid}\nlistenportTable-{len(self.listenport)}-{self.listenport}"
 
 
 if __name__ == '__main__':
