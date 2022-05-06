@@ -9,7 +9,7 @@ class ProxyManager:
     """
     代理管理器，负责该服务与用户交互
     """
-    def startproxy(self, ip, port, uuid, alterId, cipher, network, ws_path, listenport):
+    def startproxy_vmess(self, ip, port, uuid, alterId, cipher, network, ws_path, listenport):
         """
         开启一个代理
         :param proxy: vmess代理参数

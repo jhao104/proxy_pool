@@ -1,7 +1,8 @@
 from server2user.proxyManage import ProxyManager
 from server2user.proxyRecheck import ProxyRecheck
-import random, requests, setting, threading
+import random, threading, json
 from server2user.logout import logout
+from db import redisApi
 
 
 class ProxyMain:
@@ -9,49 +10,59 @@ class ProxyMain:
     代理管理器，负责从代理池服务端到该服务到用户之间的数据流
     """
     def __init__(self):
-        self.valid = []  # 可用代理的列表
-        self.using = []  # 在使用中的代理列表
-        self.unvalid = []  # 已失效代理的列表
-        self.listenport = []
+        # valid = []  # 可用代理的列表
+        # using = []  # 在使用中的代理列表
+        # unvalid = []  # 已失效代理的列表
+        # lsportList = []
 
+        self.db = redisApi.RedisClient()
         # 初始化代理管理对象
         self.PM = ProxyManager()
-        self.PR = ProxyRecheck(self.valid, self.unvalid)
+        self.PR = ProxyRecheck()
 
     def startproxy(self):
         """
         启动一条代理进程
         :return: success-{pid,ip,port}; fail-NOne
         """
+        # 从redis里取数据
+        valid = self.db.list_get("valid")
+        lsport = self.db.list_get("lsport")
+
         flag = False
 
         try:
             # 进程开启失败则重试
             while not flag:
                 # a.无可用代理
-                if len(self.valid) == 0:
-                    logout("proxyMain", f"startproxy-当前可用代理数量---{len(self.valid)}---")
+                if len(valid) == 0:
+                    logout("proxyMain", f"startproxy-当前可用代理数量---{len(valid)}---")
                     raise ValueError("当前没有可用代理")
                 # b.有可用代理
-                proxy = random.choice(self.valid)
+                proxy = random.choice(valid)
 
                 # 随机分配监听端口，控制最大同时启动代理在200左右
                 listenport = 10800
-                while listenport in self.listenport:
+                while str(listenport) in lsport:  # redis返回的键也是str，所以加str()
                     listenport = random.randint(10800, 11000)
 
                 # 配置相关参数，调用代理启动程序
-                ip = proxy['server']
-                port = proxy['port']
-                flag, pid = self.PM.startproxy(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None), listenport)
+                flag, pid = self.PM.startproxy_vmess(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None), listenport)
                 logout("proxyMain", f"代理启动，参数信息-{proxy['server']}-{proxy['port']}-{proxy['uuid']}-{proxy['alterId']}-{proxy['cipher']}-{proxy['network']}-{proxy.get('ws-path', None)}-{listenport}")
 
                 # 代理启动成功，同步修改相关信息，返回ip、port、pid
                 if flag:
-                    self.valid.remove(proxy)  # 在可用代理列表中移除该代理
+                    # 在可用代理列表中移除该代理
+                    self.db.list_del("valid", proxy)
+
+                    proxy = json.loads(proxy)
                     proxy['listenport'] = listenport  # 代理添加监听端口信息
-                    self.using.append({f'{pid}': proxy})  # 在当前使用列表中，以pid为键，代理信息为值，添加此代理
-                    self.listenport.append(listenport)  # 在当前使用端口中，添加此端口
+
+                    # 在当前使用列表中，以pid为键，代理信息为值，添加此代理
+                    self.db.dict_add("using", pid, proxy)
+
+                    # 在当前使用端口中，添加此端口
+                    self.db.list_add("lsport", listenport)
 
                     return {"ip": "127.0.0.1", "port": listenport, "pid": pid}
 
@@ -64,13 +75,15 @@ class ProxyMain:
         关闭一条代理进程
         :return:
         """
+        # 从redis里取数据
+        using = self.db.dict_getall("using")
+
         try:
             _proxy = None
-            for proxy in self.using:
-                for key in proxy.keys():
-                    if key == str(pid):
-                        _proxy = proxy[str(pid)]
-            proxy = _proxy
+            for key in using:  # 遍历的是键
+                if key == str(pid):
+                    _proxy = using[str(pid)]
+            proxy = json.loads(_proxy)  # 将str转dict
 
             # 判断是否在使用列表中查找到对应pid的代理信息
             if proxy is None:
@@ -85,9 +98,15 @@ class ProxyMain:
             if self.PM.closeproxy(pid):
                 del_dict = {pid: proxy}
                 logout("proxyMain", f"临时测试-{del_dict}")
-                self.using.remove(del_dict)
-                self.valid.append(proxy)
-                self.listenport.remove(listenport)
+
+                # using.remove(del_dict)
+                self.db.dict_del("using", pid)
+
+                # valid.append(proxy)
+                self.db.list_add("valid", proxy)
+
+                # lsportList.remove(listenport)
+                self.db.list_del("lsport", listenport)
 
                 return f"对应pid-{str(pid)}-的代理已关闭"
 
@@ -109,16 +128,22 @@ class ProxyMain:
         """
         打印当前代理信息
         """
+        # 从redis里取数据
+        valid = self.db.list_get("valid")
+        unvalid = self.db.list_get("unvalid")
+        using = self.db.dict_getall("using")
+        lsportList = self.db.list_get("lsportList")
+
         logout("proxyMain", "="*50)
-        logout("proxyMain", f"usingTable-{len(self.using)}-{self.using}")
-        logout("proxyMain", f"validTable-id-{id(self.valid)}-{len(self.valid)}-{self.valid}")
-        logout("proxyMain", f"unvalidTable-id-{id(self.unvalid)}-{len(self.unvalid)}-{self.unvalid}")
-        logout("proxyMain", f"lsportTable-{len(self.listenport)}-{self.listenport}")
+        logout("proxyMain", f"usingTable-{len(using)}-{using}")
+        logout("proxyMain", f"validTable-id-{id(valid)}-{len(valid)}-{valid}")
+        logout("proxyMain", f"unvalidTable-id-{id(unvalid)}-{len(unvalid)}-{unvalid}")
+        logout("proxyMain", f"lsportTable-{len(lsportList)}-{lsportList}")
         logout("proxyMain", "=" * 50)
-        return f"usingTable-{len(self.using)}-{self.using}\nvalidTable-id-{id(self.valid)}-{len(self.valid)}-{self.valid}\nunvalidTable-id-{id(self.unvalid)}-{len(self.unvalid)}-{self.unvalid}\nlistenportTable-{len(self.listenport)}-{self.listenport}"
+        return f"usingTable-{len(using)}-{using}\nvalidTable-id-{id(valid)}-{len(valid)}-{valid}\nunvalidTable-id-{id(unvalid)}-{len(unvalid)}-{unvalid}\nlistenportTable-{len(lsportList)}-{lsportList}"
 
 
 if __name__ == '__main__':
     pm = ProxyMain()
-    pm.recheck()
+    # pm.recheck()
     pm.pprint()

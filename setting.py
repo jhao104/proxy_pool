@@ -49,7 +49,7 @@ DB_CONN = 'redis://:meiya@2020@127.0.0.1:6379/0'
 redis = {
     "ip": "127.0.0.1",
     "port": 6379,
-    "password": None,
+    "password": "meiya@2020",
     "db": 1
 }
 
@@ -59,8 +59,8 @@ TABLE_NAME = 'use_proxy'
 
 # ###### config the proxy fetch function ######
 PROXY_FETCHER = [
-    "freeProxy02",
-    # "freeProxy01",
+    # "freeProxy02",
+    "freeProxy01",
     # "freeProxy03",
     # "freeProxy04",
     # "freeProxy05",
@@ -103,10 +103,11 @@ TIMEZONE = "Asia/Shanghai"
 poolUrl = "http://127.0.0.1:50101/all"
 deleteUrl = "http://127.0.0.1:50101/delete"
 # 测试代理是否可用的url
+#    'https://zh.m.wikipedia.org/',
+#    'https://www.kakaocorp.com/page/',
 testUrl = [
-    'http://www.line.com/',
-    'https://zh.m.wikipedia.org/',
-    'https://www.kakaocorp.com/page/',
-    'https://twitter.com/',
-    'https://www.tumblr.com/'
+    'https://www.twitter.com/',
+    'https://www.tumblr.com/',
+    'https://www.facebook.com/',
+    'https://www.google.com/',
 ]
