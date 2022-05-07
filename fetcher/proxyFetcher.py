@@ -122,7 +122,7 @@ class ProxyFetcher(object):
                           '"port": "%s",' \
                           '"password": "%s",' \
                           '"cipher": "%s",' \
-                          '"protocol": "ss",' % \
+                          '"protocol": "ss"}' % \
                           (proxy['server'],
                            proxy['port'],
                            proxy['password'],

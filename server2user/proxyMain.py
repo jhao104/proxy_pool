@@ -1,6 +1,6 @@
 from server2user.proxyManage import ProxyManager
 from server2user.proxyRecheck import ProxyRecheck
-import random, threading, json
+import random, threading, json, telnetlib
 from server2user.logout import logout
 from db import redisApi
 
@@ -40,11 +40,25 @@ class ProxyMain:
                     raise ValueError("当前没有可用代理")
                 # b.有可用代理
                 proxy = random.choice(valid)
+                proxy = json.loads(proxy)
 
                 # 随机分配监听端口，控制最大同时启动代理在200左右
-                listenport = 10800
-                while str(listenport) in lsport:  # redis返回的键也是str，所以加str()
-                    listenport = random.randint(10800, 11000)
+                # while True:
+                #     listenport = random.randint(10801, 11000)
+                #     # 判断其他代理已使用
+                #     if str(listenport) in lsport:
+                #         continue
+                #     # 判断系统已占用
+                #     if telnet("127.0.0.1", listenport):
+                #         continue
+                #     break
+                while True:
+                    listenport = int(get_free_port())
+                    # 判断其他代理已使用
+                    if str(listenport) in lsport:
+                        continue
+                    break
+                logout("proxyMain", f"startproxy-已找到未使用端口号---{listenport}---")
 
                 # 配置相关参数，调用代理启动程序
                 if proxy["protocol"] == "vmess":
@@ -57,20 +71,24 @@ class ProxyMain:
                     pass
 
                 # 代理启动成功，同步修改相关信息，返回ip、port、pid
-                if flag:
-                    # 在可用代理列表中移除该代理
-                    self.db.list_del("valid", proxy)
+                try:
+                    if flag:
+                        # 在可用代理列表中移除该代理
+                        self.db.list_del("valid", json.dumps(proxy))
 
-                    proxy = json.loads(proxy)
-                    proxy['listenport'] = listenport  # 代理添加监听端口信息
+                        logout("proxyMain", f"测试用---{proxy}-{type(proxy)}--")
 
-                    # 在当前使用列表中，以pid为键，代理信息为值，添加此代理
-                    self.db.dict_add("using", pid, proxy)
+                        proxy['listenport'] = listenport  # 代理添加监听端口信息
 
-                    # 在当前使用端口中，添加此端口
-                    self.db.list_add("lsport", listenport)
+                        # 在当前使用列表中，以pid为键，代理信息为值，添加此代理
+                        self.db.dict_add("using", pid, proxy)
 
-                    return {"ip": "127.0.0.1", "port": listenport, "pid": pid}
+                        # 在当前使用端口中，添加此端口
+                        self.db.list_add("lsport", listenport)
+
+                        return {"ip": "127.0.0.1", "port": listenport, "pid": pid, "protocol": "socks5"}
+                except Exception as e:
+                    logout("proxyMain", f"startproxy模块-数据同步错误---{e}---")
 
         except Exception as e:
             logout("proxyMain", f"startproxy模块报错---{e}---")
@@ -138,7 +156,7 @@ class ProxyMain:
         valid = self.db.list_get("valid")
         unvalid = self.db.list_get("unvalid")
         using = self.db.dict_getall("using")
-        lsportList = self.db.list_get("lsportList")
+        lsportList = self.db.list_get("lsport")
 
         logout("proxyMain", "="*50)
         logout("proxyMain", f"usingTable-{len(using)}-{using}")
@@ -147,6 +165,29 @@ class ProxyMain:
         logout("proxyMain", f"lsportTable-{len(lsportList)}-{lsportList}")
         logout("proxyMain", "=" * 50)
         return f"usingTable-{len(using)}-{using}\nvalidTable-id-{id(valid)}-{len(valid)}-{valid}\nunvalidTable-id-{id(unvalid)}-{len(unvalid)}-{unvalid}\nlistenportTable-{len(lsportList)}-{lsportList}"
+
+
+def telnet(host, port) -> bool:
+    """
+    测试代理端口是否通
+    """
+    import telnetlib
+    try:
+        telnetlib.Telnet(str(host), port=int(port), timeout=2)
+        logout("proxyMain", f"telnet--{str(host)}:{str(port)}-- 准备启动代理...")
+        return True
+    except Exception as e:
+        logout("proxyMain", f"telnet--{str(host)}:{str(port)}-- 该端口已被占用--{e}")
+        return False
+
+
+def get_free_port():
+    import socket
+    sock = socket.socket()
+    sock.bind(('', 0))
+    port = sock.getsockname()[1]
+    sock.close()
+    return port
 
 
 if __name__ == '__main__':

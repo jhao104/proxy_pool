@@ -1,0 +1,9 @@
+{
+  "server":"5.183.179.167",
+  "local_address": "127.0.0.1",
+  "local_port":13961,
+  "server_port":9045,
+  "password":"Lp27rqyJq72bZsqX",
+  "timeout":300,
+  "method":"aes-256-cfb"
+}

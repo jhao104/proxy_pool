@@ -42,41 +42,54 @@ class ProxyRecheck():
         temp = []
 
         proxies = self.dbOperate.getAll()
-        res = [_.to_dict for _ in proxies]
+
+        res = [_.to_json for _ in proxies]
         logout("proxyRecheck", f"本次从数据库里获取当前的最新数据--{res}")
 
-        for proxy in res:
-            # print(proxy)
-            # 将proxy的键值内容转换为dict类型
-            proxy = json.loads(proxy['proxy'])
+        try:
+            for proxy in res:
+                print(proxy)
+                # 将proxy的键值内容转换为dict类型
+                proxy = json.loads(proxy)
+                print(proxy)
+                print(type(proxy))
+                print(proxy['proxy'])
+                print(type(proxy['proxy']))
 
-            if proxy['protocol'] == 'vmess':
-                temp.append(
-                    {
-                        'server': proxy['server'],
-                        'port': proxy['port'],
-                        'uuid': proxy['uuid'],
-                        'alterId': proxy['alterId'],
-                        'cipher': proxy['cipher'],
-                        'network': proxy['network'],
-                        'ws-path': proxy.get('ws-path', None),
-                        'protocol': proxy['protocol']
-                    }
-                )
+                # 20220507临时测试
+                # proxy = json.loads(proxy['proxy'][:-1] + "}")
+                proxy = json.loads(proxy['proxy'])
 
-            elif proxy['protocol'] == 'ss':
-                temp.append(
-                    {
-                        "server": proxy["server"],
-                        "port": proxy['port'],
-                        "password": proxy['password'],
-                        "cipher": proxy['cipher'],
-                        "protocol": proxy['protocol']
-                    }
-                )
+                if proxy['protocol'] == 'vmess':
+                    temp.append(
+                        {
+                            'server': proxy['server'],
+                            'port': proxy['port'],
+                            'uuid': proxy['uuid'],
+                            'alterId': proxy['alterId'],
+                            'cipher': proxy['cipher'],
+                            'network': proxy['network'],
+                            'ws-path': proxy.get('ws-path', None),
+                            'protocol': proxy['protocol']
+                        }
+                    )
 
-            else:
-                pass
+                elif proxy['protocol'] == 'ss':
+                    temp.append(
+                        {
+                            "server": proxy["server"],
+                            "port": proxy['port'],
+                            "password": proxy['password'],
+                            "cipher": proxy['cipher'],
+                            "protocol": proxy['protocol']
+                        }
+                    )
+
+                else:
+                    pass
+
+        except Exception as e:
+            logout("proxyRecheck", f"getproxy-数据解析ERROR-{e}")
 
         # 2.移除已添加过的代理数据
         for new in temp:
@@ -145,6 +158,8 @@ class ProxyRecheck():
             # logout("proxyRecheck", f"测试用--巡检结束--开始删除--temp--{temp}")
 
                 logout("proxyRecheck", f"--proxy--{proxy}")
+                # 转成dict
+                proxy = json.loads(proxy)
 
                 # 分协议检测
                 if proxy['protocol'] == "vmess":
@@ -232,6 +247,20 @@ class ProxyRecheck():
                             proxy['password'],
                             proxy['cipher']
                             )
+
+            # # 20220507临时测试用
+            # elif proxy['protocol'] == "ss":
+            #     re_proxy = '{"server": "%s",' \
+            #                '"port": "%s",' \
+            #                '"password": "%s",' \
+            #                '"cipher": "%s",' \
+            #                '"protocol": "ss",' % \
+            #                (proxy['server'],
+            #                 proxy['port'],
+            #                 proxy['password'],
+            #                 proxy['cipher']
+            #                 )
+
             else:
                 continue
 
@@ -281,6 +310,5 @@ class ProxyRecheck():
 if __name__ == '__main__':
 
     PR = ProxyRecheck()
-    PR.getproxy()
-    PR.checkproxy()
+    PR.run()
 
