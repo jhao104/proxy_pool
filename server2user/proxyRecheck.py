@@ -1,5 +1,6 @@
 import requests, json, time
 from fetcher.testVmess import testVmess2
+from fetcher.testSs import testSs2
 from db import redisApi
 from server2user.logout import logout
 from handler.proxyHandler import ProxyHandler
@@ -48,6 +49,7 @@ class ProxyRecheck():
             # print(proxy)
             # 将proxy的键值内容转换为dict类型
             proxy = json.loads(proxy['proxy'])
+
             if proxy['protocol'] == 'vmess':
                 temp.append(
                     {
@@ -58,31 +60,41 @@ class ProxyRecheck():
                         'cipher': proxy['cipher'],
                         'network': proxy['network'],
                         'ws-path': proxy.get('ws-path', None),
-                        'protocol': "vmess"
+                        'protocol': proxy['protocol']
+                    }
+                )
+
+            elif proxy['protocol'] == 'ss':
+                temp.append(
+                    {
+                        "server": proxy["server"],
+                        "port": proxy['port'],
+                        "password": proxy['password'],
+                        "cipher": proxy['cipher'],
+                        "protocol": proxy['protocol']
                     }
                 )
 
             else:
-                temp.append(
-                    '{"server": "%s",' \
-                    '"port": "%s",' \
-                    '"port": "%s",' \
-                    '"port": "%s",' \
-                    '"protocol": "ss"}' % \
-                    (proxy['server'],
-                     proxy['port'],
-                     proxy['password'],
-                     proxy['cipher']
-                     )
-                )
+                pass
 
         # 2.移除已添加过的代理数据
         for new in temp:
             # a. 测试代理是否可用, 可用则添加至validList，不可用则添加至unvalid以便后续删除
-            if testVmess2(new['server'], new['port'], new['uuid'], new['alterId'], new['cipher'], new['network'], new.get('ws-path', None)):
-                self.db.list_add("valid", new)
+            if new["protocol"] == "vmess":
+                if testVmess2(new['server'], new['port'], new['uuid'], new['alterId'], new['cipher'], new['network'], new.get('ws-path', None)):
+                    self.db.list_add("valid", new)
+                else:
+                    self.db.list_add("unvalid", new)
+
+            elif new["protocol"] == "ss":
+                if testSs2(new['server'], new['port'], new['password'], new['cipher']):
+                    self.db.list_add("valid", new)
+                else:
+                    self.db.list_add("unvalid", new)
+
             else:
-                self.db.list_add("unvalid", new)
+                pass
 
         # 返回处理后的结果
         valid = self.db.list_get("valid")
@@ -116,24 +128,40 @@ class ProxyRecheck():
             for proxy in valid:
 
                 ### 该部分未测试 ###
-                logout("proxyRecheck", f"测试用--proxy--{proxy}")
-                connectFail_count = 0  # 重试次数累计
-                logout("proxyRecheck", f"测试用--connectFail_count--{connectFail_count}")
+            #     logout("proxyRecheck", f"测试用--proxy--{proxy}")
+            #     connectFail_count = 0  # 重试次数累计
+            #     logout("proxyRecheck", f"测试用--connectFail_count--{connectFail_count}")
+            #     while connectFail_count < 3:
+            #         if testVmess2(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None)):
+            #             logout("proxyRecheck", f"测试用inWhile--testVmess2--Successful")
+            #             break
+            #         else:
+            #             logout("proxyRecheck", f"测试用inWhile--testVmess2--fail--connectFail_count--{connectFail_count}")
+            #             connectFail_count += 1
+            #     if connectFail_count > 2:
+            #         logout("proxyRecheck", f"测试用--加入删除列表--当前connectFail_count--{connectFail_count}")
+            #         temp.append(proxy)
+            #         logout("proxyRecheck", f"测试用--加入删除列表--temp--{temp}")
+            # logout("proxyRecheck", f"测试用--巡检结束--开始删除--temp--{temp}")
 
-                while connectFail_count < 3:
+                logout("proxyRecheck", f"--proxy--{proxy}")
+
+                # 分协议检测
+                if proxy['protocol'] == "vmess":
                     if testVmess2(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None)):
-                        logout("proxyRecheck", f"测试用inWhile--testVmess2--Successful")
-                        break
+                        logout("proxyRecheck", f"--testVmess2--Successful")
                     else:
-                        logout("proxyRecheck", f"测试用inWhile--testVmess2--fail--connectFail_count--{connectFail_count}")
-                        connectFail_count += 1
+                        temp.append(proxy)
+                        logout("proxyRecheck", f"--加入删除列表--temp--{temp}")
 
-                if connectFail_count > 2:
-                    logout("proxyRecheck", f"测试用--加入删除列表--当前connectFail_count--{connectFail_count}")
-                    temp.append(proxy)
-                    logout("proxyRecheck", f"测试用--加入删除列表--temp--{temp}")
+                elif proxy['protocol'] == "ss":
+                    if testSs2(proxy['server'], proxy['port'], proxy['password'], proxy['cipher']):
+                        logout("proxyRecheck", f"--testSs2--Successful")
+                    else:
+                        temp.append(proxy)
+                        logout("proxyRecheck", f"--加入删除列表--temp--{temp}")
 
-            logout("proxyRecheck", f"测试用--巡检结束--开始删除--temp--{temp}")
+            logout("proxyRecheck", f"--巡检结束--开始删除--temp--{temp}")
 
             for delproxy in temp:
                 self.db.list_del("valid", delproxy)
@@ -141,7 +169,7 @@ class ProxyRecheck():
 
                 valid = self.db.list_get("valid")
                 unvalid = self.db.list_get("unvalid")
-                logout("proxyRecheck", f"测试用--删完完成--validList--{valid}--unvalid--{unvalid}")
+                logout("proxyRecheck", f"--删完完成--validList--{valid}--unvalid--{unvalid}")
 
         except Exception as e:
             logout("proxyRecheck", f"error-checkproxy-{e}")
@@ -173,6 +201,7 @@ class ProxyRecheck():
             # 从redis读出来变成str，需要转dict
             proxy = json.loads(proxy)
             logout("proxyRecheck", f"即将删除代理{str(proxy)}")
+
             if proxy['protocol'] == "vmess":
                 re_proxy = '{"server": "%s",' \
                            '"port": "%s",' \
@@ -191,12 +220,17 @@ class ProxyRecheck():
                             # proxy['ws-path']
                             proxy.get('ws-path', None)
                             )
+
             elif proxy['protocol'] == "ss":
                 re_proxy = '{"server": "%s",' \
                            '"port": "%s",' \
+                           '"password": "%s",' \
+                           '"cipher": "%s",' \
                            '"protocol": "ss"}' % \
                            (proxy['server'],
-                            proxy['port']
+                            proxy['port'],
+                            proxy['password'],
+                            proxy['cipher']
                             )
             else:
                 continue

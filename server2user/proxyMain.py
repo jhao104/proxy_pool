@@ -47,8 +47,14 @@ class ProxyMain:
                     listenport = random.randint(10800, 11000)
 
                 # 配置相关参数，调用代理启动程序
-                flag, pid = self.PM.startproxy_vmess(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None), listenport)
-                logout("proxyMain", f"代理启动，参数信息-{proxy['server']}-{proxy['port']}-{proxy['uuid']}-{proxy['alterId']}-{proxy['cipher']}-{proxy['network']}-{proxy.get('ws-path', None)}-{listenport}")
+                if proxy["protocol"] == "vmess":
+                    flag, pid = self.PM.startproxy_vmess(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None), listenport)
+                    logout("proxyMain", f"代理启动，参数信息-{proxy['server']}-{proxy['port']}-{proxy['uuid']}-{proxy['alterId']}-{proxy['cipher']}-{proxy['network']}-{proxy.get('ws-path', None)}-{listenport}")
+                if proxy["protocol"] == "ss":
+                    flag, pid = self.PM.startproxy_ss(proxy['server'], proxy['port'], proxy['password'], proxy['cipher'], listenport)
+                    logout("proxyMain", f"代理启动，参数信息-{proxy['server']}-{proxy['port']}-{proxy['password']}-{proxy['cipher']}-{listenport}")
+                else:
+                    pass
 
                 # 代理启动成功，同步修改相关信息，返回ip、port、pid
                 if flag:
