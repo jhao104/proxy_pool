@@ -131,20 +131,6 @@ if __name__ == '__main__':
 
     rr = RedisClient()
 
-    print(rr.set_get("t3"))
-    print(type(rr.set_get("t3")))
-
-    print(rr.set_add("t3", "1"))
-    print(rr.set_add("t3", "2"))
-    print(rr.set_add("t3", 3))
-
-    print(rr.set_get("t3"))
-    print(rr.set_getnum("t3"))
-    print(rr.set_in("t3", 3))
-
-    print(rr.set_pop("t3"))
-
-    print(rr.set_get("t3"))
-    print(rr.set_getnum("t3"))
+    rr.delete("unvalid")
 
 

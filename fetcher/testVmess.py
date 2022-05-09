@@ -71,7 +71,7 @@ def testVmess(ip, port, uuid, alterId, cipher, network, ws_path):
             flag = response.status_code
 
         except Exception as e:
-            logout("testSs", f"v2ray.get---- {e}")
+            logout("testVmess", f"v2ray.get---- {e}")
         time.sleep(5)
 
         # 关闭进程
@@ -158,7 +158,7 @@ def testVmess2(ip, port, uuid, alterId, cipher, network, ws_path):
             flag = response.status_code
 
         except Exception as e:
-            logout("testSs", f"v2ray.get---- {e}")
+            logout("testVmess2", f"v2ray.get---- {e}")
         time.sleep(5)
 
         # 关闭进程
@@ -219,17 +219,13 @@ def get_request_headers():
 
         "Mozilla/5.0 (X11; U; Linux x86_64; zh-CN; rv:1.9.2.10) Gecko/20100922 Ubuntu/10.10 (maverick) Firefox/3.6.10",
 
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36 Edg/100.0.1185.50',
+
     ]
 
     headers = {
 
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36 Edg/100.0.1185.50',
-
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-
-    'Accept-Language': 'en-US,en;q=0.5',
-
-    'Connection': 'keep-alive',
+    'User-Agent': random.choice(USER_AGENTS)
 
     }
 

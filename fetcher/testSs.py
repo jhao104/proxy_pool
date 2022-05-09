@@ -44,17 +44,13 @@ def get_request_headers():
 
         "Mozilla/5.0 (X11; U; Linux x86_64; zh-CN; rv:1.9.2.10) Gecko/20100922 Ubuntu/10.10 (maverick) Firefox/3.6.10",
 
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36 Edg/100.0.1185.50',
+
     ]
 
     headers = {
 
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.127 Safari/537.36 Edg/100.0.1185.50',
-
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-
-    'Accept-Language': 'en-US,en;q=0.5',
-
-    'Connection': 'keep-alive',
+    'User-Agent': random.choice(USER_AGENTS)
 
     }
 
@@ -180,24 +176,24 @@ def testSs2(ip, port, password, cipher):
             flag = response.status_code
 
         except Exception as e:
-            logout("testSs", f"ss.get---- {e}")
+            logout("testSs2", f"ss.get---- {e}")
         time.sleep(5)
 
         # 关闭进程
-        logout("testSs", f'pid--{proc_vmess_test.pid}')
+        logout("testSs2", f'pid--{proc_vmess_test.pid}')
         subprocess.call(["kill", "-9", str(proc_vmess_test.pid)]) # linux用
         # subprocess.call(["taskkill", "-F", "/pid", str(proc_vmess_test.pid)])  # windows用
 
         # 根据情况返回结果
         if int(flag) == 200:
-            logout("testSs", f"ss--{str(ip)}:{str(port)}--测试站点:{testurl} -- connecting successfully ...")
+            logout("testSs2", f"ss--{str(ip)}:{str(port)}--测试站点:{testurl} -- connecting successfully ...")
             return True
         else:
-            logout("testSs", f"ss--{str(ip)}:{str(port)}--测试站点:{testurl} -- connecting fail !")
+            logout("testSs2", f"ss--{str(ip)}:{str(port)}--测试站点:{testurl} -- connecting fail !")
             return False
 
     except Exception as e:
-        logout("testSs", f"testss解析模块ERROR-- {e}")
+        logout("testSs2", f"testss解析模块ERROR-- {e}")
         return False
 
 
@@ -229,4 +225,4 @@ def tests():
 
 
 if __name__ == '__main__':
-    tests()
+    testSs2("150.230.96.106", "57239")

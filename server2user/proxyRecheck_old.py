@@ -134,6 +134,8 @@ class ProxyRecheck():
         logout("proxyRecheck", f"输入valid:{valid}")
         logout("proxyRecheck", f"输入unvalid:{unvalid}")
 
+        temp = []  # 待删除列表
+
         try:
 
             for proxy in valid:
@@ -147,19 +149,21 @@ class ProxyRecheck():
                     if testVmess2(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None)):
                         logout("proxyRecheck", f"--testVmess2--Successful")
                     else:
-                        self.db.list_del("valid", json.dumps(proxy))  # count-0，针对valid有效去重
-                        self.db.list_add("unvalid", proxy)
-                        logout("proxyRecheck", f"--加入删除列表--temp--{proxy}")
+                        temp.append(proxy)
+                        logout("proxyRecheck", f"--加入删除列表--temp--{len(temp)}")
 
                 elif proxy['protocol'] == "ss":
                     if testSs2(proxy['server'], proxy['port'], proxy['password'], proxy['cipher']):
                         logout("proxyRecheck", f"--testSs2--Successful")
                     else:
-                        self.db.list_del("valid", json.dumps(proxy))  # count-0，针对valid有效去重
-                        self.db.list_add("unvalid", proxy)
-                        logout("proxyRecheck", f"--加入删除列表--temp--{proxy}")
+                        temp.append(proxy)
+                        logout("proxyRecheck", f"--加入删除列表--temp--{len(temp)}")
 
-            logout("proxyRecheck", f"--巡检结束--")
+            logout("proxyRecheck", f"--巡检结束--开始删除--temp--{temp}")
+
+            for delproxy in temp:
+                self.db.list_del("valid", delproxy)
+                self.db.list_add("unvalid", delproxy)
 
             valid = self.db.list_get("valid")
             unvalid = self.db.list_get("unvalid")
@@ -255,7 +259,7 @@ class ProxyRecheck():
 
         # 从失效代理列表中移除已经成功删除的代理数据
         for delproxy in temp:
-            del_flag = self.db.list_del("unvalid", json.dumps(delproxy))  # count-0，针对unvalid有效去重
+            del_flag = self.db.list_del("unvalid", json.dumps(delproxy))
             print(f"{del_flag}--{delproxy}")
 
         # 返回处理后的结果

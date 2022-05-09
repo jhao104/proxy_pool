@@ -2,9 +2,9 @@
   "version": "4.1.8.0",
   "configs": [
     {
-      "server": "152.89.210.84",
-      "server_port": 9059,
-      "password": "9XwYyZsK8SNzQDtY",
+      "server": "213.183.53.177",
+      "server_port": 9088,
+      "password": "f8npKgNzdkss2ytn",
       "method": "aes-256-cfb",
       "plugin": "",
       "plugin_opts": "",
@@ -16,7 +16,7 @@
   "strategy": null,
   "index": 0,
   "global": true,
-  "enabled": true,
+  "enabled": false,
   "shareOverLan": false,
   "isDefault": false,
   "isIPv6Enabled": false,
