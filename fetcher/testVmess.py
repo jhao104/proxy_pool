@@ -21,7 +21,7 @@ def testVmess(ip, port, uuid, alterId, cipher, network, ws_path):
         }
 
         # v2ray配置文件
-        conf_dir = "./tools/v2ray-cli/config.json"
+        conf_dir = "./tools/v2ray-cli-web/config.json"
 
         # 读取congif
         with open(conf_dir, 'r+', encoding='utf-8') as conf:
@@ -54,7 +54,7 @@ def testVmess(ip, port, uuid, alterId, cipher, network, ws_path):
             conf.write(json.dumps(source, indent=4, ensure_ascii=False))
 
         # 启动进程
-        proc_vmess_test = subprocess.Popen("./tools/v2ray-cli/v2ray")
+        proc_vmess_test = subprocess.Popen("./tools/v2ray-cli-web/v2ray")
         time.sleep(3)
 
         # 测试可用性

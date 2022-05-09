@@ -140,23 +140,6 @@ class ProxyRecheck():
 
             for proxy in valid:
 
-                ### 该部分未测试 ###
-            #     logout("proxyRecheck", f"测试用--proxy--{proxy}")
-            #     connectFail_count = 0  # 重试次数累计
-            #     logout("proxyRecheck", f"测试用--connectFail_count--{connectFail_count}")
-            #     while connectFail_count < 3:
-            #         if testVmess2(proxy['server'], proxy['port'], proxy['uuid'], proxy['alterId'], proxy['cipher'], proxy['network'], proxy.get('ws-path', None)):
-            #             logout("proxyRecheck", f"测试用inWhile--testVmess2--Successful")
-            #             break
-            #         else:
-            #             logout("proxyRecheck", f"测试用inWhile--testVmess2--fail--connectFail_count--{connectFail_count}")
-            #             connectFail_count += 1
-            #     if connectFail_count > 2:
-            #         logout("proxyRecheck", f"测试用--加入删除列表--当前connectFail_count--{connectFail_count}")
-            #         temp.append(proxy)
-            #         logout("proxyRecheck", f"测试用--加入删除列表--temp--{temp}")
-            # logout("proxyRecheck", f"测试用--巡检结束--开始删除--temp--{temp}")
-
                 logout("proxyRecheck", f"--proxy--{proxy}")
                 # 转成dict
                 proxy = json.loads(proxy)
@@ -174,7 +157,7 @@ class ProxyRecheck():
                         logout("proxyRecheck", f"--testSs2--Successful")
                     else:
                         temp.append(proxy)
-                        logout("proxyRecheck", f"--加入删除列表--temp--{temp}")
+                        logout("proxyRecheck", f"--加入删除列表--temp--{len(temp)}")
 
             logout("proxyRecheck", f"--巡检结束--开始删除--temp--{temp}")
 
@@ -182,9 +165,9 @@ class ProxyRecheck():
                 self.db.list_del("valid", delproxy)
                 self.db.list_add("unvalid", delproxy)
 
-                valid = self.db.list_get("valid")
-                unvalid = self.db.list_get("unvalid")
-                logout("proxyRecheck", f"--删完完成--validList--{valid}--unvalid--{unvalid}")
+            valid = self.db.list_get("valid")
+            unvalid = self.db.list_get("unvalid")
+            logout("proxyRecheck", f"--删完完成--validList--{valid}--unvalid--{unvalid}")
 
         except Exception as e:
             logout("proxyRecheck", f"error-checkproxy-{e}")

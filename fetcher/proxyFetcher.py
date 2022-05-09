@@ -57,6 +57,7 @@ class ProxyFetcher(object):
                 # 代理提取并转为dict格式，并打印进度
                 proxy = json.loads(proxy)
                 logout("proxyFetcher", f"--正在处理-({proxyCount}/{proxyNums})-代理数据--")
+                logout("proxyFetcher", f"--正在处理-({proxy})-代理数据--")
 
                 # 代理过滤0：CN即中国代理,部分代理没有country字段则跳过
                 try:

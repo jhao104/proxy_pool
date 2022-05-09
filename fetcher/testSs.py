@@ -76,7 +76,7 @@ def testSs(ip, port, password, cipher):
 
         # ss配置文件
         # conf_dir = "./tools/Shadowsocks-4.1/gui-config.json"
-        conf_dir = "./tools/Shadowsocks/shadowsocks.json"
+        conf_dir = "./tools/Shadowsocks-web/shadowsocks.json"
 
         # 读取congif
         with open(conf_dir, 'r+', encoding='utf-8') as conf:
@@ -93,7 +93,7 @@ def testSs(ip, port, password, cipher):
             conf.write(json.dumps(source, indent=4, ensure_ascii=False))
 
         # 启动进程
-        proc_vmess_test = subprocess.Popen("sslocal -c ./tools/Shadowsocks/shadowsocks.json".split(" "))
+        proc_vmess_test = subprocess.Popen("sslocal -c ./tools/Shadowsocks-web/shadowsocks.json".split(" "))
         time.sleep(3)
 
         # 测试可用性
