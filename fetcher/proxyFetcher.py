@@ -136,7 +136,7 @@ class ProxyFetcher(object):
                     continue
 
             except Exception as e:
-                logout("proxyFetcher", f"网页解析-{line}-失败ERROR-{e}")
+                logout("proxyFetcher", f"代理数据-{proxy}-测试失败ERROR-{e}")
                 pass
 
     @staticmethod
