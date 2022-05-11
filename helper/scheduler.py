@@ -52,15 +52,16 @@ def runScheduler():
     scheduler_log = LogHandler("scheduler")
     scheduler = BlockingScheduler(logger=scheduler_log, timezone=timezone)
 
-    scheduler.add_job(__runProxyFetch, 'interval', minutes=4, id="proxy_fetch", name="proxy采集")
-    scheduler.add_job(__runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查")
+    # interval minutes=4 表示每隔4分钟启动一次，不考虑前一个进程是否结束
+    scheduler.add_job(__runProxyFetch, 'interval', minutes=10, id="proxy_fetch", name="proxy采集")
+    # scheduler.add_job(__runProxyCheck, 'interval', minutes=2, id="proxy_check", name="proxy检查")
     executors = {
-        'default': {'type': 'threadpool', 'max_workers': 20},
-        'processpool': ProcessPoolExecutor(max_workers=5)
+        'default': {'type': 'threadpool', 'max_workers': 1},
+        'processpool': ProcessPoolExecutor(max_workers=1)
     }
     job_defaults = {
-        'coalesce': False,
-        'max_instances': 10
+        'coalesce': True,  # 设置这个目的是，比如由于某个原因导致某个任务积攒了很多次没有执行（比如有一个任务是1分钟跑一次，但是系统原因断了5分钟），如果coalesce=True，那么下次恢复运行的时候，会只执行一次，而如果设置coalesce=False，那么就不会合并，会5次全部执行。
+        'max_instances': 1  # 同一个任务同一时间最多只能有5个实例在运行。比如一个耗时10分钟的job，被指定每分钟运行1次，如果我max_instance值5，那么在第6~10分钟上，新的运行实例不会被执行，因为已经有5个实例在跑了。
     }
 
     scheduler.configure(executors=executors, job_defaults=job_defaults, timezone=timezone)

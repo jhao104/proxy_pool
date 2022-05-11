@@ -2,10 +2,10 @@
   "version": "4.1.8.0",
   "configs": [
     {
-      "server": "213.183.53.177",
-      "server_port": 9088,
-      "password": "f8npKgNzdkss2ytn",
-      "method": "aes-256-cfb",
+      "server": "217.138.193.6",
+      "server_port": 812,
+      "password": "G!yBwPWH3Vao",
+      "method": "chacha20-ietf-poly1305",
       "plugin": "",
       "plugin_opts": "",
       "plugin_args": "",

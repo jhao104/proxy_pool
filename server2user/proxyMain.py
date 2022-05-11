@@ -158,23 +158,33 @@ class ProxyMain:
         using = self.db.dict_getall("using")
         lsportList = self.db.list_get("lsport")
 
-        logout("proxyMain", "="*50)
+        logout("proxyMain", "="*80)
+        logout("proxyMain", "\n")
+
         logout("proxyMain", f"usingTable-{len(using)}-{using}")
+        logout("proxyMain", "="*50)
+        logout("proxyMain", "\n")
         logout("proxyMain", f"validTable-id-{id(valid)}-{len(valid)}-{valid}")
+        logout("proxyMain", "="*50)
+        logout("proxyMain", "\n")
         logout("proxyMain", f"unvalidTable-id-{id(unvalid)}-{len(unvalid)}-{unvalid}")
+        logout("proxyMain", "="*50)
+        logout("proxyMain", "\n")
         logout("proxyMain", f"lsportTable-{len(lsportList)}-{lsportList}")
-        logout("proxyMain", "=" * 50)
+        logout("proxyMain", "="*80)
+        logout("proxyMain", "\n")
         return f"usingTable-{len(using)}-{using}\nvalidTable-id-{id(valid)}-{len(valid)}-{valid}\nunvalidTable-id-{id(unvalid)}-{len(unvalid)}-{unvalid}\nlistenportTable-{len(lsportList)}-{lsportList}"
 
 
-def telnet(host, port) -> bool:
+def telnet(host, port)->bool:
     """
     测试代理端口是否通
     """
     import telnetlib
     try:
-        telnetlib.Telnet(str(host), port=int(port), timeout=2)
+        tel = telnetlib.Telnet(str(host), port=int(port), timeout=2)
         logout("proxyMain", f"telnet--{str(host)}:{str(port)}-- 准备启动代理...")
+        tel.close()
         return True
     except Exception as e:
         logout("proxyMain", f"telnet--{str(host)}:{str(port)}-- 该端口已被占用--{e}")

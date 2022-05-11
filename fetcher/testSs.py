@@ -160,7 +160,7 @@ def testSs2(ip, port, password, cipher):
 
         # 启动进程
         proc_vmess_test = subprocess.Popen("sslocal -c ./tools/Shadowsocks/shadowsocks.json".split(" "))
-        time.sleep(3)
+        time.sleep(6)
 
         # 测试可用性
         import requests
@@ -177,12 +177,12 @@ def testSs2(ip, port, password, cipher):
 
         except Exception as e:
             logout("testSs2", f"ss.get---- {e}")
-        time.sleep(5)
 
         # 关闭进程
         logout("testSs2", f'pid--{proc_vmess_test.pid}')
         subprocess.call(["kill", "-9", str(proc_vmess_test.pid)]) # linux用
         # subprocess.call(["taskkill", "-F", "/pid", str(proc_vmess_test.pid)])  # windows用
+        time.sleep(5)
 
         # 根据情况返回结果
         if int(flag) == 200:

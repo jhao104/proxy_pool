@@ -27,8 +27,9 @@ def telnet(host, port)->bool:
     """
     import telnetlib
     try:
-        telnetlib.Telnet(str(host), port=int(port), timeout=2)
+        tel = telnetlib.Telnet(str(host), port=int(port), timeout=2)
         logout("proxyFetcher", f"telnet--{str(host)}:{str(port)}-- connecting pass ...")
+        tel.close()
         return True
     except Exception as e:
         logout("proxyFetcher", f"telnet--{str(host)}:{str(port)}-- {e}")

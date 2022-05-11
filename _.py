@@ -1,3 +1,4 @@
+# encoding: utf-8
 import redis, json
 
 use = [
@@ -79,10 +80,10 @@ if __name__ == '__main__':
 
     rr = RedisClient()
 
-    # rr.delete("valid")
-    #
-    # for i in use:
-    #     rr.list_add("valid", json.dumps(i))
+    rr.delete("valid")
+
+    for i in use:
+        rr.list_add("valid", json.dumps(i))
 
     rr.delete("unvaild")
     print("完成")
