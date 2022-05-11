@@ -102,7 +102,7 @@ class ProxyRecheck():
         for new in temp:
 
             proxyCount += 1  # 代理计数器，提高log可读性
-            logout("proxyFetcher", f"--正在处理-({proxyCount}/{proxyNums})-代理数据--")
+            logout("proxyRecheck", f"--正在处理-({proxyCount}/{proxyNums})-代理数据--")
 
             # a.排重
             if json.dumps(new) in valid:
@@ -167,7 +167,7 @@ class ProxyRecheck():
             for proxy in valid:
 
                 proxyCount += 1  # 代理计数器，提高log可读性
-                logout("proxyFetcher", f"--正在处理-({proxyCount}/{proxyNums})-代理数据--")
+                logout("proxyRecheck", f"--正在处理-({proxyCount}/{proxyNums})-代理数据--")
 
                 logout("proxyRecheck", f"--proxy--{proxy}")
                 # 转成dict
