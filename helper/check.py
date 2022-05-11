@@ -102,7 +102,8 @@ class _ThreadChecker(Thread):
     def __ifRaw(self, proxy):
         if proxy:
             logout("check", f"当前存入数据库的代理数据信息--数据类型：{type(proxy)}--数据本身：{proxy}")
-            self.proxy_handler.put(proxy)
+            # 20220511 数据通过proxyFetch.py直接插入数据库
+            # self.proxy_handler.put(proxy)
 
     #     if proxy.last_status:
     #         if self.proxy_handler.exists(proxy):

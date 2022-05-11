@@ -12,12 +12,12 @@
 """
 __author__ = 'JHao'
 
-import re, json, os, subprocess, time
-from time import sleep
+import json
+from helper.proxy import Proxy
 from fetcher.testVmess import testVmess
 from fetcher.testSs import testSs
 from fetcher.prehandle_url import getProxyFromWeb
-from util.webRequest import WebRequest
+from handler.proxyHandler import ProxyHandler
 from server2user.logout import logout
 
 
@@ -46,6 +46,10 @@ class ProxyFetcher(object):
         """
         vmess代理池
         """
+        # 操作redis数据库对象
+        proxy_handler = ProxyHandler()
+
+        # log可读性相关参数
         proxyNums, proxyList = getProxyFromWeb()
         proxyCount = 0
         proxyCount_successful = 0
@@ -86,7 +90,8 @@ class ProxyFetcher(object):
                     logout("proxyFetcher",
                            f"Successful--代理-{proxy['server']}:{proxy['port']}-测试通过-- 当前累计可用代理数量为-<{proxyCount_successful}>-")
 
-                    yield '{"server": "%s",' \
+                    # result:生成可用代理标准格式
+                    UseProxy = '{"server": "%s",' \
                           '"port": "%s",' \
                           '"uuid": "%s",' \
                           '"alterId": "%s",' \
@@ -104,6 +109,20 @@ class ProxyFetcher(object):
                            proxy.get('ws-path', None)
                            )
 
+                    # 用途1：直接加入redis数据库
+                    proxy = Proxy(UseProxy)
+                    try:
+                        """
+                        返回int类型，1为插入成功，0为数据更新成功
+                        """
+                        flag = proxy_handler.put(proxy)
+                        logout("proxyFetcher", f"--可用代理数据直插数据成功flag：{flag}--")
+                    except Exception as e:
+                        logout("proxyFetcher", f"--error-可用代理数据:{type(proxy.proxy)}-{proxy.proxy}-{type(proxy.to_json)}-{proxy.to_json}--直插数据发生错误：{e}--")
+
+                    # 用途2：返回给服务框架
+                    yield UseProxy
+
                 # 代理过滤2:只获取Vmess代理
                 elif proxy['type'] == 'ss':
 
@@ -120,7 +139,8 @@ class ProxyFetcher(object):
                     logout("proxyFetcher",
                            f"Successful--代理-{proxy['server']}:{proxy['port']}-测试通过-- 当前累计可用代理数量为-<{proxyCount_successful}>-")
 
-                    yield '{"server": "%s",' \
+                    # result:生成可用代理标准格式
+                    UseProxy = '{"server": "%s",' \
                           '"port": "%s",' \
                           '"password": "%s",' \
                           '"cipher": "%s",' \
@@ -130,6 +150,20 @@ class ProxyFetcher(object):
                            proxy['password'],
                            proxy['cipher']
                            )
+
+                    # 用途1：直接加入redis数据库
+                    proxy = Proxy(UseProxy)
+                    try:
+                        """
+                        返回int类型，1为插入成功，0为数据更新成功
+                        """
+                        flag = proxy_handler.put(proxy)
+                        logout("proxyFetcher", f"--可用代理数据直插数据成功flag：{flag}--")
+                    except Exception as e:
+                        logout("proxyFetcher", f"--error-可用代理数据:{type(proxy.proxy)}-{proxy.proxy}-{type(proxy.to_json)}-{proxy.to_json}--直插数据发生错误：{e}--")
+
+                    # 用途2：返回给服务框架
+                    yield UseProxy
 
                 # 过滤其他类型代理
                 else:
