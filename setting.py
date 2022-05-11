@@ -37,8 +37,8 @@ PORT = 50101
 # example:
 #      Redis: redis://:password@ip:port/db
 #      Ssdb:  ssdb://:password@ip:port
-# DB_CONN = 'redis://:meiya@2020@127.0.0.1:6379/0'
-DB_CONN = 'redis://:@127.0.0.1:6379/0'
+DB_CONN = 'redis://:meiya@2020@127.0.0.1:6379/0'
+# DB_CONN = 'redis://:@127.0.0.1:6379/0'
 
 # redis = {
 #     "ip": "127.0.0.1",
