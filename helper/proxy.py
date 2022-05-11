@@ -13,6 +13,7 @@
 __author__ = 'JHao'
 
 import json
+from handler import proxyHandler
 
 
 class Proxy(object):
@@ -130,3 +131,22 @@ class Proxy(object):
         if source_str:
             self._source.append(source_str)
             self._source = list(set(self._source))
+
+
+if __name__ == '__main__':
+    # 操作redis数据库对象
+    proxy_handler = proxyHandler.ProxyHandler()
+    UseProxy = '{"server": "110",' \
+               '"port": "001",' \
+               '"password": "abc",' \
+               '"cipher": "sss",' \
+               '"protocol": "ss"}'
+
+
+    proxy = Proxy(UseProxy)
+    print(proxy.proxy)
+    print(type(proxy.proxy))
+    print(proxy.to_json)
+    print(type(proxy.to_json))
+
+    flag = proxy_handler.put(proxy)

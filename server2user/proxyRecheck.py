@@ -117,6 +117,7 @@ class ProxyRecheck():
                     self.db.list_add("valid", new)
                 else:
                     self.db.list_add("unvalid", new)
+                    logout("proxyRecheck", f"该代理不可用已添加至删除列表-<{type(new)}>-proxy:{new}")
 
             elif new["protocol"] == "ss":
                 if testSs2(new['server'], new['port'], new['password'], new['cipher']):
@@ -125,6 +126,7 @@ class ProxyRecheck():
                     self.db.list_add("valid", new)
                 else:
                     self.db.list_add("unvalid", new)
+                    logout("proxyRecheck", f"该代理不可用已添加至删除列表-<{type(new)}>-proxy:{new}")
 
             else:
                 pass
