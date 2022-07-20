@@ -92,47 +92,19 @@ python proxyPool.py server
 
 ```
 
-### Docker运行
+### Docker Image
 
 ```bash
 docker pull jhao104/proxy_pool
 
-docker run --env DB_CONN=redis://:password@ip:port/0 -p 5010:5010 jhao104/proxy_pool:2.4.0
+docker run --env DB_CONN=redis://:password@ip:port/0 -p 5010:5010 jhao104/proxy_pool:latest
 ```
-#### docker-compose
+### docker-compose
 
-- 将如下内容保存到 `docker-compose.yaml`
-
-```yaml
-version: '3'
-
-networks:
-  proxy_pool:
-    driver: bridge
-
-services:
-  proxy_pool:
-    image: jhao104/proxy_pool:2.4.0
-    environment:
-      - DB_CONN=redis://@redis:6379/0
-    ports:
-      - '5010:5010'
-    depends_on:
-      - redis
-    networks: 
-      - proxy_pool
-    restart: unless-stopped
-
-  redis:
-    image: redis:5.0
-    ports:
-      - '6379:6379'
-    networks:
-      - proxy_pool
-    restart: unless-stopped
+项目目录下运行: 
+``` bash
+docker-compose up -d
 ```
-
-- 运行: `docker-compose up -d`
 
 ### 使用
 
