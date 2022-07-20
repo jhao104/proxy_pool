@@ -1,11 +1,9 @@
-name: Publish Docker image
+name: Publish Docker image latest
 
 on:
   push:
     branches:
       - 'master'
-    tags:
-      - '*'
 
 jobs:
 
@@ -34,5 +32,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: latest
