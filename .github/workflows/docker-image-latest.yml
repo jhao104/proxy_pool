@@ -32,4 +32,4 @@ jobs:
         with:
           context: .
           push: true
-          tags: latest
+          tags: jhao104/proxy_pool:latest
