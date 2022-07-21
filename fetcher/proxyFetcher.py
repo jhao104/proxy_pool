@@ -43,7 +43,7 @@ class ProxyFetcher(object):
                     yield "%s:%s" % (ip, port)
                 next_page = _tree.xpath("//div[@class='page']/a[@title='下一页']/@href")
                 target_url = "https://www.zdaye.com/" + next_page[0].strip() if next_page else False
-                sleep(3)
+                sleep(5)
 
     @staticmethod
     def freeProxy02():
@@ -51,10 +51,12 @@ class ProxyFetcher(object):
         代理66 http://www.66ip.cn/
         """
         url = "http://www.66ip.cn/"
-        resp = WebRequest().get(url, timeout=10)
-        proxies = re.findall(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5})', resp.text)
-        for proxy in proxies:
-            yield proxy
+        resp = WebRequest().get(url, timeout=10).tree
+        for i, tr in enumerate(resp.xpath("(//table)[3]//tr")):
+            if i > 0:
+                ip = "".join(tr.xpath("./td[1]/text()")).strip()
+                port = "".join(tr.xpath("./td[2]/text()")).strip()
+                yield "%s:%s" % (ip, port)
 
     @staticmethod
     def freeProxy03():
@@ -69,13 +71,21 @@ class ProxyFetcher(object):
 
     @staticmethod
     def freeProxy04():
-        """ 蝶鸟IP """
-        url = "https://www.dieniao.com/FreeProxy.html"
+        """ FreeProxyList https://www.freeproxylists.net/zh/ """
+        url = "https://www.freeproxylists.net/zh/?c=CN&pt=&pr=&a%5B%5D=0&a%5B%5D=1&a%5B%5D=2&u=50"
         tree = WebRequest().get(url, verify=False).tree
-        for li in tree.xpath("//div[@class='free-main col-lg-12 col-md-12 col-sm-12 col-xs-12']/ul/li")[1:]:
-            ip = "".join(li.xpath('./span[1]/text()')).strip()
-            port = "".join(li.xpath('./span[2]/text()')).strip()
-            yield "%s:%s" % (ip, port)
+        from urllib import parse
+
+        def parse_ip(input_str):
+            html_str = parse.unquote(input_str)
+            ips = re.findall(r'\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}', html_str)
+            return ips[0] if ips else None
+
+        for tr in tree.xpath("//tr[@class='Odd']") + tree.xpath("//tr[@class='Even']"):
+            ip = parse_ip("".join(tr.xpath('./td[1]/script/text()')).strip())
+            port = "".join(tr.xpath('./td[2]/text()')).strip()
+            if ip:
+                yield "%s:%s" % (ip, port)
 
     @staticmethod
     def freeProxy05(page_count=1):
@@ -213,7 +223,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy02():
+    for _ in p.freeProxy04():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm
