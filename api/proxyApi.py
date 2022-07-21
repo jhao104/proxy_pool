@@ -91,8 +91,15 @@ def delete():
 
 @app.route('/count/')
 def getCount():
-    status = proxy_handler.getCount()
-    return status
+    proxies = proxy_handler.getAll()
+    http_type_dict = {}
+    source_dict = {}
+    for proxy in proxies:
+        http_type = 'https' if proxy.https else 'http'
+        http_type_dict[http_type] = http_type_dict.get(http_type, 0) + 1
+        for source in proxy.source.split('/'):
+            source_dict[source] = source_dict.get(source, 0) + 1
+    return {"http_type": http_type_dict, "source": source_dict, "count": len(proxies)}
 
 
 def runFlask():
