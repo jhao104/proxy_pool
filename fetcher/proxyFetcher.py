@@ -13,6 +13,7 @@
 __author__ = 'JHao'
 
 import re
+import json
 from time import sleep
 
 from util.webRequest import WebRequest
@@ -108,12 +109,14 @@ class ProxyFetcher(object):
 
     @staticmethod
     def freeProxy06():
-        """ PROXY11 https://proxy11.com """
-        url = "https://proxy11.com/api/demoweb/proxy.json?country=hk&speed=2000"
+        """ FateZero http://proxylist.fatezero.org/ """
+        url = "http://proxylist.fatezero.org/proxy.list"
         try:
-            resp_json = WebRequest().get(url).json
-            for each in resp_json.get("data", []):
-                yield "%s:%s" % (each.get("ip", ""), each.get("port", ""))
+            resp_text = WebRequest().get(url).text
+            for each in resp_text.split("\n"):
+                json_info = json.loads(each)
+                if json_info.get("country") == "CN":
+                    yield "%s:%s" % (json_info.get("host", ""), json_info.get("port", ""))
         except Exception as e:
             print(e)
 
@@ -223,7 +226,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy04():
+    for _ in p.freeProxy06():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm
