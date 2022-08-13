@@ -47,7 +47,7 @@ class RedisClient(object):
                                                                    socket_timeout=5,
                                                                    **kwargs))
 
-    def get(self, https):
+    def get(self, https, region):
         """
         返回一个代理
         :return:
@@ -55,6 +55,12 @@ class RedisClient(object):
         if https:
             items = self.__conn.hvals(self.name)
             proxies = list(filter(lambda x: json.loads(x).get("https"), items))
+            if region != '':
+                proxies = list(filter(lambda x: region in json.loads(x).get("region"), iter(proxies)))
+            return choice(proxies) if proxies else None
+        elif region != '':
+            items = self.__conn.hvals(self.name)
+            proxies = list(filter(lambda x: region in json.loads(x).get("region"), items))
             return choice(proxies) if proxies else None
         else:
             proxies = self.__conn.hkeys(self.name)
