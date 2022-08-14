@@ -13,6 +13,9 @@
 """
 __author__ = 'JHao'
 
+import requests
+import json
+
 from util.six import Empty
 from threading import Thread
 from datetime import datetime
@@ -40,6 +43,8 @@ class DoValidator(object):
         proxy.check_count += 1
         proxy.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         proxy.last_status = True if http_r else False
+        proxy._region = cls.region_get(proxy.proxy)
+        proxy._anonymous = cls.anonymousValidator(proxy.proxy, proxy.https)
         if http_r:
             if proxy.fail_count > 0:
                 proxy.fail_count -= 1
@@ -68,6 +73,35 @@ class DoValidator(object):
             if not func(proxy):
                 return False
         return True
+
+    @classmethod
+    def region_get(cls, proxy):
+        try:
+            r = requests.get(url='https://searchplugin.csdn.net/api/v1/ip/get', params={'ip': proxy.split(':')[0]})
+            return json.loads(r.text)['data']['address']
+        except:
+            return '未知或请求失败'
+
+    @classmethod
+    def anonymousValidator(cls, proxy, https):
+        if https:
+            url = 'https://httpbin.org/get'
+            proxy = {'https': proxy}
+        else:
+            url = 'http://httpbin.org/get'
+            proxy = {'http': proxy}
+
+        r = requests.get(url, proxies=proxy)
+        r = json.loads(r.text)
+        try:
+            if ',' in r.get('origin'):
+                return 0
+            elif r.get('headers').get('Proxy-connecttion', False):
+                return 1
+            else:
+                return 2
+        except:
+            return -1
 
 
 class _ThreadChecker(Thread):

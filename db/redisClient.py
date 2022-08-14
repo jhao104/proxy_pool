@@ -47,19 +47,35 @@ class RedisClient(object):
                                                                    socket_timeout=5,
                                                                    **kwargs))
 
-    def get(self, https):
+    def get(self, https, region, anonymous):
         """
         返回一个代理
         :return:
         """
+        items = self.__conn.hvals(self.name)
+        proxies = list(items)
         if https:
-            items = self.__conn.hvals(self.name)
             proxies = list(filter(lambda x: json.loads(x).get("https"), items))
-            return choice(proxies) if proxies else None
-        else:
-            proxies = self.__conn.hkeys(self.name)
-            proxy = choice(proxies) if proxies else None
-            return self.__conn.hget(self.name, proxy) if proxy else None
+        if region != '':
+            proxies = list(filter(lambda x: region in json.loads(x).get("region"), iter(proxies)))
+        if anonymous != -1:
+            proxies = list(filter(lambda x: json.loads(x).get("anonymous") == anonymous, iter(proxies)))
+        return choice(proxies) if proxies else None
+
+        # if https:
+        #     items = self.__conn.hvals(self.name)
+        #     proxies = list(filter(lambda x: json.loads(x).get("https"), items))
+        #     if region != '':
+        #         proxies = list(filter(lambda x: region in json.loads(x).get("region"), iter(proxies)))
+        #     return choice(proxies) if proxies else None
+        # elif region != '':
+        #     items = self.__conn.hvals(self.name)
+        #     proxies = list(filter(lambda x: region in json.loads(x).get("region"), items))
+        #     return choice(proxies) if proxies else None
+        # else:
+        #     proxies = self.__conn.hkeys(self.name)
+        #     proxy = choice(proxies) if proxies else None
+        #     return self.__conn.hget(self.name, proxy) if proxy else None
 
     def put(self, proxy_obj):
         """
