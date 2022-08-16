@@ -126,6 +126,10 @@ class Proxy(object):
     def https(self, value):
         self._https = value
 
+    @region.setter
+    def region(self, value):
+        self._region = value
+
     def add_source(self, source_str):
         if source_str:
             self._source.append(source_str)

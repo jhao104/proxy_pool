@@ -74,6 +74,10 @@ class ConfigHandler(withMetaclass(Singleton)):
         return int(os.getenv("POOL_SIZE_MIN", setting.POOL_SIZE_MIN))
 
     @LazyProperty
+    def proxyRegion(self):
+        return bool(os.getenv("PROXY_REGION", setting.PROXY_REGION))
+
+    @LazyProperty
     def timezone(self):
         return os.getenv("TIMEZONE", setting.TIMEZONE)
 

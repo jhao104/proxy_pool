@@ -9,6 +9,7 @@
    Change Activity:
                    2019/08/06: 执行代理校验
                    2021/05/25: 分别校验http和https
+                   2022/08/16: 获取代理Region信息
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -16,6 +17,7 @@ __author__ = 'JHao'
 from util.six import Empty
 from threading import Thread
 from datetime import datetime
+from util.webRequest import WebRequest
 from handler.logHandler import LogHandler
 from helper.validator import ProxyValidator
 from handler.proxyHandler import ProxyHandler
@@ -25,12 +27,15 @@ from handler.configHandler import ConfigHandler
 class DoValidator(object):
     """ 执行校验 """
 
+    conf = ConfigHandler()
+
     @classmethod
-    def validator(cls, proxy):
+    def validator(cls, proxy, work_type):
         """
         校验入口
         Args:
             proxy: Proxy Object
+            work_type: raw/use
         Returns:
             Proxy Object
         """
@@ -44,6 +49,8 @@ class DoValidator(object):
             if proxy.fail_count > 0:
                 proxy.fail_count -= 1
             proxy.https = True if https_r else False
+            if work_type == "raw":
+                proxy.region = cls.regionGetter(proxy) if cls.conf.proxyRegion else ""
         else:
             proxy.fail_count += 1
         return proxy
@@ -69,6 +76,15 @@ class DoValidator(object):
                 return False
         return True
 
+    @classmethod
+    def regionGetter(cls, proxy):
+        try:
+            url = 'https://searchplugin.csdn.net/api/v1/ip/get?ip=%s' % proxy.proxy.split(':')[0]
+            r = WebRequest().get(url=url, retry_time=1, timeout=2).json
+            return r['data']['address']
+        except:
+            return 'error'
+
 
 class _ThreadChecker(Thread):
     """ 多线程检测 """
@@ -89,7 +105,7 @@ class _ThreadChecker(Thread):
             except Empty:
                 self.log.info("{}ProxyCheck - {}: complete".format(self.work_type.title(), self.name))
                 break
-            proxy = DoValidator.validator(proxy)
+            proxy = DoValidator.validator(proxy, self.work_type)
             if self.work_type == "raw":
                 self.__ifRaw(proxy)
             else:
