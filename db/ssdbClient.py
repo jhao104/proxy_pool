@@ -47,19 +47,20 @@ class SsdbClient(object):
                                                                    socket_timeout=5,
                                                                    **kwargs))
 
-    def get(self, https):
+    def get(self, https, region, anonymous):
         """
         从hash中随机返回一个代理
         :return:
         """
+        items = self.__conn.hgetall(self.name).values()
+        proxies = list(items)
         if https:
-            items_dict = self.__conn.hgetall(self.name)
-            proxies = list(filter(lambda x: json.loads(x).get("https"), items_dict.values()))
-            return choice(proxies) if proxies else None
-        else:
-            proxies = self.__conn.hkeys(self.name)
-            proxy = choice(proxies) if proxies else None
-            return self.__conn.hget(self.name, proxy) if proxy else None
+            proxies = list(filter(lambda x: json.loads(x).get("https"), items))
+        if region != '':
+            proxies = list(filter(lambda x: region in json.loads(x).get("region"), iter(proxies)))
+        if anonymous != -1:
+            proxies = list(filter(lambda x: json.loads(x).get("anonymous") == anonymous, iter(proxies)))
+        return choice(proxies) if proxies else None
 
     def put(self, proxy_obj):
         """
