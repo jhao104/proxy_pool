@@ -9,16 +9,15 @@
    Change Activity:
                    2019/08/06: 执行代理校验
                    2021/05/25: 分别校验http和https
+                   2022/08/16: 获取代理Region信息
 -------------------------------------------------
 """
 __author__ = 'JHao'
 
-import requests
-import json
-
 from util.six import Empty
 from threading import Thread
 from datetime import datetime
+from util.webRequest import WebRequest
 from handler.logHandler import LogHandler
 from helper.validator import ProxyValidator
 from handler.proxyHandler import ProxyHandler
@@ -28,12 +27,15 @@ from handler.configHandler import ConfigHandler
 class DoValidator(object):
     """ 执行校验 """
 
+    conf = ConfigHandler()
+
     @classmethod
-    def validator(cls, proxy):
+    def validator(cls, proxy, work_type):
         """
         校验入口
         Args:
             proxy: Proxy Object
+            work_type: raw/use
         Returns:
             Proxy Object
         """
@@ -43,11 +45,12 @@ class DoValidator(object):
         proxy.check_count += 1
         proxy.last_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         proxy.last_status = True if http_r else False
-        proxy._region = cls.region_get(proxy.proxy)
         if http_r:
             if proxy.fail_count > 0:
                 proxy.fail_count -= 1
             proxy.https = True if https_r else False
+            if work_type == "raw":
+                proxy.region = cls.regionGetter(proxy) if cls.conf.proxyRegion else ""
         else:
             proxy.fail_count += 1
         return proxy
@@ -74,12 +77,13 @@ class DoValidator(object):
         return True
 
     @classmethod
-    def region_get(cls, proxy):
+    def regionGetter(cls, proxy):
         try:
-            r = requests.get(url='https://searchplugin.csdn.net/api/v1/ip/get', params={'ip': proxy.split(':')[0]})
-            return json.loads(r.text)['data']['address']
+            url = 'https://searchplugin.csdn.net/api/v1/ip/get?ip=%s' % proxy.proxy.split(':')[0]
+            r = WebRequest().get(url=url, retry_time=1, timeout=2).json
+            return r['data']['address']
         except:
-            return '未知或请求失败'
+            return 'error'
 
 
 class _ThreadChecker(Thread):
@@ -101,7 +105,7 @@ class _ThreadChecker(Thread):
             except Empty:
                 self.log.info("{}ProxyCheck - {}: complete".format(self.work_type.title(), self.name))
                 break
-            proxy = DoValidator.validator(proxy)
+            proxy = DoValidator.validator(proxy, self.work_type)
             if self.work_type == "raw":
                 self.__ifRaw(proxy)
             else:
