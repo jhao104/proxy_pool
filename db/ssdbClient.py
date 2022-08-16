@@ -52,7 +52,7 @@ class SsdbClient(object):
         从hash中随机返回一个代理
         :return:
         """
-        items = self.__conn.hgetall(self.name)
+        items = self.__conn.hgetall(self.name).values()
         proxies = list(items)
         if https:
             proxies = list(filter(lambda x: json.loads(x).get("https"), items))
