@@ -1,5 +1,5 @@
 APScheduler==3.2.0
-werkzeug==0.15.5
+werkzeug==2.2.3
 Flask==1.0
 requests==2.20.0
 click==7.0
