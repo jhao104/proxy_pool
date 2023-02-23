@@ -14,7 +14,7 @@ RUN apk add -U tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && 
 
 # runtime environment
 RUN apk add musl-dev gcc libxml2-dev libxslt-dev && \
-    pip install --no-cache-dir -r requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple/ && \
+    pip install --no-cache-dir -r requirements.txt && \
     apk del gcc musl-dev
 
 COPY . .
