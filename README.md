@@ -23,11 +23,17 @@ ProxyPool 爬虫代理IP池
 
 * 文档: [document](https://proxy-pool.readthedocs.io/zh/latest/) [![Documentation Status](https://readthedocs.org/projects/proxy-pool/badge/?version=latest)](https://proxy-pool.readthedocs.io/zh/latest/?badge=latest)
 
-* 支持版本: ![](https://img.shields.io/badge/Python-2.x-green.svg) ![](https://img.shields.io/badge/Python-3.x-blue.svg)
+* 支持版本: [![](https://img.shields.io/badge/Python-2.7-green.svg)](https://docs.python.org/2.7/)
+[![](https://img.shields.io/badge/Python-3.5-blue.svg)](https://docs.python.org/3.5/)
+[![](https://img.shields.io/badge/Python-3.6-blue.svg)](https://docs.python.org/3.6/)
+[![](https://img.shields.io/badge/Python-3.7-blue.svg)](https://docs.python.org/3.7/)
+[![](https://img.shields.io/badge/Python-3.8-blue.svg)](https://docs.python.org/3.8/)
+[![](https://img.shields.io/badge/Python-3.9-blue.svg)](https://docs.python.org/3.9/)
+[![](https://img.shields.io/badge/Python-3.10-blue.svg)](https://docs.python.org/3.10/)
 
 * 测试地址: http://demo.spiderpy.cn (勿压谢谢)
 
-* 付费代理推荐: [luminati-china](https://brightdata.grsm.io/proxyPool). 国外的亮数据BrightData（以前叫luminati）被认为是代理市场领导者，覆盖全球的7200万IP，大部分是真人住宅IP，成功率扛扛的。付费套餐多种，需要高质量代理IP的可以注册后联系中文客服，开通后有5美金赠送和教程指引(PS:用不明白的同学可以参考这个[使用教程](https://www.cnblogs.com/jhao/p/15611785.html))。
+* 付费代理推荐: [luminati-china](https://brightdata.grsm.io/proxyPool). 国外的亮数据BrightData（以前叫luminati）被认为是代理市场领导者，覆盖全球的7200万IP，大部分是真人住宅IP，成功率扛扛的。付费套餐多种，需要高质量代理IP的可以注册后联系中文客服，开通后赠送5美金余额和教程指引(PS:用不明白的同学可以参考这个[使用教程](https://www.cnblogs.com/jhao/p/15611785.html))。
 
 
 ### 运行项目
