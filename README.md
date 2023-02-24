@@ -30,6 +30,7 @@ ProxyPool 爬虫代理IP池
 [![](https://img.shields.io/badge/Python-3.8-blue.svg)](https://docs.python.org/3.8/)
 [![](https://img.shields.io/badge/Python-3.9-blue.svg)](https://docs.python.org/3.9/)
 [![](https://img.shields.io/badge/Python-3.10-blue.svg)](https://docs.python.org/3.10/)
+[![](https://img.shields.io/badge/Python-3.11-blue.svg)](https://docs.python.org/3.11/)
 
 * 测试地址: http://demo.spiderpy.cn (勿压谢谢)
 
