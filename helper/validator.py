@@ -7,12 +7,12 @@
    date：          2021/5/25
 -------------------------------------------------
    Change Activity:
-                   2021/5/25:
+                   2023/03/10: 支持带用户认证的代理格式 username:password@ip:port
 -------------------------------------------------
 """
 __author__ = 'JHao'
 
-from re import findall
+import re
 from requests import head
 from util.six import withMetaclass
 from util.singleton import Singleton
@@ -24,6 +24,8 @@ HEADER = {'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:34.0) Gecko/2010
           'Accept': '*/*',
           'Connection': 'keep-alive',
           'Accept-Language': 'zh-CN,zh;q=0.8'}
+
+IP_REGEX = re.compile(r"(.*:.*@)?\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}")
 
 
 class ProxyValidator(withMetaclass(Singleton)):
@@ -50,9 +52,7 @@ class ProxyValidator(withMetaclass(Singleton)):
 @ProxyValidator.addPreValidator
 def formatValidator(proxy):
     """检查代理格式"""
-    verify_regex = r"\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}"
-    _proxy = findall(verify_regex, proxy)
-    return True if len(_proxy) == 1 and _proxy[0] == proxy else False
+    return True if IP_REGEX.fullmatch(proxy) else False
 
 
 @ProxyValidator.addHttpValidator
