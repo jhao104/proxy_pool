@@ -30,14 +30,14 @@ class ProxyFetcher(object):
         站大爷 https://www.zdaye.com/dayProxy.html
         """
         start_url = "https://www.zdaye.com/dayProxy.html"
-        html_tree = WebRequest().get(start_url).tree
+        html_tree = WebRequest().get(start_url, verify=False).tree
         latest_page_time = html_tree.xpath("//span[@class='thread_time_info']/text()")[0].strip()
         from datetime import datetime
         interval = datetime.now() - datetime.strptime(latest_page_time, "%Y/%m/%d %H:%M:%S")
         if interval.seconds < 300:  # 只采集5分钟内的更新
             target_url = "https://www.zdaye.com/" + html_tree.xpath("//h3[@class='thread_title']/a/@href")[0].strip()
             while target_url:
-                _tree = WebRequest().get(target_url).tree
+                _tree = WebRequest().get(target_url, verify=False).tree
                 for tr in _tree.xpath("//table//tr"):
                     ip = "".join(tr.xpath("./td[1]/text()")).strip()
                     port = "".join(tr.xpath("./td[2]/text()")).strip()
@@ -226,7 +226,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy06():
+    for _ in p.freeProxy01():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm
