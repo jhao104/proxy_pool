@@ -145,7 +145,7 @@ class ProxyFetcher(object):
         """ 免费代理库 """
         for i in range(1, page_count + 1):
             url = 'http://ip.jiangxianli.com/?country=中国&page={}'.format(i)
-            html_tree = WebRequest().get(url).tree
+            html_tree = WebRequest().get(url, verify=False).tree
             for index, tr in enumerate(html_tree.xpath("//table//tr")):
                 if index == 0:
                     continue
@@ -226,7 +226,12 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy01():
+    for _ in p.freeProxy09():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm
+
+
+# freeProxy04
+# freeProxy07
+# freeProxy08
