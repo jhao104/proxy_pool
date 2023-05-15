@@ -161,6 +161,16 @@ class ProxyFetcher(object):
         for proxy in proxies:
             yield ':'.join(proxy)
 
+    @staticmethod
+    def freeProxy11():
+        """ 稻壳代理 https://www.docip.net/ """
+        r = WebRequest().get("https://www.docip.net/data/free.json", timeout=10)
+        try:
+            for each in r.json['data']:
+                yield each['ip']
+        except Exception as e:
+            print(e)
+
     # @staticmethod
     # def wallProxy01():
     #     """
@@ -226,7 +236,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy09():
+    for _ in p.freeProxy11():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm
