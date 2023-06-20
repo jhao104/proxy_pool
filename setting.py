@@ -60,9 +60,9 @@ PROXY_FETCHER = [
 
 # ############# proxy validator #################
 # 代理验证目标网站
-HTTP_URL = "http://httpbin.org"
+HTTP_URL = "http://security.bilibili.com/412"
 
-HTTPS_URL = "https://www.qq.com"
+HTTPS_URL = "https://security.bilibili.com/412"
 
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 10
