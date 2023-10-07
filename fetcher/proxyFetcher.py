@@ -12,8 +12,8 @@
 """
 __author__ = 'JHao'
 
-import re
 import json
+import re
 from time import sleep
 
 from util.webRequest import WebRequest
@@ -29,12 +29,12 @@ class ProxyFetcher(object):
         """
         站大爷 https://www.zdaye.com/dayProxy.html
         """
-        start_url = "https://www.zdaye.com/dayProxy.html"
-        html_tree = WebRequest().get(start_url, verify=False).tree
-        latest_page_time = html_tree.xpath("//span[@class='thread_time_info']/text()")[0].strip()
+        start_url = "https://www.zdaye.com/dayProxy/{}/{}/{}.html"
         from datetime import datetime
+        html_tree = WebRequest().get(start_url.format(datetime.now().year, datetime.now().month, 1), verify=False).tree
+        latest_page_time = html_tree.xpath("//span[@class='thread_time_info']/text()")[0].strip()
         interval = datetime.now() - datetime.strptime(latest_page_time, "%Y/%m/%d %H:%M:%S")
-        if interval.seconds < 300:  # 只采集5分钟内的更新
+        if interval.seconds < 300:  # 只采集5分钟内的更新，当前7个小时更新一次
             target_url = "https://www.zdaye.com/" + html_tree.xpath("//h3[@class='thread_title']/a/@href")[0].strip()
             while target_url:
                 _tree = WebRequest().get(target_url, verify=False).tree
@@ -44,7 +44,7 @@ class ProxyFetcher(object):
                     yield "%s:%s" % (ip, port)
                 next_page = _tree.xpath("//div[@class='page']/a[@title='下一页']/@href")
                 target_url = "https://www.zdaye.com/" + next_page[0].strip() if next_page else False
-                sleep(5)
+                sleep(10)
 
     @staticmethod
     def freeProxy02():
@@ -60,9 +60,14 @@ class ProxyFetcher(object):
                 yield "%s:%s" % (ip, port)
 
     @staticmethod
-    def freeProxy03():
-        """ 开心代理 """
-        target_urls = ["http://www.kxdaili.com/dailiip.html", "http://www.kxdaili.com/dailiip/2/1.html"]
+    def freeProxy03(page_count=10):
+        """ 开心代理 http://www.kxdaili.com/dailiip.html"""
+        target_url = "http://www.kxdaili.com/dailiip/{}/{}.html"
+        target_urls = []
+        for tabIndex in range(2):
+            for pageIndex in range(page_count):
+                target_urls.append(target_url.format(tabIndex + 1, pageIndex + 1))
+
         for url in target_urls:
             tree = WebRequest().get(url).tree
             for tr in tree.xpath("//table[@class='active']//tr")[1:]:
@@ -89,7 +94,7 @@ class ProxyFetcher(object):
                 yield "%s:%s" % (ip, port)
 
     @staticmethod
-    def freeProxy05(page_count=1):
+    def freeProxy05(page_count=10):
         """ 快代理 https://www.kuaidaili.com """
         url_pattern = [
             'https://www.kuaidaili.com/free/inha/{}/',
@@ -103,7 +108,7 @@ class ProxyFetcher(object):
         for url in url_list:
             tree = WebRequest().get(url).tree
             proxy_list = tree.xpath('.//table//tr')
-            sleep(1)  # 必须sleep 不然第二条请求不到数据
+            sleep(10)  # 必须sleep 不然第二条请求不到数据
             for tr in proxy_list[1:]:
                 yield ':'.join(tr.xpath('./td/text()')[0:2])
 
@@ -129,16 +134,21 @@ class ProxyFetcher(object):
             proxies = re.findall(r'<td>(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})</td>[\s\S]*?<td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ":".join(proxy)
+            sleep(10)
 
     @staticmethod
     def freeProxy08():
         """ 小幻代理 """
-        urls = ['https://ip.ihuan.me/address/5Lit5Zu9.html']
-        for url in urls:
-            r = WebRequest().get(url, timeout=10)
+        url = 'https://ip.ihuan.me/'
+        tree = WebRequest().get(url, verify=False).tree
+        hrefs = tree.xpath("//ul[@class='pagination']/li/a/@href")
+
+        for href in hrefs:
+            r = WebRequest().get(url + href, timeout=10)
             proxies = re.findall(r'>\s*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s*?</a></td><td>(\d+)</td>', r.text)
             for proxy in proxies:
                 yield ":".join(proxy)
+            sleep(10)
 
     @staticmethod
     def freeProxy09(page_count=1):
@@ -154,12 +164,20 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy10():
         """ 89免费代理 """
-        r = WebRequest().get("https://www.89ip.cn/index_1.html", timeout=10)
-        proxies = re.findall(
-            r'<td.*?>[\s\S]*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})[\s\S]*?</td>[\s\S]*?<td.*?>[\s\S]*?(\d+)[\s\S]*?</td>',
-            r.text)
-        for proxy in proxies:
-            yield ':'.join(proxy)
+        url = "https://www.89ip.cn/{}.html"
+        target_url = url.format('index_1')
+        next_page = True
+        while next_page:
+            r = WebRequest().get(target_url, timeout=10)
+            proxies = re.findall(
+                r'<td.*?>[\s\S]*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})[\s\S]*?</td>[\s\S]*?<td.*?>[\s\S]*?(\d+)[\s\S]*?</td>', r.text)
+            for proxy in proxies:
+                yield ':'.join(proxy)
+
+            next_page = r.tree.xpath("//a[@class='layui-laypage-next']/@href")
+            next_page = next_page[0].strip() if next_page else False
+            target_url = url.format(next_page)
+            sleep(10)
 
     @staticmethod
     def freeProxy11():
@@ -236,7 +254,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy11():
+    for _ in p.freeProxy10():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm
