@@ -17,6 +17,7 @@ import re
 from time import sleep
 
 from util.webRequest import WebRequest
+from pyquery import PyQuery as pq
 
 
 class ProxyFetcher(object):
@@ -27,9 +28,9 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy01():
         """
-        站大爷 https://www.zdaye.com/dayProxy.html
         """
         start_url = "https://www.zdaye.com/dayProxy/{}/{}/{}.html"
+        站大爷 https://www.zdaye.com/dayProxy.html
         from datetime import datetime
         html_tree = WebRequest().get(start_url.format(datetime.now().year, datetime.now().month, 1), verify=False).tree
         latest_page_time = html_tree.xpath("//span[@class='thread_time_info']/text()")[0].strip()
@@ -189,6 +190,51 @@ class ProxyFetcher(object):
         except Exception as e:
             print(e)
 
+    @staticmethod
+    def wingser01():
+        """
+        seo方法 crawler, https://proxy.seofangfa.com/
+        """
+        url = 'https://proxy.seofangfa.com/'
+        html_tree = WebRequest().get(url, verify=False).tree
+        for index, tr in enumerate(html_tree.xpath("//table//tr")):
+            if index == 0:
+                continue
+            yield ":".join(tr.xpath("./td/text()")[0:2]).strip()
+
+    @staticmethod
+    def wingser02():
+        """
+        小舒代理 crawler, http://www.xsdaili.cn/
+        """
+        url = 'http://www.xsdaili.cn/'
+        base_url = "http://www.xsdaili.cn/dayProxy/ip/{page}.html"
+
+        '''通过网站,获取最近10个日期的共享'''
+        urls = []
+        html = WebRequest().get(url, verify=False).tree
+        doc = pq(html)
+        title = doc(".title:eq(0) a").items()
+        latest_page = 0
+        for t in title:
+            res = re.search(r"/(\d+)\.html", t.attr("href"))
+            latest_page = int(res.group(1)) if res else 0
+        if latest_page:
+            urls = [base_url.format(page=page) for page in range(latest_page - 10, latest_page)]
+        else:
+            urls = []
+
+        '''每个日期的网站,爬proxy'''
+        for u in urls:
+            h = WebRequest().get(u, verify=False).tree
+            doc = pq(h)
+            contents = doc('.cont').text()
+            contents = contents.split("\n")
+            for content in contents:
+                yield content[:content.find("@")]
+
+
+
     # @staticmethod
     # def wallProxy01():
     #     """
@@ -254,7 +300,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy10():
+    for _ in p.freeProxy01():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm
