@@ -77,14 +77,6 @@ PORT = 5000                    # 监听端口
 
 DB_CONN = 'redis://:pwd@127.0.0.1:8888/0'
 
-
-# 配置 ProxyFetcher
-
-PROXY_FETCHER = [
-    "freeProxy01",      # 这里是启用的代理抓取方法名，所有fetch方法位于fetcher/proxyFetcher.py
-    "freeProxy02",
-    # ....
-]
 ```
 
 #### 启动项目:
@@ -190,20 +182,7 @@ class ProxyFetcher(object):
         # 确保每个proxy都是 host:ip正确的格式返回
 ```
 
-* 2、添加好方法后，修改[setting.py](https://github.com/jhao104/proxy_pool/blob/1a3666283806a22ef287fba1a8efab7b94e94bac/setting.py#L47)文件中的`PROXY_FETCHER`项：
-
-　　在`PROXY_FETCHER`下添加自定义方法的名字:
-
-```python
-PROXY_FETCHER = [
-    "freeProxy01",    
-    "freeProxy02",
-    # ....
-    "freeProxyCustom1"  #  # 确保名字和你添加方法名字一致
-]
-```
-
-
+* 2、添加好方法后，改为自动加载，无需配置。（原设计不太合理，我自己提交都漏掉几次，直接改自动加载）：
 　　`schedule` 进程会每隔一段时间抓取一次代理，下次抓取时会自动识别调用你定义的方法。
 
 ### 免费代理源

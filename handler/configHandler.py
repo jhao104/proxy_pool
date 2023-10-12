@@ -12,16 +12,18 @@
 """
 __author__ = 'JHao'
 
-import os
+import os, inspect
 import setting
+from fetcher.proxyFetcher import ProxyFetcher
 from util.singleton import Singleton
 from util.lazyProperty import LazyProperty
-from util.six import reload_six, withMetaclass
+from util.six import withMetaclass
 
 
 class ConfigHandler(withMetaclass(Singleton)):
 
     def __init__(self):
+        self.fetchersMethord =  [method for method in dir(ProxyFetcher) if callable(getattr(ProxyFetcher, method)) and not method.startswith("__")]
         pass
 
     @LazyProperty
@@ -40,11 +42,10 @@ class ConfigHandler(withMetaclass(Singleton)):
     def tableName(self):
         return os.getenv("TABLE_NAME", setting.TABLE_NAME)
 
-    @property
+    @LazyProperty
     def fetchers(self):
-        reload_six(setting)
-        return setting.PROXY_FETCHER
-
+        return  [method for method in dir(ProxyFetcher) if callable(getattr(ProxyFetcher, method)) and not method.startswith("__")]
+    
     @LazyProperty
     def httpUrl(self):
         return os.getenv("HTTP_URL", setting.HTTP_URL)
@@ -81,3 +82,7 @@ class ConfigHandler(withMetaclass(Singleton)):
     def timezone(self):
         return os.getenv("TIMEZONE", setting.TIMEZONE)
 
+
+if __name__ == '__main__':
+    config = ConfigHandler()
+    print(config.fetchers)

@@ -44,21 +44,22 @@ TABLE_NAME = 'use_proxy'
 
 
 # ###### config the proxy fetch function ######
-PROXY_FETCHER = [
-    "freeProxy01",
-    "freeProxy02",
-    "freeProxy03",
-    "freeProxy05",
-    "freeProxy06",
-    "freeProxy07",
-    "freeProxy10",
-    "freeProxy11",
-    "wingser01",
-    "wingser02",
-    "wingser03",
-    "wingser04",
-    "wingser05"
-]
+# 改为自动加载,不需要配置.
+# PROXY_FETCHER = [
+#     "freeProxy01",
+#     "freeProxy02",
+#     "freeProxy03",
+#     "freeProxy05",
+#     "freeProxy06",
+#     "freeProxy07",
+#     "freeProxy10",
+#     "freeProxy11",
+#     "wingser01",
+#     "wingser02",
+#     "wingser03",
+#     "wingser04",
+#     "wingser05"
+# ]
 
 # ############# proxy validator #################
 # 代理验证目标网站
