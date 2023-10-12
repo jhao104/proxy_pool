@@ -28,9 +28,9 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy01():
         """
+        站大爷 https://www.zdaye.com/dayProxy.html
         """
         start_url = "https://www.zdaye.com/dayProxy/{}/{}/{}.html"
-        站大爷 https://www.zdaye.com/dayProxy.html
         from datetime import datetime
         html_tree = WebRequest().get(start_url.format(datetime.now().year, datetime.now().month, 1), verify=False).tree
         latest_page_time = html_tree.xpath("//span[@class='thread_time_info']/text()")[0].strip()
