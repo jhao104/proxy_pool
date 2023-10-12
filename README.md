@@ -20,6 +20,8 @@ ProxyPool 爬虫代理IP池
 
 爬虫代理IP池项目,主要功能为定时采集网上发布的免费代理验证入库，定时验证入库的代理保证代理的可用性，提供API和CLI两种使用方式。同时你也可以扩展代理源以增加代理池IP的质量和数量。
 
+[原作者项目地址](https://github.com/jhao104/proxy_pool) 感谢jhao104之前项目贡献，因原项目更新缓慢，自己fork开启更新维护。欢迎提建议，我尽量更新，如果我更新也慢了，你可以考虑自己从原项目fork一份自己维护。
+
 * 文档: [document](https://proxy-pool.readthedocs.io/zh/latest/) [![Documentation Status](https://readthedocs.org/projects/proxy-pool/badge/?version=latest)](https://proxy-pool.readthedocs.io/zh/latest/?badge=latest)
 
 * 支持版本: [![](https://img.shields.io/badge/Python-2.7-green.svg)](https://docs.python.org/2.7/)
@@ -43,13 +45,14 @@ ProxyPool 爬虫代理IP池
 * git clone
 
 ```bash
-git clone git@github.com:jhao104/proxy_pool.git
+git clone git@github.com:wingser/proxy_pool.git
 ```
 
 * releases
 
 ```bash
-https://github.com/jhao104/proxy_pool/releases 下载对应zip文件
+https://github.com/wingser/proxy_pool/releases 下载对应zip文件
+建议docker安装。
 ```
 
 ##### 安装依赖:
@@ -101,9 +104,9 @@ python proxyPool.py server
 ### Docker Image
 
 ```bash
-docker pull jhao104/proxy_pool
+docker pull wingser/proxy_pool
 
-docker run --env DB_CONN=redis://:password@ip:port/0 -p 5010:5010 jhao104/proxy_pool:latest
+docker run --env DB_CONN=redis://:password@ip:port/0 -p 5010:5010 --name wingser_pool wingser/proxy_pool:latest
 ```
 ### docker-compose
 
@@ -218,13 +221,17 @@ PROXY_FETCHER = [
   | 89代理      |  ✔    |     ☆     |   *     | [地址](https://www.89ip.cn/)         | [`freeProxy10`](/fetcher/proxyFetcher.py#L155) |
   | 稻壳代理     |  ✔    |     ★★    |   ***   | [地址](https://www.docip.ne)         | [`freeProxy11`](/fetcher/proxyFetcher.py#L165) |
   | SEO方法代理  |  ✔    |     ☆    |   *   | [地址](https://proxy.seofangfa.com/)  | [`wingser01`](/fetcher/proxyFetcher.py#L194) |
-  | 小舒代理     |  ✔    |     ☆    |   *   | [地址](http://www.xsdaili.cn/)        | [`wingser01`](/fetcher/proxyFetcher.py#L206) |
-  
-  如果还有其他好的免费代理网站, 可以在提交在[issues](https://github.com/jhao104/proxy_pool/issues/71), 下次更新时会考虑在项目中支持。
+  | 小舒代理     |  ✔    |     ☆    |   *   | [地址](http://www.xsdaili.cn/)        | [`wingser02`](/fetcher/proxyFetcher.py#L206) |
+  | PzzQz代理    |  ✔    |     ☆    |   *   | [地址](https://pzzqz.com/)            | [`wingser03`](/fetcher/proxyFetcher.py#L244) |
+  | proxy-list   |  ✔    |     ☆    |   *   | [地址](https://proxy-list.org/)     | [`wingser04`](/fetcher/proxyFetcher.py#L269) |
+  | proxylistplus|  ✔    |     ☆    |   *   | [地址](https://list.proxylistplus.com/)| [`wingser05`](/fetcher/proxyFetcher.py#L284) |
+
+
+如果还有其他好的免费代理网站, 可以在提交在[Issues](https://github.com/zwingser/proxy_pool/issues), 下次更新时会考虑在项目中支持。
 
 ### 问题反馈
 
-　　任何问题欢迎在[Issues](https://github.com/jhao104/proxy_pool/issues) 中反馈，同时也可以到我的[博客](http://www.spiderpy.cn/blog/message)中留言。
+　　任何问题欢迎在[Issues](https://github.com/zwingser/proxy_pool/issues) 中反馈。
 
 　　你的反馈会让此项目变得更加完美。
 
@@ -232,7 +239,7 @@ PROXY_FETCHER = [
 
 　　本项目仅作为基本的通用的代理池架构，不接收特有功能(当然,不限于特别好的idea)。
 
-　　本项目依然不够完善，如果发现bug或有新的功能添加，请在[Issues](https://github.com/jhao104/proxy_pool/issues)中提交bug(或新功能)描述，我会尽力改进，使她更加完美。
+　　本项目依然不够完善，如果发现bug或有新的功能添加，请在[Issues](https://github.com/zwingser/proxy_pool/issues)中提交bug(或新功能)描述，我会尽力改进，使她更加完美。
 
 　　这里感谢以下contributor的无私奉献：
 
