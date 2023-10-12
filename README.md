@@ -219,6 +219,7 @@ PROXY_FETCHER = [
   | 稻壳代理     |  ✔    |     ★★    |   ***   | [地址](https://www.docip.ne)         | [`freeProxy11`](/fetcher/proxyFetcher.py#L165) |
   | SEO方法代理  |  ✔    |     ☆    |   *   | [地址](https://proxy.seofangfa.com/)  | [`wingser01`](/fetcher/proxyFetcher.py#L194) |
   | 小舒代理     |  ✔    |     ☆    |   *   | [地址](http://www.xsdaili.cn/)        | [`wingser01`](/fetcher/proxyFetcher.py#L206) |
+  
   如果还有其他好的免费代理网站, 可以在提交在[issues](https://github.com/jhao104/proxy_pool/issues/71), 下次更新时会考虑在项目中支持。
 
 ### 问题反馈
