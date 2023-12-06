@@ -29,10 +29,10 @@ if PY3:
 else:
     from urlparse import urlparse
 
-if PY3:
-    from imp import reload as reload_six
-else:
-    reload_six = reload
+# if PY3:
+#     from imp import reload as reload_six
+# else:
+#     reload_six = reload
 
 if PY3:
     from queue import Empty, Queue

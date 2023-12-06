@@ -44,25 +44,28 @@ TABLE_NAME = 'use_proxy'
 
 
 # ###### config the proxy fetch function ######
-PROXY_FETCHER = [
-    "freeProxy01",
-    "freeProxy02",
-    "freeProxy03",
-    "freeProxy04",
-    "freeProxy05",
-    "freeProxy06",
-    "freeProxy07",
-    "freeProxy08",
-    "freeProxy09",
-    "freeProxy10",
-    "freeProxy11"
-]
+# 改为自动加载,不需要配置.
+# PROXY_FETCHER = [
+#     "freeProxy01",
+#     "freeProxy02",
+#     "freeProxy03",
+#     "freeProxy05",
+#     "freeProxy06",
+#     "freeProxy07",
+#     "freeProxy10",
+#     "freeProxy11",
+#     "wingser01",
+#     "wingser02",
+#     "wingser03",
+#     "wingser04",
+#     "wingser05"
+# ]
 
 # ############# proxy validator #################
 # 代理验证目标网站
 HTTP_URL = "http://httpbin.org"
 
-HTTPS_URL = "https://www.qq.com"
+HTTPS_URL = "https://jd.com"
 
 # 代理验证时超时时间
 VERIFY_TIMEOUT = 10
