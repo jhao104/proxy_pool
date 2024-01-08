@@ -109,14 +109,13 @@ class ProxyFetcher(object):
 
     @staticmethod
     def freeProxy06():
-        """ FateZero http://proxylist.fatezero.org/ """
-        url = "http://proxylist.fatezero.org/proxy.list"
+        """ 冰凌代理 https://www.binglx.cn """
+        url = "https://www.binglx.cn/?page=1"
         try:
-            resp_text = WebRequest().get(url).text
-            for each in resp_text.split("\n"):
-                json_info = json.loads(each)
-                if json_info.get("country") == "CN":
-                    yield "%s:%s" % (json_info.get("host", ""), json_info.get("port", ""))
+            tree = WebRequest().get(url).tree
+            proxy_list = tree.xpath('.//table//tr')
+            for tr in proxy_list[1:]:
+                yield ':'.join(tr.xpath('./td/text()')[0:2])
         except Exception as e:
             print(e)
 
@@ -236,12 +235,7 @@ class ProxyFetcher(object):
 
 if __name__ == '__main__':
     p = ProxyFetcher()
-    for _ in p.freeProxy11():
+    for _ in p.freeProxy06():
         print(_)
 
 # http://nntime.com/proxy-list-01.htm
-
-
-# freeProxy04
-# freeProxy07
-# freeProxy08
