@@ -14,9 +14,9 @@ __author__ = 'JHao'
 
 import re
 import urllib
+import urllib.parse
 from datetime import datetime
 from time import sleep
-import urllib.parse
 
 from util.webRequest import WebRequest
 
