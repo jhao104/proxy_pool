@@ -1,7 +1,7 @@
 requests==2.20.0
 gunicorn==19.9.0
 lxml==4.9.2
-redis==3.5.3
+redis==4.4.4
 APScheduler==3.10.0;python_version>="3.10"
 APScheduler==3.2.0;python_version<"3.10"
 click==8.0.1;python_version>"3.6"
