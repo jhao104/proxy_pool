@@ -30,14 +30,14 @@ class ProxyFetcher(object):
         站大爷 https://www.zdaye.com/dayProxy.html
         """
         start_url = "https://www.zdaye.com/dayProxy.html"
-        html_tree = WebRequest().get(start_url, verify=False).tree
+        html_tree = WebRequest().get(start_url).tree
         latest_page_time = html_tree.xpath("//span[@class='thread_time_info']/text()")[0].strip()
         from datetime import datetime
         interval = datetime.now() - datetime.strptime(latest_page_time, "%Y/%m/%d %H:%M:%S")
         if interval.seconds < 300:  # 只采集5分钟内的更新
             target_url = "https://www.zdaye.com/" + html_tree.xpath("//h3[@class='thread_title']/a/@href")[0].strip()
             while target_url:
-                _tree = WebRequest().get(target_url, verify=False).tree
+                _tree = WebRequest().get(target_url).tree
                 for tr in _tree.xpath("//table//tr"):
                     ip = "".join(tr.xpath("./td[1]/text()")).strip()
                     port = "".join(tr.xpath("./td[2]/text()")).strip()
@@ -109,13 +109,14 @@ class ProxyFetcher(object):
 
     @staticmethod
     def freeProxy06():
-        """ 冰凌代理 https://www.binglx.cn """
-        url = "https://www.binglx.cn/?page=1"
+        """ FateZero http://proxylist.fatezero.org/ """
+        url = "http://proxylist.fatezero.org/proxy.list"
         try:
-            tree = WebRequest().get(url).tree
-            proxy_list = tree.xpath('.//table//tr')
-            for tr in proxy_list[1:]:
-                yield ':'.join(tr.xpath('./td/text()')[0:2])
+            resp_text = WebRequest().get(url).text
+            for each in resp_text.split("\n"):
+                json_info = json.loads(each)
+                if json_info.get("country") == "CN":
+                    yield "%s:%s" % (json_info.get("host", ""), json_info.get("port", ""))
         except Exception as e:
             print(e)
 
@@ -144,7 +145,7 @@ class ProxyFetcher(object):
         """ 免费代理库 """
         for i in range(1, page_count + 1):
             url = 'http://ip.jiangxianli.com/?country=中国&page={}'.format(i)
-            html_tree = WebRequest().get(url, verify=False).tree
+            html_tree = WebRequest().get(url).tree
             for index, tr in enumerate(html_tree.xpath("//table//tr")):
                 if index == 0:
                     continue
@@ -159,16 +160,6 @@ class ProxyFetcher(object):
             r.text)
         for proxy in proxies:
             yield ':'.join(proxy)
-
-    @staticmethod
-    def freeProxy11():
-        """ 稻壳代理 https://www.docip.net/ """
-        r = WebRequest().get("https://www.docip.net/data/free.json", timeout=10)
-        try:
-            for each in r.json['data']:
-                yield each['ip']
-        except Exception as e:
-            print(e)
 
     # @staticmethod
     # def wallProxy01():
