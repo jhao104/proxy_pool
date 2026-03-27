@@ -33,7 +33,12 @@ ProxyPool 爬虫代理IP池
 
 * 测试地址: http://demo.spiderpy.cn (勿压谢谢)
 
-* 付费代理推荐: [luminati-china](https://get.brightdata.com/github_jh). 国外的亮数据BrightData（以前叫luminati）被认为是代理市场领导者，覆盖全球的7200万IP，大部分是真人住宅IP，成功率扛扛的。付费套餐多种，需要高质量代理IP的可以注册后联系中文客服。[申请免费试用](https://get.brightdata.com/github_jh) 目前有50%折扣优惠活动。(PS:用不明白的同学可以参考这个[使用教程](https://www.cnblogs.com/jhao/p/15611785.html))。
+* 付费代理推荐: [亮数据 Bright Data](https://get.brightdata.com/github_jh)（前身 Luminati）.全球代理与网络抓取行业头部领导者。覆盖 195+ 国家的 1.5亿+ 真人住宅IP，亲测成功率极高，轻松突破反爬封锁。需要高质量代理IP的可以注册后联系中文客服。[申请免费试用](https://get.brightdata.com/github_jh) (PS:用不明白的同学可以参考这个[使用教程](https://www.cnblogs.com/jhao/p/15611785.html))。
+
+&emsp;&emsp; 想自建爬虫？接入 [Bright Data MCP Server](https://get.brightdata.com/cd3yy5)，让 Claude、Cursor、Windsurf 等 AI 助手直接实时抓取网页——自动破解验证码、绕过地区限制。[Scraper Studio](https://get.brightdata.com/cd3yy5) 支持 AI 一键生成或 JS 代码定制，全托管基础设施运行，无需自购代理、无需搭服务器，分钟级上线。所有产品底层均由同一套顶级代理网络驱动。
+
+&emsp;&emsp; API 产品现享7折 + 免费试用额度，注册后可联系中文客服快速上手。(用不明白的同学可参考使用教程，或注册后直接使用互动 AI 智能助手)
+👉 [https://get.brightdata.com/cd3yy5](https://get.brightdata.com/cd3yy5)
 
 
 ### 运行项目
