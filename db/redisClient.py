@@ -138,6 +138,73 @@ class RedisClient(object):
         """
         self.name = name
 
+    def changeAnonymousTable(self, name):
+        """
+        切换匿名代理表
+        :param name:
+        :return:
+        """
+        self.anonymous_name = name
+
+    def putAnonymous(self, proxy_obj):
+        """
+        将匿名代理放入 anonymous hash
+        :param proxy_obj: Proxy obj
+        :return:
+        """
+        if not hasattr(self, 'anonymous_name') or not self.anonymous_name:
+            return 0
+        return self.__conn.hset(self.anonymous_name, proxy_obj.proxy, proxy_obj.to_json)
+
+    def getAnonymous(self, https):
+        """
+        返回一个匿名代理
+        :return:
+        """
+        if not hasattr(self, 'anonymous_name') or not self.anonymous_name:
+            return None
+        if https:
+            items = self.__conn.hvals(self.anonymous_name)
+            proxies = list(filter(lambda x: json.loads(x).get("https"), items))
+            return choice(proxies) if proxies else None
+        else:
+            proxies = self.__conn.hkeys(self.anonymous_name)
+            proxy = choice(proxies) if proxies else None
+            return self.__conn.hget(self.anonymous_name, proxy) if proxy else None
+
+    def getAllAnonymous(self, https):
+        """
+        返回所有匿名代理
+        :return:
+        """
+        if not hasattr(self, 'anonymous_name') or not self.anonymous_name:
+            return []
+        items = self.__conn.hvals(self.anonymous_name)
+        if https:
+            return list(filter(lambda x: json.loads(x).get("https"), items))
+        else:
+            return items
+
+    def deleteAnonymous(self, proxy_str):
+        """
+        删除匿名代理
+        :param proxy_str:
+        :return:
+        """
+        if not hasattr(self, 'anonymous_name') or not self.anonymous_name:
+            return 0
+        return self.__conn.hdel(self.anonymous_name, proxy_str)
+
+    def getAnonymousCount(self):
+        """
+        返回匿名代理数量
+        :return:
+        """
+        if not hasattr(self, 'anonymous_name') or not self.anonymous_name:
+            return {'total': 0, 'https': 0}
+        proxies = self.getAllAnonymous(https=False)
+        return {'total': len(proxies), 'https': len(list(filter(lambda x: json.loads(x).get("https"), proxies)))}
+
     def test(self):
         log = LogHandler('redis_client')
         try:

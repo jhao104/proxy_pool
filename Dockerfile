@@ -1,5 +1,13 @@
 FROM python:3.6-alpine
 
+# 设置标签
+LABEL name="proxy-pool" \
+      version="1.0.0" \
+      project="ci" \
+      platform="linux/amd64,linux/arm64" \
+      maintainer="andy" \
+      description="Proxy Pool Service"
+
 MAINTAINER jhao104 <j_hao104@163.com>
 
 WORKDIR /app

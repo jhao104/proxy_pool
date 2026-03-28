@@ -1,14 +1,10 @@
 version: '2'
 services:
   proxy_pool:
-    build: .
-    container_name: proxy_pool
+    image: harbor.vocoor.com/ci/proxy-pool:latest
+    container_name: proxy-pool
     ports:
       - "5010:5010"
-    links:
-      - proxy_redis
     environment:
-      DB_CONN: "redis://@proxy_redis:6379/0"
-  proxy_redis:
-    image: "redis"
-    container_name: proxy_redis
+      DB_CONN: "redis://:lilishop@192.168.2.130:6379/10"
+    restart: unless-stopped
