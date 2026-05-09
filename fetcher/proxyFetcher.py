@@ -170,6 +170,20 @@ class ProxyFetcher(object):
         except Exception as e:
             print(e)
 
+    @staticmethod
+    def freeProxyExternal():
+        """
+        外部免费代理源
+        包含多个 GitHub 和 API 代理源
+        """
+        try:
+            from fetcher.freeproxyAdapter import FreeproxyAdapter
+            adapter = FreeproxyAdapter()
+            for proxy in adapter.fetch_all():
+                yield proxy
+        except Exception as e:
+            print(f"[freeProxyExternal] 获取代理失败: {e}")
+
     # @staticmethod
     # def wallProxy01():
     #     """

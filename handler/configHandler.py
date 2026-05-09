@@ -40,6 +40,14 @@ class ConfigHandler(withMetaclass(Singleton)):
     def tableName(self):
         return os.getenv("TABLE_NAME", setting.TABLE_NAME)
 
+    @LazyProperty
+    def anonymousTableName(self):
+        return os.getenv("ANONYMOUS_TABLE_NAME", setting.ANONYMOUS_TABLE_NAME)
+
+    @LazyProperty
+    def anonymousCheckUrl(self):
+        return os.getenv("ANONYMOUS_CHECK_URL", setting.ANONYMOUS_CHECK_URL)
+
     @property
     def fetchers(self):
         reload_six(setting)

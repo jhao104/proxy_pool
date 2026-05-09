@@ -78,12 +78,68 @@ class DoValidator(object):
 
     @classmethod
     def regionGetter(cls, proxy):
+        """
+        获取代理 IP 的地区信息
+        使用多个备用 API
+        """
+        ip = proxy.proxy.split(':')[0]
+
+        # API 列表（按可靠性排序）
+        apis = [
+            # ip-api.com - 免费，稳定
+            lambda: cls._get_region_ip_api(ip),
+            # ipinfo.io - 免费，限制较多
+            lambda: cls._get_region_ipinfo(ip),
+            # ipwho.is - 免费，无限制
+            lambda: cls._get_region_ipwho(ip),
+        ]
+
+        for api_func in apis:
+            try:
+                result = api_func()
+                if result and result != 'error':
+                    return result
+            except:
+                continue
+        return 'unknown'
+
+    @classmethod
+    def _get_region_ip_api(cls, ip):
+        """ip-api.com"""
         try:
-            url = 'https://searchplugin.csdn.net/api/v1/ip/get?ip=%s' % proxy.proxy.split(':')[0]
-            r = WebRequest().get(url=url, retry_time=1, timeout=2).json
-            return r['data']['address']
+            url = f'http://ip-api.com/json/{ip}?fields=status,country,countryCode'
+            r = WebRequest().get(url=url, retry_time=1, timeout=3).json
+            if r.get('status') == 'success':
+                return f"{r.get('country', '')}({r.get('countryCode', '')})"
         except:
-            return 'error'
+            pass
+        return None
+
+    @classmethod
+    def _get_region_ipinfo(cls, ip):
+        """ipinfo.io"""
+        try:
+            url = f'https://ipinfo.io/{ip}/json'
+            r = WebRequest().get(url=url, retry_time=1, timeout=3).json
+            country = r.get('country', '')
+            city = r.get('city', '')
+            if country:
+                return f"{city},{country}" if city else country
+        except:
+            pass
+        return None
+
+    @classmethod
+    def _get_region_ipwho(cls, ip):
+        """ipwho.is"""
+        try:
+            url = f'https://ipwho.is/{ip}'
+            r = WebRequest().get(url=url, retry_time=1, timeout=3).json
+            if r.get('success'):
+                return f"{r.get('country', '')}({r.get('country_code', '')})"
+        except:
+            pass
+        return None
 
 
 class _ThreadChecker(Thread):

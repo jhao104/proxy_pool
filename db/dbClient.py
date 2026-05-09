@@ -116,5 +116,23 @@ class DbClient(withMetaclass(Singleton)):
     def getCount(self):
         return self.client.getCount()
 
+    def changeAnonymousTable(self, name):
+        self.client.changeAnonymousTable(name)
+
+    def putAnonymous(self, key, **kwargs):
+        return self.client.putAnonymous(key, **kwargs)
+
+    def getAnonymous(self, https, **kwargs):
+        return self.client.getAnonymous(https, **kwargs)
+
+    def getAllAnonymous(self, https):
+        return self.client.getAllAnonymous(https)
+
+    def deleteAnonymous(self, key, **kwargs):
+        return self.client.deleteAnonymous(key, **kwargs)
+
+    def getAnonymousCount(self):
+        return self.client.getAnonymousCount()
+
     def test(self):
         return self.client.test()

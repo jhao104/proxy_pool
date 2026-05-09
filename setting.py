@@ -42,6 +42,12 @@ DB_CONN = 'redis://:pwd@127.0.0.1:6379/0'
 # proxy table name
 TABLE_NAME = 'use_proxy'
 
+# anonymous proxy table name
+ANONYMOUS_TABLE_NAME = 'anonymous_proxy'
+
+# anonymous check url
+ANONYMOUS_CHECK_URL = 'http://httpbin.org/ip'
+
 
 # ###### config the proxy fetch function ######
 PROXY_FETCHER = [
@@ -55,7 +61,8 @@ PROXY_FETCHER = [
     "freeProxy08",
     "freeProxy09",
     "freeProxy10",
-    "freeProxy11"
+    "freeProxy11",
+    "freeProxyExternal",  # freeproxy 项目代理源
 ]
 
 # ############# proxy validator #################

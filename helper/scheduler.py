@@ -43,6 +43,16 @@ def __runProxyCheck():
         proxy_queue.put(proxy)
     Checker("use", proxy_queue)
 
+    # 常规检测完成后执行匿名性检测
+    __runAnonymousCheck()
+
+
+def __runAnonymousCheck():
+    """匿名性检测（增强版）"""
+    from helper.anonymousChecker import AnonymousChecker
+    checker = AnonymousChecker()
+    checker.run()
+
 
 def runScheduler():
     __runProxyFetch()

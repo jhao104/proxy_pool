@@ -46,8 +46,9 @@ api_list = [
     {"url": "/pop", "params": "", "desc": "get and delete a proxy"},
     {"url": "/delete", "params": "proxy: 'e.g. 127.0.0.1:8080'", "desc": "delete an unable proxy"},
     {"url": "/all", "params": "type: ''https'|''", "desc": "get all proxy from proxy pool"},
-    {"url": "/count", "params": "", "desc": "return proxy count"}
-    # 'refresh': 'refresh proxy pool',
+    {"url": "/count", "params": "", "desc": "return proxy count"},
+    {"url": "/get_anonymous", "params": "type: ''https'|''", "desc": "get an anonymous proxy"},
+    {"url": "/all_anonymous", "params": "type: ''https'|''", "desc": "get all anonymous proxy"},
 ]
 
 
@@ -93,6 +94,7 @@ def delete():
 @app.route('/count/')
 def getCount():
     proxies = proxy_handler.getAll()
+    anonymous_proxies = proxy_handler.getAllAnonymous()
     http_type_dict = {}
     source_dict = {}
     for proxy in proxies:
@@ -100,7 +102,28 @@ def getCount():
         http_type_dict[http_type] = http_type_dict.get(http_type, 0) + 1
         for source in proxy.source.split('/'):
             source_dict[source] = source_dict.get(source, 0) + 1
-    return {"http_type": http_type_dict, "source": source_dict, "count": len(proxies)}
+    return {
+        "http_type": http_type_dict,
+        "source": source_dict,
+        "count": len(proxies),
+        "anonymous_count": len(anonymous_proxies)
+    }
+
+
+@app.route('/get_anonymous/')
+def get_anonymous():
+    """获取一个匿名代理"""
+    https = request.args.get("type", "").lower() == 'https'
+    proxy = proxy_handler.getAnonymous(https)
+    return proxy.to_dict if proxy else {"code": 0, "src": "no anonymous proxy"}
+
+
+@app.route('/all_anonymous/')
+def get_all_anonymous():
+    """获取所有匿名代理"""
+    https = request.args.get("type", "").lower() == 'https'
+    proxies = proxy_handler.getAllAnonymous(https)
+    return jsonify([_.to_dict for _ in proxies])
 
 
 def runFlask():
@@ -118,7 +141,7 @@ def runFlask():
 
             def load_config(self):
                 _config = dict([(key, value) for key, value in iteritems(self.options)
-                                if key in self.cfg.settings and value is not None])
+                               if key in self.cfg.settings and value is not None])
                 for key, value in iteritems(_config):
                     self.cfg.set(key.lower(), value)
 

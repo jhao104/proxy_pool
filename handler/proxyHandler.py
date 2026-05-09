@@ -25,6 +25,7 @@ class ProxyHandler(object):
         self.conf = ConfigHandler()
         self.db = DbClient(self.conf.dbConn)
         self.db.changeTable(self.conf.tableName)
+        self.db.changeAnonymousTable(self.conf.anonymousTableName)
 
     def get(self, https=False):
         """
@@ -84,3 +85,46 @@ class ProxyHandler(object):
         """
         total_use_proxy = self.db.getCount()
         return {'count': total_use_proxy}
+
+    # 匿名代理相关方法
+
+    def getAnonymous(self, https=False):
+        """
+        return an anonymous proxy
+        Args:
+            https: True/False
+        Returns:
+        """
+        proxy = self.db.getAnonymous(https)
+        return Proxy.createFromJson(proxy) if proxy else None
+
+    def getAllAnonymous(self, https=False):
+        """
+        get all anonymous proxy from pool as Proxy list
+        :return:
+        """
+        proxies = self.db.getAllAnonymous(https)
+        return [Proxy.createFromJson(_) for _ in proxies]
+
+    def putAnonymous(self, proxy):
+        """
+        put proxy into anonymous proxy pool
+        :param proxy:
+        :return:
+        """
+        self.db.putAnonymous(proxy)
+
+    def deleteAnonymous(self, proxy):
+        """
+        delete anonymous proxy
+        :param proxy:
+        :return:
+        """
+        return self.db.deleteAnonymous(proxy.proxy)
+
+    def getAnonymousCount(self):
+        """
+        return anonymous proxy count
+        :return:
+        """
+        return self.db.getAnonymousCount()
