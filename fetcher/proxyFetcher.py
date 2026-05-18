@@ -16,6 +16,8 @@ import re
 import json
 from time import sleep
 
+from lxml import etree
+
 from util.webRequest import WebRequest
 
 
@@ -25,11 +27,74 @@ class ProxyFetcher(object):
     """
 
     @staticmethod
+    def _parse_proxies_from_text(text):
+        if not text:
+            return []
+        proxy_pattern = re.compile(r'(?<![\d.])(\d{1,3}(?:\.\d{1,3}){3})(?:\s*:\s*|\s+)(\d{2,5})(?!\d)')
+        return ["%s:%s" % proxy for proxy in proxy_pattern.findall(text)]
+
+    @staticmethod
+    def _parse_proxies_from_json(data):
+        proxies = []
+        if isinstance(data, dict):
+            proxy = data.get("proxy") or data.get("addr") or data.get("address")
+            if proxy:
+                proxies.extend(ProxyFetcher._parse_proxies_from_text(str(proxy)))
+
+            ip = data.get("ip") or data.get("host") or data.get("server")
+            port = data.get("port")
+            if ip and port:
+                proxies.append("%s:%s" % (ip, port))
+
+            parsed_keys = {"proxy", "addr", "address", "ip", "host", "server", "port"}
+            for key, value in data.items():
+                if key in parsed_keys:
+                    continue
+                proxies.extend(ProxyFetcher._parse_proxies_from_json(value))
+        elif isinstance(data, list):
+            for item in data:
+                proxies.extend(ProxyFetcher._parse_proxies_from_json(item))
+        elif isinstance(data, str):
+            proxies.extend(ProxyFetcher._parse_proxies_from_text(data))
+        return proxies
+
+    @staticmethod
+    def _parse_proxies_from_tree(tree):
+        proxies = []
+        if tree is None:
+            return proxies
+        for tr in tree.xpath("//tr"):
+            cells = [" ".join(td.xpath(".//text()")).strip() for td in tr.xpath("./td")]
+            if len(cells) < 2:
+                continue
+            ip = ""
+            port = ""
+            for cell in cells:
+                ip_match = re.search(r'\d{1,3}(?:\.\d{1,3}){3}', cell)
+                port_match = re.search(r'\b\d{2,5}\b', cell)
+                if ip_match and not ip:
+                    ip = ip_match.group()
+                    continue
+                if port_match and not port:
+                    port = port_match.group()
+            if ip and port:
+                proxies.append("%s:%s" % (ip, port))
+        return proxies
+
+    @staticmethod
+    def _yield_unique_proxies(proxies):
+        seen = set()
+        for proxy in proxies:
+            if proxy not in seen:
+                seen.add(proxy)
+                yield proxy
+
+    @staticmethod
     def freeProxy01():
         """
         站大爷 https://www.zdaye.com/dayProxy.html
         """
-        start_url = "https://www.zdaye.com/dayProxy.html"
+        start_url = "https://www.zdaye.com/free/"
         html_tree = WebRequest().get(start_url, verify=False).tree
         latest_page_time = html_tree.xpath("//span[@class='thread_time_info']/text()")[0].strip()
         from datetime import datetime
@@ -132,12 +197,50 @@ class ProxyFetcher(object):
     @staticmethod
     def freeProxy08():
         """ 小幻代理 """
-        urls = ['https://ip.ihuan.me/address/5Lit5Zu9.html']
-        for url in urls:
-            r = WebRequest().get(url, timeout=10)
-            proxies = re.findall(r'>\s*?(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s*?</a></td><td>(\d+)</td>', r.text)
-            for proxy in proxies:
-                yield ":".join(proxy)
+        request = WebRequest()
+        ti_url = "https://ip.ihuan.me/ti.html"
+        tqdl_url = "https://ip.ihuan.me/tqdl.html"
+        ti_resp = request.get(ti_url, timeout=10, verify=False)
+        form_data = {}
+        if ti_resp.tree is not None:
+            for input_tag in ti_resp.tree.xpath("//form//input[@name]"):
+                name = "".join(input_tag.xpath("./@name")).strip()
+                value = "".join(input_tag.xpath("./@value")).strip()
+                if name:
+                    form_data[name] = value
+
+        key = form_data.get("key")
+        if not key:
+            key_match = re.search(r'name=["\']key["\'][^>]*value=["\']([^"\']+)', ti_resp.text)
+            if not key_match:
+                key_match = re.search(r'key["\']?\s*[:=]\s*["\']([0-9a-f]{16,})', ti_resp.text)
+            key = key_match.group(1) if key_match else ""
+
+        if not key:
+            return
+
+        header = {
+            "Origin": "https://ip.ihuan.me",
+            "Referer": ti_url,
+        }
+        data = form_data.copy()
+        data.update({
+            "num": "2000",
+            "port": "",
+            "kill_port": "",
+            "address": "",
+            "kill_address": "",
+            "anonymity": "",
+            "type": "",
+            "post": "",
+            "sort": "1",
+            "key": key,
+        })
+        r = request.post(tqdl_url, header=header, data=data, timeout=10, verify=False)
+        proxies = ProxyFetcher._parse_proxies_from_tree(r.tree)
+        proxies.extend(ProxyFetcher._parse_proxies_from_text(r.text))
+        for proxy in ProxyFetcher._yield_unique_proxies(proxies):
+            yield proxy
 
     @staticmethod
     def freeProxy09(page_count=1):
@@ -180,6 +283,55 @@ class ProxyFetcher(object):
             port = "".join(item.xpath("./ul/li[2]/text()")).strip()
             if ip and port:
                 yield "%s:%s" % (ip, port)
+
+    @staticmethod
+    def freeProxy13():
+        """ FreeVPNNode 中国代理 https://cn.freevpnnode.com/free-proxy-for-china/ """
+        # url = "https://cn.freevpnnode.com/free-proxy-for-china/"
+        url = "https://cn.freevpnnode.com/free-proxy/"
+        r = WebRequest().get(url, timeout=5, retry_time=1, verify=False)
+        proxies = ProxyFetcher._parse_proxies_from_tree(r.tree)
+        proxies.extend(ProxyFetcher._parse_proxies_from_text(r.text))
+        for proxy in ProxyFetcher._yield_unique_proxies(proxies):
+            yield proxy
+
+    @staticmethod
+    def freeProxy14():
+        """ SCDN 代理接口 """
+        # url = "https://proxy.scdn.io/get_proxies.php?protocol=&country=%E4%B8%AD%E5%9B%BD&per_page=100&page=1"
+        url = "https://proxy.scdn.io/get_proxies.php?protocol=&country=&per_page=100&page=1"
+        r = WebRequest().get(url, timeout=5, retry_time=1, verify=False)
+        try:
+            data = r.json
+            proxies = []
+            table_html = data.get("table_html") if isinstance(data, dict) else ""
+            if table_html:
+                tree = etree.HTML("<table>%s</table>" % table_html)
+                proxies.extend(ProxyFetcher._parse_proxies_from_tree(tree))
+
+            if not proxies:
+                proxies = ProxyFetcher._parse_proxies_from_json(data)
+            if not proxies:
+                proxies = ProxyFetcher._parse_proxies_from_text(r.text)
+            for proxy in ProxyFetcher._yield_unique_proxies(proxies):
+                yield proxy
+        except Exception as e:
+            print(e)
+
+    @staticmethod
+    def freeProxy15():
+        """ Geonode Free Proxy 中国代理 https://geonode.com/free-proxy-list/ """
+        # url = "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc&country=CN"
+        url = "https://proxylist.geonode.com/api/proxy-list?limit=500&page=1&sort_by=lastChecked&sort_type=desc"
+        r = WebRequest().get(url, timeout=5, retry_time=1, verify=False)
+        try:
+            proxies = ProxyFetcher._parse_proxies_from_json(r.json)
+            if not proxies:
+                proxies = ProxyFetcher._parse_proxies_from_text(r.text)
+            for proxy in ProxyFetcher._yield_unique_proxies(proxies):
+                yield proxy
+        except Exception as e:
+            print(e)
 
     # @staticmethod
     # def wallProxy01():
