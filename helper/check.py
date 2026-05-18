@@ -79,9 +79,9 @@ class DoValidator(object):
     @classmethod
     def regionGetter(cls, proxy):
         try:
-            url = 'https://api.ip.sb/geoip/%s' % proxy.proxy.split(':')[0]
+            url = 'https://opendata.baidu.com/api.php?query=%s&co=&resource_id=6006&oe=utf8' % proxy.proxy.split(':')[0]
             r = WebRequest().get(url=url, retry_time=1, timeout=2).json
-            return r.get('country_code')
+            return r.data[0].location
         except:
             return 'error'
 
