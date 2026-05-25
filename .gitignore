@@ -1,4 +1,9 @@
 .idea/
 docs/_build
 *.pyc
+*.pyc.*
+__pycache__/
 *.log
+.tox
+/SPEC.md
+/.claude/settings.json

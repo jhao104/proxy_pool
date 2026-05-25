@@ -86,8 +86,38 @@ class WebRequest(object):
                 self.log.info("retry %s second after" % retry_interval)
                 time.sleep(retry_interval)
 
+    def post(self, url, header=None, retry_time=3, retry_interval=5, timeout=5, *args, **kwargs):
+        """
+        post method
+        :param url: target url
+        :param header: headers
+        :param retry_time: retry time
+        :param retry_interval: retry interval
+        :param timeout: network timeout
+        :return:
+        """
+        headers = self.header
+        if header and isinstance(header, dict):
+            headers.update(header)
+        while True:
+            try:
+                self.response = requests.post(url, headers=headers, timeout=timeout, *args, **kwargs)
+                return self
+            except Exception as e:
+                self.log.error("requests: %s error: %s" % (url, str(e)))
+                retry_time -= 1
+                if retry_time <= 0:
+                    resp = Response()
+                    resp.status_code = 200
+                    self.response = resp
+                    return self
+                self.log.info("retry %s second after" % retry_interval)
+                time.sleep(retry_interval)
+
     @property
     def tree(self):
+        if not self.response.content:
+            return None
         return etree.HTML(self.response.content)
 
     @property
@@ -101,4 +131,3 @@ class WebRequest(object):
         except Exception as e:
             self.log.error(str(e))
             return {}
-
