@@ -17,7 +17,6 @@
 __author__ = 'JHao'
 
 import platform
-from random import shuffle
 from werkzeug.wrappers import Response
 from flask import Flask, jsonify, request
 
@@ -43,39 +42,13 @@ class JsonResponse(Response):
 app.response_class = JsonResponse
 
 api_list = [
-    {"url": "/get", "params": "type: ''https'|'', count: '1', region: 'e.g. CN'", "desc": "get proxy"},
-    {"url": "/pop", "params": "type: ''https'|'', region: 'e.g. CN'", "desc": "get and delete a proxy"},
+    {"url": "/get", "params": "type: ''https'|''", "desc": "get a proxy"},
+    {"url": "/pop", "params": "", "desc": "get and delete a proxy"},
     {"url": "/delete", "params": "proxy: 'e.g. 127.0.0.1:8080'", "desc": "delete an unable proxy"},
-    {"url": "/all", "params": "type: ''https'|'', region: 'e.g. CN'", "desc": "get all proxy from proxy pool"},
-    {"url": "/count", "params": "region: 'e.g. CN'", "desc": "return proxy count"}
+    {"url": "/all", "params": "type: ''https'|''", "desc": "get all proxy from proxy pool"},
+    {"url": "/count", "params": "", "desc": "return proxy count"}
     # 'refresh': 'refresh proxy pool',
 ]
-
-
-def _get_https_arg():
-    return request.args.get("type", "").lower() == 'https'
-
-
-def _get_region_arg():
-    return request.args.get("region", "").strip()
-
-
-def _get_count_arg(default=1):
-    try:
-        return max(int(request.args.get("count", default)), 1)
-    except (TypeError, ValueError):
-        return default
-
-
-def _filter_region(proxies, region):
-    if not region:
-        return proxies
-    region = region.lower()
-    return [proxy for proxy in proxies if str(proxy.region).lower() == region]
-
-
-def _get_filtered_proxies(https=False, region=""):
-    return _filter_region(proxy_handler.getAll(https), region)
 
 
 @app.route('/')
@@ -85,33 +58,15 @@ def index():
 
 @app.route('/get/')
 def get():
-    https = _get_https_arg()
-    region = _get_region_arg()
-    count = _get_count_arg()
-    if count == 1 and not region:
-        proxy = proxy_handler.get(https)
-        return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
-
-    proxies = _get_filtered_proxies(https, region)
-    if not proxies:
-        return {"code": 0, "src": "no proxy"}
-    shuffle(proxies)
-    result = [proxy.to_dict for proxy in proxies[:count]]
-    return result[0] if count == 1 else jsonify(result)
+    https = request.args.get("type", "").lower() == 'https'
+    proxy = proxy_handler.get(https)
+    return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
 
 
 @app.route('/pop/')
 def pop():
-    https = _get_https_arg()
-    region = _get_region_arg()
-    if region:
-        proxies = _get_filtered_proxies(https, region)
-        shuffle(proxies)
-        proxy = proxies[0] if proxies else None
-        if proxy:
-            proxy_handler.delete(proxy)
-    else:
-        proxy = proxy_handler.pop(https)
+    https = request.args.get("type", "").lower() == 'https'
+    proxy = proxy_handler.pop(https)
     return proxy.to_dict if proxy else {"code": 0, "src": "no proxy"}
 
 
@@ -123,9 +78,8 @@ def refresh():
 
 @app.route('/all/')
 def getAll():
-    https = _get_https_arg()
-    region = _get_region_arg()
-    proxies = _get_filtered_proxies(https, region)
+    https = request.args.get("type", "").lower() == 'https'
+    proxies = proxy_handler.getAll(https)
     return jsonify([_.to_dict for _ in proxies])
 
 
@@ -138,7 +92,7 @@ def delete():
 
 @app.route('/count/')
 def getCount():
-    proxies = _get_filtered_proxies(region=_get_region_arg())
+    proxies = proxy_handler.getAll()
     http_type_dict = {}
     source_dict = {}
     for proxy in proxies:
