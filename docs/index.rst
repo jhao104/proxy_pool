@@ -29,7 +29,7 @@ Python爬虫代理IP池
 
 .. code-block:: console
 
-    $ git clone git@github.com:jhao104/proxy_pool.git
+    $ git clone https://github.com/jhao104/proxy_pool.git
 
 * 安装依赖
 

@@ -8,5 +8,6 @@
    :maxdepth: 2
 
    how_to_run
+   how_to_manage
    how_to_use
    how_to_config
