@@ -9,8 +9,10 @@ COPY ./requirements.txt .
 # apk repository
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
-# timezone
-RUN apk add -U tzdata && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && apk del tzdata
+# timezone and init process
+RUN apk add -U tzdata tini && \
+    cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime && \
+    apk del tzdata
 
 # runtime environment
 RUN apk add musl-dev gcc libxml2-dev libxslt-dev && \
@@ -21,4 +23,4 @@ COPY . .
 
 EXPOSE 5010
 
-ENTRYPOINT [ "sh", "start.sh" ]
+ENTRYPOINT ["tini", "--", "bash", "proxy_pool.sh", "start", "--fg"]

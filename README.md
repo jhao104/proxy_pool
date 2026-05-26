@@ -45,7 +45,7 @@ ProxyPool 爬虫代理IP池
 * git clone
 
 ```bash
-git clone git@github.com:jhao104/proxy_pool.git
+git clone https://github.com/jhao104/proxy_pool.git
 ```
 
 * releases
