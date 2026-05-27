@@ -1,13 +1,10 @@
-FROM python:3.6-alpine
+FROM python:3.10-alpine
 
-MAINTAINER jhao104 <j_hao104@163.com>
+LABEL maintainer="jhao104 <j_hao104@163.com>"
 
 WORKDIR /app
 
 COPY ./requirements.txt .
-
-# apk repository
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
 
 # timezone and init process
 RUN apk add -U tzdata tini && \
