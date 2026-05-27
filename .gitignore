@@ -1,5 +1,5 @@
 .idea/
-docs/_build
+site/
 *.pyc
 *.pyc.*
 __pycache__/

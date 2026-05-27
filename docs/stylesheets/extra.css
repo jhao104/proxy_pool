@@ -1,0 +1,127 @@
+/* 科技感主题定制 */
+
+/* 首页 Hero 区域 */
+.md-typeset .tx-hero {
+  background: linear-gradient(135deg, #3949ab 0%, #1a237e 100%);
+  color: #fff;
+  padding: 3rem 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.md-typeset .tx-hero h1 {
+  color: #fff !important;
+  font-weight: 700;
+  font-size: 2.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.md-typeset .tx-hero p {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+/* 特性卡片 */
+.tx-features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.2rem;
+  margin: 2rem 0;
+}
+
+.tx-feature {
+  padding: 1.5rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 8px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.tx-feature:hover {
+  border-color: var(--md-accent-fg-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.tx-feature h3 {
+  margin-top: 0;
+  font-size: 1rem;
+}
+
+.tx-feature p {
+  margin-bottom: 0;
+  color: var(--md-default-fg-color--light);
+  font-size: 0.85rem;
+}
+
+/* 快速开始按钮 */
+.md-typeset .tx-hero .md-button {
+  border-color: rgba(255, 255, 255, 0.5);
+  color: #fff;
+  font-weight: 600;
+}
+
+.md-typeset .tx-hero .md-button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  border-color: #fff;
+}
+
+.md-typeset .tx-hero .md-button--primary {
+  background-color: #fff;
+  color: #1a237e;
+  border-color: #fff;
+}
+
+.md-typeset .tx-hero .md-button--primary:hover {
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* 顶部导航栏 */
+.md-header {
+  background: linear-gradient(90deg, #1a237e 0%, #3949ab 100%);
+}
+
+.md-header__title {
+  font-weight: 600;
+}
+
+/* 代码块增强 */
+.md-typeset code {
+  font-size: 0.82rem;
+}
+
+/* 导航标签页 */
+.md-tabs {
+  background: var(--md-primary-fg-color);
+}
+
+.md-tabs__link {
+  font-weight: 500;
+}
+
+/* 搜索框 */
+.md-search__form {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* 侧边栏 */
+.md-sidebar--primary .md-sidebar__scrollwrap {
+  background: linear-gradient(180deg, rgba(57, 73, 171, 0.05) 0%, transparent 100%);
+}
+
+/* 表格增强 */
+.md-typeset table:not([class]) {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.md-typeset table:not([class]) th {
+  background-color: var(--md-primary-fg-color--light);
+  color: #fff;
+  font-weight: 600;
+}
+
+/* Admonition 增强 */
+.md-typeset .admonition,
+.md-typeset details {
+  border-radius: 8px;
+}
