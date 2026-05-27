@@ -83,6 +83,7 @@ nav:
   - 首页: index.md
   - 用户指南:
       - 快速开始: getting-started.md
+      - 项目结构: project-structure.md
       - 配置参考: configuration.md
       - API 使用: api.md
       - Docker 部署: docker.md

@@ -108,6 +108,7 @@ html = requests.get(
 | 章节 | 说明 |
 |------|------|
 | [快速开始](getting-started.md) | 安装、配置、启动项目 |
+| [项目结构](project-structure.md) | 目录结构与核心模块说明 |
 | [配置参考](configuration.md) | `setting.py` 全部配置项详解 |
 | [API 使用](api.md) | RESTful API 端点与调用示例 |
 | [Docker 部署](docker.md) | Docker / docker-compose 部署方式 |
