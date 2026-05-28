@@ -1,4 +1,4 @@
-requests==2.31.0
+requests==2.33.0
 gunicorn==19.9.0
 lxml==4.9.2
 redis>=4.2.0
