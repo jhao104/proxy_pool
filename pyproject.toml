@@ -1,0 +1,8 @@
+[tool.setuptools]
+py-modules = []
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: 需要外部服务（如 Redis）的集成测试",
+]
