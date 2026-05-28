@@ -16,17 +16,6 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
 
-    services:
-      redis:
-        image: redis:latest
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
       - uses: actions/checkout@v4
 
@@ -38,11 +27,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install tox-uv
+          pip install -r requirements.txt
+          pip install -r requirements-test.txt
 
-      - name: Run tests with tox
-        run: |
-          TOX_ENV="py$(echo ${{ matrix.python-version }} | tr -d '.')"
-          tox -e $TOX_ENV
-        env:
-          DB_CONN: redis://localhost:6379/0
+      - name: Run tests
+        run: pytest --cov=. --cov-report=term-missing

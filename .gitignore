@@ -5,5 +5,8 @@ site/
 __pycache__/
 *.log
 .tox
-/SPEC.md
-/.claude/settings.json
+.claude/
+docs/ideas/
+.coverage
+.pytest_cache/
+htmlcov/

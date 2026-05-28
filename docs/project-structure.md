@@ -27,12 +27,18 @@ proxy_pool/
 │   ├── lazyProperty.py     #   惰性属性装饰器
 │   ├── six.py              #   Python 2/3 兼容层
 │   └── webRequest.py       #   HTTP 请求封装
-├── test/                   # 单元测试
+├── tests/                  # 测试
+│   ├── conftest.py         #   共享 fixtures
+│   ├── unit/               #   单元测试（零外部依赖）
+│   ├── api/                #   API 路由测试（Flask test client）
+│   └── integration/        #   集成测试（RedisClient/SsdbClient CRUD）
 ├── docs/                   # MkDocs 文档源文件
 ├── proxyPool.py            # CLI 入口（click）
 ├── proxy_pool.sh           # 服务管理脚本
 ├── setting.py              # 全局配置文件
 ├── requirements.txt        # Python 依赖
+├── requirements-test.txt   # 测试依赖（pytest、pytest-cov、fakeredis）
+├── pyproject.toml          # pytest 配置
 ├── Dockerfile              # Docker 镜像构建
 ├── docker-compose.yml      # Docker Compose 编排
 └── tox.ini                 # 多版本测试配置

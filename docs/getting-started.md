@@ -125,3 +125,36 @@ kill <PID>
 # 删除 PID 文件
 rm proxy_pool.pid
 ```
+
+## 运行测试
+
+### 安装测试依赖
+
+```console
+pip install -r requirements-test.txt
+```
+
+### 运行全部测试
+
+```console
+pytest
+```
+
+### 分层运行
+
+```console
+# 单元测试（零外部依赖，CI 必跑）
+pytest tests/unit/
+
+# API 路由测试
+pytest tests/api/
+
+# 集成测试（RedisClient/SsdbClient CRUD，使用 fakeredis 模拟）
+pytest tests/integration/
+```
+
+### 查看覆盖率
+
+```console
+pytest --cov=. --cov-report=term-missing
+```
