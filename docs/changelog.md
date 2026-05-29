@@ -5,10 +5,9 @@
 1. 新增代理源 **谷德代理**; (2026-05-14)
 2. 引入tox自动化测试, **放弃Python 3.7以下版本支持**; (2026-05-14)
 3. 新增统一服务管理脚本 ``proxy_pool.sh``, 支持start/stop/restart/status命令; (2026-05-26)
-4. Docker镜像使用 ``tini`` 作为init进程, 正确处理信号转发; (2026-05-26)
-5. tox依赖统一从 ``requirements.txt`` 读取并自动重建环境; (2026-05-26)
-6. 优化CI配置, 避免PR时重复触发测试; (2026-05-26)
-7. **重写测试套件**: 使用pytest重构全部测试, 覆盖unit/api/integration三层; (2026-05-28)
+4. 优化CI配置, 避免PR时重复触发测试; (2026-05-26)
+5. 迁移文档从 Sphinx/ReadTheDocs 到 MkDocs Material/GitHub Pages; (2026-05-27)
+6. **重写测试套件**: 使用pytest重构全部测试, 覆盖unit/api/integration三层; (2026-05-28)
 
 
 ## 2.4.2 (2024-01-18)

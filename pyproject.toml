@@ -6,3 +6,15 @@ testpaths = ["tests"]
 markers = [
     "integration: 需要外部服务（如 Redis）的集成测试",
 ]
+
+[tool.coverage.run]
+source = ["."]
+omit = [
+    "tests/*",
+    "docs/*",
+    "setup.py",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
