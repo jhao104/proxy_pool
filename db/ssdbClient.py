@@ -45,6 +45,7 @@ class SsdbClient(object):
         self.__conn = Redis(connection_pool=BlockingConnectionPool(decode_responses=True,
                                                                    timeout=5,
                                                                    socket_timeout=5,
+                                                                   protocol=2,
                                                                    **kwargs))
 
     def get(self, https):
