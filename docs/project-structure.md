@@ -55,7 +55,7 @@ proxy_pool/
 
 ### `proxyPool.py` — 入口
 
-基于 click 的命令行入口，提供 `schedule`、`server`、`show` 三个子命令。`schedule` 启动代理采集和验证调度器，`server` 启动 Flask API 服务，`show` 查看当前启用的代理源列表。
+基于 click 的命令行入口，提供 `schedule`、`server`、`fetcher` 三个子命令。`schedule` 启动代理采集和验证调度器，`server` 启动 Flask API 服务，`fetcher` 查看当前启用的代理源列表。
 
 ### `api/proxyApi.py` — API 服务
 

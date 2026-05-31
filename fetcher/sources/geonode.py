@@ -27,7 +27,12 @@ class GeonodeFetcher(BaseFetcher):
                "limit=500&page=1&sort_by=lastChecked&sort_type=desc")
         r = WebRequest().get(url, timeout=5, retry_time=1, verify=False)
         try:
-            proxies = self.parseProxiesFromJson(r.json)
+            proxies = []
+            for item in r.json.get("data", []):
+                ip = item.get("ip", "")
+                port = item.get("port", "")
+                if ip and port:
+                    proxies.append("%s:%s" % (ip, port))
             if not proxies:
                 proxies = self.parseProxiesFromText(r.text)
             for proxy in self.yieldUniqueProxies(proxies):

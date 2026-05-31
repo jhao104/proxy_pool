@@ -12,9 +12,7 @@
    - 每个代理源独立文件（`fetcher/sources/`），继承 `BaseFetcher` 基类
    - 自动扫描启用的代理源，无需在配置中列举
    - 新增 `PROXY_FETCHER_EXCLUDE` 黑名单配置
-   - 新增 `proxyPool.py show` 命令查看启用的代理源
-   - 每次调度打印 active fetchers 列表
-   - 删除旧 `proxyFetcher.py`
+   - 新增 `proxyPool.py fetcher` 命令查看启用的代理源
 
 
 ## 2.4.2 (2024-01-18)

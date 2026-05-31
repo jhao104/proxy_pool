@@ -54,7 +54,7 @@ DB_CONN = 'ssdb://:123456@127.0.0.1:8888'
 查看当前启用的代理源：
 
 ```bash
-python proxyPool.py show
+python proxyPool.py fetcher
 ```
 
 ### `PROXY_FETCHER_EXCLUDE`

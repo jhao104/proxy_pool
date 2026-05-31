@@ -12,7 +12,6 @@
 """
 __author__ = 'JHao'
 
-from lxml import etree
 from fetcher.baseFetcher import BaseFetcher
 
 
@@ -58,108 +57,6 @@ class TestParseProxiesFromText(object):
         result = BaseFetcher.parseProxiesFromText(text)
         assert "1.2.3.4:80" in result
         assert "1.2.3.4:65535" in result
-
-
-class TestParseProxiesFromJson(object):
-    """parseProxiesFromJson 测试"""
-
-    def test_dict_with_proxy_key(self):
-        data = {"proxy": "1.2.3.4:8080"}
-        result = BaseFetcher.parseProxiesFromJson(data)
-        assert "1.2.3.4:8080" in result
-
-    def test_dict_with_addr_key(self):
-        data = {"addr": "1.2.3.4:8080"}
-        result = BaseFetcher.parseProxiesFromJson(data)
-        assert "1.2.3.4:8080" in result
-
-    def test_dict_with_ip_port_keys(self):
-        data = {"ip": "1.2.3.4", "port": "8080"}
-        result = BaseFetcher.parseProxiesFromJson(data)
-        assert "1.2.3.4:8080" in result
-
-    def test_dict_with_host_port_keys(self):
-        data = {"host": "1.2.3.4", "port": "8080"}
-        result = BaseFetcher.parseProxiesFromJson(data)
-        assert "1.2.3.4:8080" in result
-
-    def test_dict_with_server_port_keys(self):
-        data = {"server": "1.2.3.4", "port": "8080"}
-        result = BaseFetcher.parseProxiesFromJson(data)
-        assert "1.2.3.4:8080" in result
-
-    def test_list_of_dicts(self):
-        data = [
-            {"ip": "1.2.3.4", "port": "8080"},
-            {"ip": "5.6.7.8", "port": "3128"},
-        ]
-        result = BaseFetcher.parseProxiesFromJson(data)
-        assert "1.2.3.4:8080" in result
-        assert "5.6.7.8:3128" in result
-
-    def test_nested_dict(self):
-        data = {
-            "data": {
-                "items": [
-                    {"ip": "1.2.3.4", "port": "8080"}
-                ]
-            }
-        }
-        result = BaseFetcher.parseProxiesFromJson(data)
-        assert "1.2.3.4:8080" in result
-
-    def test_string_value(self):
-        data = "1.2.3.4:8080"
-        result = BaseFetcher.parseProxiesFromJson(data)
-        assert "1.2.3.4:8080" in result
-
-    def test_empty_dict(self):
-        assert BaseFetcher.parseProxiesFromJson({}) == []
-
-    def test_empty_list(self):
-        assert BaseFetcher.parseProxiesFromJson([]) == []
-
-
-class TestParseProxiesFromTree(object):
-    """parseProxiesFromTree 测试"""
-
-    def test_basic_table(self):
-        html = "<table><tr><td>1.2.3.4</td><td>8080</td></tr></table>"
-        tree = etree.HTML(html)
-        result = BaseFetcher.parseProxiesFromTree(tree)
-        assert "1.2.3.4:8080" in result
-
-    def test_multiple_rows(self):
-        html = """<table>
-            <tr><td>1.2.3.4</td><td>8080</td></tr>
-            <tr><td>5.6.7.8</td><td>3128</td></tr>
-        </table>"""
-        tree = etree.HTML(html)
-        result = BaseFetcher.parseProxiesFromTree(tree)
-        assert "1.2.3.4:8080" in result
-        assert "5.6.7.8:3128" in result
-
-    def test_none_tree(self):
-        assert BaseFetcher.parseProxiesFromTree(None) == []
-
-    def test_empty_table(self):
-        html = "<table></table>"
-        tree = etree.HTML(html)
-        assert BaseFetcher.parseProxiesFromTree(tree) == []
-
-    def test_header_row_skipped(self):
-        html = """<table>
-            <tr><th>IP</th><th>Port</th></tr>
-            <tr><td>1.2.3.4</td><td>8080</td></tr>
-        </table>"""
-        tree = etree.HTML(html)
-        result = BaseFetcher.parseProxiesFromTree(tree)
-        assert "1.2.3.4:8080" in result
-
-    def test_row_with_too_few_cells(self):
-        html = "<table><tr><td>1.2.3.4</td></tr></table>"
-        tree = etree.HTML(html)
-        assert BaseFetcher.parseProxiesFromTree(tree) == []
 
 
 class TestYieldUniqueProxies(object):

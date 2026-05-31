@@ -34,7 +34,7 @@ if __name__ == '__main__':
         print(proxy)
 ```
 
-添加完成后，调度器下一轮采集（默认 4 分钟）会自动发现并启用新源，**无需修改任何配置文件**。
+添加完成后，调度器下一轮采集（默认 5 分钟）会自动发现并启用新源，**无需修改任何配置文件**。
 
 ### 第二步：验证
 
@@ -47,7 +47,7 @@ python -m fetcher.sources.mySource
 查看当前启用的代理源：
 
 ```bash
-python proxyPool.py show
+python proxyPool.py fetcher
 ```
 
 ## 禁用代理源
@@ -56,7 +56,7 @@ python proxyPool.py show
 
 **方式一：修改源文件**（推荐）
 
-在对应文件中将 `enabled` 设为 `False`：
+在对应py文件中将 `enabled` 设为 `False`：
 
 ```python
 class MySourceFetcher(BaseFetcher):
@@ -99,8 +99,6 @@ PROXY_FETCHER_EXCLUDE = ["MySourceFetcher"]
 | 方法 | 说明 |
 |------|------|
 | `parseProxiesFromText(text)` | 从纯文本中用正则提取 ip:port |
-| `parseProxiesFromJson(data)` | 从 JSON 结构中递归提取 ip:port |
-| `parseProxiesFromTree(tree)` | 从 lxml tree 的 table 行中提取 ip:port |
 | `yieldUniqueProxies(proxies)` | 去重 yield |
 
 ## 运行时热更新

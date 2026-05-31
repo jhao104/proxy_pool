@@ -12,6 +12,8 @@
 """
 __author__ = 'JHao'
 
+import re
+
 from lxml import etree
 
 from fetcher.baseFetcher import BaseFetcher
@@ -34,10 +36,20 @@ class ScdnFetcher(BaseFetcher):
             table_html = data.get("table_html") if isinstance(data, dict) else ""
             if table_html:
                 tree = etree.HTML("<table>%s</table>" % table_html)
-                proxies.extend(self.parseProxiesFromTree(tree))
+                for tr in tree.xpath("//tr"):
+                    cells = [" ".join(td.xpath(".//text()")).strip() for td in tr.xpath("./td")]
+                    if len(cells) >= 2:
+                        ip_match = re.match(r'^\d{1,3}(?:\.\d{1,3}){3}$', cells[0])
+                        port_match = re.match(r'^\d{2,5}$', cells[1])
+                        if ip_match and port_match:
+                            proxies.append("%s:%s" % (cells[0], cells[1]))
 
             if not proxies:
-                proxies = self.parseProxiesFromJson(data)
+                for item in data.get("data", []) if isinstance(data, dict) else []:
+                    ip = item.get("ip", "")
+                    port = item.get("port", "")
+                    if ip and port:
+                        proxies.append("%s:%s" % (ip, port))
             if not proxies:
                 proxies = self.parseProxiesFromText(r.text)
             for proxy in self.yieldUniqueProxies(proxies):

@@ -39,17 +39,17 @@ def server():
     startServer()
 
 
-@cli.command(name="show")
-def show():
+@cli.command(name="fetcher")
+def fetcher():
     """ 查看启用的代理源 """
     from helper.fetch import _discover_fetchers
     from handler.configHandler import ConfigHandler
     conf = ConfigHandler()
     exclude = conf.fetcherExclude
-    fetcher_names = _discover_fetchers(exclude)
-    click.echo("Active fetchers (%d):" % len(fetcher_names))
-    for name in fetcher_names:
-        click.echo("  - %s" % name)
+    fetcher_classes = _discover_fetchers(exclude)
+    click.echo("Active fetchers (%d):" % len(fetcher_classes))
+    for cls in fetcher_classes:
+        click.echo("  - %s" % cls.name)
     if exclude:
         click.echo("\nExcluded: %s" % ", ".join(exclude))
 

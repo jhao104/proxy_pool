@@ -67,7 +67,15 @@ class IhuanFetcher(BaseFetcher):
             "key": key,
         })
         r = request.post(tqdl_url, header=header, data=data, timeout=10, verify=False)
-        proxies = self.parseProxiesFromTree(r.tree)
+        proxies = []
+        if r.tree is not None:
+            for tr in r.tree.xpath("//tr"):
+                cells = [" ".join(td.xpath(".//text()")).strip() for td in tr.xpath("./td")]
+                if len(cells) >= 2:
+                    ip_match = re.match(r'^\d{1,3}(?:\.\d{1,3}){3}$', cells[0])
+                    port_match = re.match(r'^\d{2,5}$', cells[1])
+                    if ip_match and port_match:
+                        proxies.append("%s:%s" % (cells[0], cells[1]))
         proxies.extend(self.parseProxiesFromText(r.text))
         for proxy in self.yieldUniqueProxies(proxies):
             yield proxy
