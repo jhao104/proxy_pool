@@ -44,23 +44,9 @@ TABLE_NAME = 'use_proxy'
 
 
 # ###### config the proxy fetch function ######
-PROXY_FETCHER = [
-    "freeProxy01",
-    "freeProxy02",
-    "freeProxy03",
-    "freeProxy04",
-    "freeProxy05",
-    "freeProxy06",
-    "freeProxy07",
-    "freeProxy08",
-    "freeProxy09",
-    "freeProxy10",
-    "freeProxy11",
-    "freeProxy12",
-    "freeProxy13",
-    "freeProxy14",
-    "freeProxy15",
-]
+# 自动扫描 fetcher/sources/ 目录，加载所有 enabled=True 的 fetcher
+# 如需临时禁用某个 fetcher，在下方黑名单中添加类名（不改源文件）
+PROXY_FETCHER_EXCLUDE = []
 
 # ############# proxy validator #################
 # 代理验证目标网站

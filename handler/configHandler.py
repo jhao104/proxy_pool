@@ -41,9 +41,9 @@ class ConfigHandler(withMetaclass(Singleton)):
         return os.getenv("TABLE_NAME", setting.TABLE_NAME)
 
     @property
-    def fetchers(self):
+    def fetcherExclude(self):
         reload_six(setting)
-        return setting.PROXY_FETCHER
+        return getattr(setting, 'PROXY_FETCHER_EXCLUDE', [])
 
     @LazyProperty
     def httpUrl(self):
