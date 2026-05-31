@@ -1,5 +1,6 @@
 pytest>=7.0
 pytest-cov>=4.0
-fakeredis>=2.0
+fakeredis>=2.0,<2.26;python_version<="3.8"
+fakeredis>=2.26;python_version>"3.8"
 async_timeout>=3.0;python_version<"3.11"
 typing_extensions>=4.0;python_version<"3.11"

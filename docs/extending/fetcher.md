@@ -4,39 +4,115 @@
 
 ## 添加新的代理源
 
-### 第一步：编写获取方法
+### 第一步：创建代理源文件
 
-在 `ProxyFetcher` 类中添加自定义的获取代理的静态方法，该方法需要以生成器（yield）形式返回 `host:port` 格式的代理字符串：
+在 `fetcher/sources/` 目录下新建一个 `.py` 文件，继承 `BaseFetcher` 基类，实现 `fetch()` 方法：
 
 ```python
-# fetcher/proxyFetcher.py
+# fetcher/sources/mySource.py
 
-class ProxyFetcher(object):
-    # ....
-    # 自定义代理源获取方法
-    @staticmethod
-    def freeProxyCustom01():  # 命名不和已有重复即可
-        # 通过某网站或者某接口或某数据库获取代理
-        # 假设你已经拿到了一个代理列表
-        proxies = ["x.x.x.x:3128", "x.x.x.x:80"]
-        for proxy in proxies:
+from fetcher.baseFetcher import BaseFetcher
+from util.webRequest import WebRequest
+
+
+class MySourceFetcher(BaseFetcher):
+    """我的代理源 https://example.com/proxy"""
+
+    name = "mysource"                   # 唯一标识，用于日志
+    url = "https://example.com/proxy"   # 源网站首页
+    enabled = True                      # 设为 False 可禁用
+
+    def fetch(self):
+        """yield "host:port" 格式的代理字符串"""
+        r = WebRequest().get(self.url, timeout=10)
+        for proxy in self.parseProxiesFromText(r.text):
             yield proxy
-        # 确保每个 proxy 都是 host:port 正确的格式返回
+
+
+if __name__ == '__main__':
+    for proxy in MySourceFetcher().fetch():
+        print(proxy)
 ```
 
-### 第二步：注册到配置
+添加完成后，调度器下一轮采集（默认 5 分钟）会自动发现并启用新源，**无需修改任何配置文件**。
 
-修改配置文件 `setting.py` 中的 `PROXY_FETCHER` 项，加入刚才添加的自定义方法的名字：
+### 第二步：验证
+
+独立调试代理源：
+
+```bash
+python -m fetcher.sources.mySource
+```
+
+查看当前启用的代理源：
+
+```bash
+python proxyPool.py fetcher
+```
+
+## 禁用代理源
+
+有两种方式禁用某个代理源：
+
+**方式一：修改源文件**（推荐）
+
+在对应py文件中将 `enabled` 设为 `False`：
 
 ```python
-PROXY_FETCHER = [
-    # ....
-    "freeProxyCustom01"  # 确保名字和你添加的方法名字一致
-]
+class MySourceFetcher(BaseFetcher):
+    enabled = False  # 禁用该源
 ```
 
-调度程序每次执行采集任务时都会重新加载该配置，添加后会自动启用新的代理源。
+**方式二：黑名单配置**
+
+在 `setting.py` 的 `PROXY_FETCHER_EXCLUDE` 列表中添加类名，无需修改源文件：
+
+```python
+PROXY_FETCHER_EXCLUDE = ["MySourceFetcher"]
+```
+
+## BaseFetcher 基类
+
+所有代理源必须继承 `BaseFetcher`，基类提供以下约定和工具：
+
+### 必须声明的属性
+
+| 属性 | 类型 | 说明 |
+|------|------|------|
+| `name` | str | 唯一标识，用于日志和代理来源标记 |
+| `url` | str | 源网站首页 URL |
+
+### 可选属性
+
+| 属性 | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `enabled` | bool | `True` | 是否启用 |
+
+### 必须实现的方法
+
+| 方法 | 说明 |
+|------|------|
+| `fetch(self)` | 生成器，yield `"host:port"` 格式字符串 |
+
+### 共享解析工具
+
+| 方法 | 说明 |
+|------|------|
+| `parseProxiesFromText(text)` | 从纯文本中用正则提取 ip:port |
+| `yieldUniqueProxies(proxies)` | 去重 yield |
+
+## 运行时热更新
+
+调度器每轮采集时会重新扫描 `fetcher/sources/` 目录并 reload 模块，因此：
+
+- 新增文件 → 下一轮自动启用
+- 修改文件内容 → 下一轮自动加载新版本
+- 删除文件 → 下一轮自动移除（建议先从 `PROXY_FETCHER_EXCLUDE` 或 `enabled` 中禁用）
 
 ## 命名规范
 
-代理获取方法建议命名为 `freeProxy` + 两位数字（如 `freeProxy01`），自定义方法可使用 `freeProxyCustom` + 数字。
+| 元素 | 风格 | 示例 |
+|------|------|------|
+| 文件名 | 小写 | `mysource.py` |
+| 类名 | PascalCase | `MySourceFetcher` |
+| `name` 属性 | 小写 | `"mysource"` |

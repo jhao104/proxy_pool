@@ -8,6 +8,11 @@
 4. 优化CI配置, 避免PR时重复触发测试; (2026-05-26)
 5. 迁移文档从 Sphinx/ReadTheDocs 到 MkDocs Material/GitHub Pages; (2026-05-27)
 6. **重写测试套件**: 使用pytest重构全部测试, 覆盖unit/api/integration三层; (2026-05-28)
+7. **重构代理采集模块**: 将 `proxyFetcher.py` 拆分为独立文件 + `BaseFetcher` 基类插件架构，支持自动扫描和运行时热更新; (2026-05-31)
+   - 每个代理源独立文件（`fetcher/sources/`），继承 `BaseFetcher` 基类
+   - 自动扫描启用的代理源，无需在配置中列举
+   - 新增 `PROXY_FETCHER_EXCLUDE` 黑名单配置
+   - 新增 `proxyPool.py fetcher` 命令查看启用的代理源
 
 
 ## 2.4.2 (2024-01-18)

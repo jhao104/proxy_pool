@@ -57,7 +57,7 @@ def https_proxy_obj():
 @pytest.fixture
 def fake_redis():
     """fakeredis 实例，用于 RedisClient/SsdbClient 测试"""
-    return fakeredis.FakeRedis(decode_responses=True)
+    return fakeredis.FakeRedis(decode_responses=True, protocol=2)
 
 
 @pytest.fixture
@@ -73,7 +73,8 @@ def mock_db_client(fake_redis):
 def app():
     """Flask app，proxy_handler 被 mock"""
     # mock 掉 DbClient，防止 ProxyHandler 连接真实 Redis
-    with patch("db.dbClient.DbClient") as mock_db_cls:
+    # 必须 patch handler.proxyHandler.DbClient（已 import 到本地命名空间）
+    with patch("handler.proxyHandler.DbClient") as mock_db_cls:
         mock_db_instance = MagicMock()
         mock_db_cls.return_value = mock_db_instance
 

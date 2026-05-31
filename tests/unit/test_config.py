@@ -72,9 +72,8 @@ class TestConfigHandlerDefaults:
     def test_timezone_default(self, conf):
         assert conf.timezone == setting.TIMEZONE
 
-    def test_fetchers_is_list(self, conf):
-        assert isinstance(conf.fetchers, list)
-        assert len(conf.fetchers) > 0
+    def test_fetcher_exclude_is_list(self, conf):
+        assert isinstance(conf.fetcherExclude, list)
 
 
 class TestConfigHandlerEnvOverride:

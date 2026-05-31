@@ -49,21 +49,25 @@ DB_CONN = 'ssdb://:123456@127.0.0.1:8888'
 
 ## 采集配置
 
-### `PROXY_FETCHER`
+代理采集采用插件架构，调度器自动扫描 `fetcher/sources/` 目录，加载所有 `enabled=True` 的代理源。新增代理源只需在 `sources/` 下创建文件，无需修改配置。
 
-启用的代理采集方法名列表。代理采集方法位于 `fetcher/proxyFetcher.py` 类中。
+查看当前启用的代理源：
 
-由于各个代理源的稳定性不容易掌握，当某个代理采集方法失效时，可以在该配置中注释掉其名称。如果有增加某些代理采集方法，也请在该配置中添加其方法名，具体请参考 [扩展代理源](extending/fetcher.md)。
+```bash
+python proxyPool.py fetcher
+```
 
-调度程序每次执行采集任务时都会再次加载该配置，保证每次运行的采集方法都是有效的。
+### `PROXY_FETCHER_EXCLUDE`
+
+代理源黑名单。列表中的类名对应的代理源不会被加载，即使 `enabled=True`。适用于临时禁用某个代理源而不修改其源文件。
 
 ```python
-PROXY_FETCHER = [
-    "freeProxy01",
-    "freeProxy02",
-    # ....
+PROXY_FETCHER_EXCLUDE = [
+    # "BinglxFetcher",   # 临时禁用冰凌代理
 ]
 ```
+
+如需永久禁用，建议直接在源文件中设置 `enabled = False`。
 
 ## 校验配置
 
