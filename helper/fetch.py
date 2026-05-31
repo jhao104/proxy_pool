@@ -24,39 +24,70 @@ from handler.logHandler import LogHandler
 from handler.configHandler import ConfigHandler
 from fetcher.baseFetcher import BaseFetcher
 
+_logger = LogHandler("fetch")
+
+# 模块缓存: {module_name: (mtime, module)}
+_module_cache = {}
+
 
 def _get_sources_dir():
     return os.path.join(
         os.path.dirname(os.path.abspath(__file__)), '..', 'fetcher', 'sources')
 
 
+def _load_module(module_name, filepath):
+    """加载或 reload 模块，仅在文件 mtime 变化时 reload"""
+    global _module_cache
+    mtime = os.path.getmtime(filepath)
+    cached = _module_cache.get(module_name)
+    if cached and cached[0] == mtime:
+        return cached[1]
+    try:
+        if module_name in sys.modules:
+            module = importlib.reload(sys.modules[module_name])
+        else:
+            module = importlib.import_module(module_name)
+        _module_cache[module_name] = (mtime, module)
+        return module
+    except Exception as e:
+        _logger.warning("ProxyFetch : load %s error - %s" % (module_name, e))
+        return None
+
+
 def _discover_fetchers(exclude_list):
     """
     自动扫描 sources/ 目录，返回所有 enabled=True 且不在黑名单中的 fetcher 类列表。
-    每次调用重新加载模块，支持运行时热更新。
+    仅在文件 mtime 变化时重新加载模块，支持运行时热更新。
     """
+    global _module_cache
     sources_dir = _get_sources_dir()
     fetcher_classes = []
+    seen_modules = set()
+
     for filename in os.listdir(sources_dir):
         if not filename.endswith('.py') or filename.startswith('_'):
             continue
         module_name = "fetcher.sources.%s" % filename[:-3]
-        try:
-            if module_name in sys.modules:
-                module = importlib.reload(sys.modules[module_name])
-            else:
-                module = importlib.import_module(module_name)
-            for attr_name in dir(module):
-                attr = getattr(module, attr_name, None)
-                if (attr and isinstance(attr, type)
-                        and issubclass(attr, BaseFetcher)
-                        and attr is not BaseFetcher
-                        and attr.name
-                        and attr.enabled
-                        and attr.__name__ not in exclude_list):
-                    fetcher_classes.append(attr)
-        except Exception:
+        seen_modules.add(module_name)
+        filepath = os.path.join(sources_dir, filename)
+        module = _load_module(module_name, filepath)
+        if module is None:
             continue
+        for attr_name in dir(module):
+            attr = getattr(module, attr_name, None)
+            if (attr and isinstance(attr, type)
+                    and issubclass(attr, BaseFetcher)
+                    and attr is not BaseFetcher
+                    and attr.name
+                    and attr.enabled
+                    and attr.__name__ not in exclude_list):
+                fetcher_classes.append(attr)
+
+    # 清理已删除文件的缓存
+    for name in list(_module_cache):
+        if name not in seen_modules:
+            del _module_cache[name]
+
     return sorted(fetcher_classes, key=lambda c: c.name)
 
 

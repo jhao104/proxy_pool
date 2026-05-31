@@ -13,7 +13,10 @@
 __author__ = 'JHao'
 
 from fetcher.baseFetcher import BaseFetcher
+from handler.logHandler import LogHandler
 from util.webRequest import WebRequest
+
+logger = LogHandler("fetcher")
 
 
 class DocipFetcher(BaseFetcher):
@@ -28,7 +31,7 @@ class DocipFetcher(BaseFetcher):
             for each in r.json['data']:
                 yield each['ip']
         except Exception as e:
-            print(e)
+            logger.error("ProxyFetch - docip: %s" % e)
 
 
 if __name__ == '__main__':

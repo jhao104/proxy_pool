@@ -32,7 +32,7 @@ class ZdayeFetcher(BaseFetcher):
             "//span[@class='thread_time_info']/text()")[0].strip()
         interval = datetime.now() - datetime.strptime(
             latest_page_time, "%Y/%m/%d %H:%M:%S")
-        if interval.seconds < 300:
+        if interval.total_seconds() < 300:
             target_url = ("https://www.zdaye.com/"
                           + html_tree.xpath("//h3[@class='thread_title']/a/@href")[0].strip())
             while target_url:

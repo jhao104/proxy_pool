@@ -323,6 +323,23 @@ class TestZdayeFetcher(object):
         result = list(ZdayeFetcher().fetch())
         assert result == []
 
+    @patch("fetcher.sources.zdaye.WebRequest")
+    @patch("fetcher.sources.zdaye.datetime")
+    def test_fetch_old_cross_day_returns_empty(self, mock_dt, mock_wr):
+        """跨天帖子应判定为过期（total_seconds 而非 seconds）"""
+        from fetcher.sources.zdaye import ZdayeFetcher
+        from datetime import datetime as real_datetime
+        # 帖子是昨天 23:59，当前是今天 00:01（差 2 分钟，但跨天）
+        mock_dt.now.return_value = real_datetime(2026, 5, 31, 0, 1, 0)
+        mock_dt.strptime.return_value = real_datetime(2026, 5, 30, 23, 59, 0)
+
+        index_tree = etree.HTML(
+            '<span class="thread_time_info">2026/05/30 23:59:00</span>'
+            '<h3 class="thread_title"><a href="/detail/1">test</a></h3>')
+        mock_wr.return_value.get.return_value = _make_response(tree=index_tree)
+        result = list(ZdayeFetcher().fetch())
+        assert result == []
+
 
 class TestIhuanFetcher(object):
 

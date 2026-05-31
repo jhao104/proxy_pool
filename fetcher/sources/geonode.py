@@ -13,7 +13,10 @@
 __author__ = 'JHao'
 
 from fetcher.baseFetcher import BaseFetcher
+from handler.logHandler import LogHandler
 from util.webRequest import WebRequest
+
+logger = LogHandler("fetcher")
 
 
 class GeonodeFetcher(BaseFetcher):
@@ -38,7 +41,7 @@ class GeonodeFetcher(BaseFetcher):
             for proxy in self.yieldUniqueProxies(proxies):
                 yield proxy
         except Exception as e:
-            print(e)
+            logger.error("ProxyFetch - geonode: %s" % e)
 
 
 if __name__ == '__main__':

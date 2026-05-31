@@ -17,7 +17,10 @@ import re
 from lxml import etree
 
 from fetcher.baseFetcher import BaseFetcher
+from handler.logHandler import LogHandler
 from util.webRequest import WebRequest
+
+logger = LogHandler("fetcher")
 
 
 class ScdnFetcher(BaseFetcher):
@@ -45,7 +48,8 @@ class ScdnFetcher(BaseFetcher):
                             proxies.append("%s:%s" % (cells[0], cells[1]))
 
             if not proxies:
-                for item in data.get("data", []) if isinstance(data, dict) else []:
+                items = data.get("data", []) if isinstance(data, dict) else []
+                for item in items:
                     ip = item.get("ip", "")
                     port = item.get("port", "")
                     if ip and port:
@@ -55,7 +59,7 @@ class ScdnFetcher(BaseFetcher):
             for proxy in self.yieldUniqueProxies(proxies):
                 yield proxy
         except Exception as e:
-            print(e)
+            logger.error("ProxyFetch - scdn: %s" % e)
 
 
 if __name__ == '__main__':

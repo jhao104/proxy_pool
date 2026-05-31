@@ -13,7 +13,10 @@
 __author__ = 'JHao'
 
 from fetcher.baseFetcher import BaseFetcher
+from handler.logHandler import LogHandler
 from util.webRequest import WebRequest
+
+logger = LogHandler("fetcher")
 
 
 class BinglxFetcher(BaseFetcher):
@@ -30,7 +33,7 @@ class BinglxFetcher(BaseFetcher):
             for tr in proxy_list[1:]:
                 yield ':'.join(tr.xpath('./td/text()')[0:2])
         except Exception as e:
-            print(e)
+            logger.error("ProxyFetch - binglx: %s" % e)
 
 
 if __name__ == '__main__':
