@@ -57,7 +57,6 @@ class TestFetcherInterface(object):
     FETCHER_CLASSES = [
         ("fetcher.sources.ip66", "Ip66Fetcher"),
         ("fetcher.sources.kxdaili", "KxdailiFetcher"),
-        ("fetcher.sources.binglx", "BinglxFetcher"),
         ("fetcher.sources.ip3366", "Ip3366Fetcher"),
         ("fetcher.sources.jiangxianli", "JiangxianliFetcher"),
         ("fetcher.sources.ip89", "Ip89Fetcher"),
@@ -120,19 +119,6 @@ class TestKxdailiFetcher(object):
         tree = etree.HTML(html)
         mock_wr.return_value.get.return_value = _make_response(tree=tree)
         result = list(KxdailiFetcher().fetch())
-        assert "1.2.3.4:8080" in result
-
-
-class TestBinglxFetcher(object):
-
-    @patch("fetcher.sources.binglx.WebRequest")
-    def test_fetch(self, mock_wr):
-        from fetcher.sources.binglx import BinglxFetcher
-        # binglx 使用 proxy_list[1:] 跳过第一行，需要 header 行
-        html = _html_table([("IP", "Port"), ("1.2.3.4", "8080")])
-        tree = etree.HTML(html)
-        mock_wr.return_value.get.return_value = _make_response(tree=tree)
-        result = list(BinglxFetcher().fetch())
         assert "1.2.3.4:8080" in result
 
 
