@@ -57,7 +57,6 @@ class TestFetcherInterface(object):
     FETCHER_CLASSES = [
         ("fetcher.sources.ip66", "Ip66Fetcher"),
         ("fetcher.sources.kxdaili", "KxdailiFetcher"),
-        ("fetcher.sources.binglx", "BinglxFetcher"),
         ("fetcher.sources.ip3366", "Ip3366Fetcher"),
         ("fetcher.sources.jiangxianli", "JiangxianliFetcher"),
         ("fetcher.sources.ip89", "Ip89Fetcher"),
@@ -70,6 +69,7 @@ class TestFetcherInterface(object):
         ("fetcher.sources.scdn", "ScdnFetcher"),
         ("fetcher.sources.zdaye", "ZdayeFetcher"),
         ("fetcher.sources.ihuan", "IhuanFetcher"),
+        ("fetcher.sources.proxifly", "ProxiFlyFetcher"),
     ]
 
     def test_all_fetchers_have_name_url_enabled(self):
@@ -120,19 +120,6 @@ class TestKxdailiFetcher(object):
         tree = etree.HTML(html)
         mock_wr.return_value.get.return_value = _make_response(tree=tree)
         result = list(KxdailiFetcher().fetch())
-        assert "1.2.3.4:8080" in result
-
-
-class TestBinglxFetcher(object):
-
-    @patch("fetcher.sources.binglx.WebRequest")
-    def test_fetch(self, mock_wr):
-        from fetcher.sources.binglx import BinglxFetcher
-        # binglx 使用 proxy_list[1:] 跳过第一行，需要 header 行
-        html = _html_table([("IP", "Port"), ("1.2.3.4", "8080")])
-        tree = etree.HTML(html)
-        mock_wr.return_value.get.return_value = _make_response(tree=tree)
-        result = list(BinglxFetcher().fetch())
         assert "1.2.3.4:8080" in result
 
 
@@ -369,3 +356,42 @@ class TestIhuanFetcher(object):
         mock_wr.return_value.get.return_value = ti_resp
         result = list(IhuanFetcher().fetch())
         assert result == []
+
+
+class TestProxiFlyFetcher(object):
+
+    @patch("fetcher.sources.proxifly.WebRequest")
+    def test_fetch(self, mock_wr):
+        from fetcher.sources.proxifly import ProxiFlyFetcher
+        json_data = [
+            {"proxy": "1.2.3.4:8080", "protocol": "http", "geolocation": {"country": "CN"}},
+            {"proxy": "5.6.7.8:3128", "protocol": "http", "geolocation": {"country": "CN"}},
+        ]
+        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+        result = list(ProxiFlyFetcher().fetch())
+        assert "1.2.3.4:8080" in result
+        assert "5.6.7.8:3128" in result
+
+    @patch("fetcher.sources.proxifly.WebRequest")
+    def test_fetch_filters_non_cn(self, mock_wr):
+        from fetcher.sources.proxifly import ProxiFlyFetcher
+        json_data = [
+            {"proxy": "1.2.3.4:8080", "protocol": "http", "geolocation": {"country": "CN"}},
+            {"proxy": "9.9.9.9:8080", "protocol": "http", "geolocation": {"country": "US"}},
+        ]
+        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+        result = list(ProxiFlyFetcher().fetch())
+        assert "1.2.3.4:8080" in result
+        assert "9.9.9.9:8080" not in result
+
+    @patch("fetcher.sources.proxifly.WebRequest")
+    def test_fetch_filters_non_http(self, mock_wr):
+        from fetcher.sources.proxifly import ProxiFlyFetcher
+        json_data = [
+            {"proxy": "1.2.3.4:8080", "protocol": "http", "geolocation": {"country": "CN"}},
+            {"proxy": "9.9.9.9:8080", "protocol": "https", "geolocation": {"country": "CN"}},
+        ]
+        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+        result = list(ProxiFlyFetcher().fetch())
+        assert "1.2.3.4:8080" in result
+        assert "9.9.9.9:8080" not in result
