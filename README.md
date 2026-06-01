@@ -77,13 +77,10 @@ PORT = 5000                    # 监听端口
 DB_CONN = 'redis://:pwd@127.0.0.1:8888/0'
 
 
-# 配置 ProxyFetcher
-
-PROXY_FETCHER = [
-    "freeProxy01",      # 这里是启用的代理抓取方法名，所有fetch方法位于fetcher/proxyFetcher.py
-    "freeProxy02",
-    # ....
-]
+# 配置代理源（可选）
+# 默认自动扫描 fetcher/sources/ 目录下所有 enabled=True 的代理源
+# 如需禁用某些代理源，在黑名单中添加其 name 即可
+# PROXY_FETCHER_EXCLUDE = ["freevpnnode"]
 ```
 
 #### 启动项目:
@@ -167,59 +164,48 @@ def getHtml():
 
 　　添加一个新的代理源方法如下:
 
-* 1、首先在[ProxyFetcher](https://github.com/jhao104/proxy_pool/blob/1a3666283806a22ef287fba1a8efab7b94e94bac/fetcher/proxyFetcher.py#L21)类中添加自定义的获取代理的静态方法，
-该方法需要以生成器(yield)形式返回`host:ip`格式的代理，例如:
+* 1、在 `fetcher/sources/` 目录下新建 `.py` 文件，继承 `BaseFetcher` 基类，声明 `name`/`url`/`enabled` 属性，实现 `fetch()` 方法以生成器(yield)形式返回`host:port`格式的代理，例如:
 
 ```python
+from fetcher.baseFetcher import BaseFetcher
+from util.webRequest import WebRequest
 
-class ProxyFetcher(object):
-    # ....
+class MyProxyFetcher(BaseFetcher):
+    """我的代理源"""
 
-    # 自定义代理源获取方法
-    @staticmethod
-    def freeProxyCustom1():  # 命名不和已有重复即可
+    name = "myproxy"
+    url = "https://www.example.com/"
+    enabled = True
 
-        # 通过某网站或者某接口或某数据库获取代理
-        # 假设你已经拿到了一个代理列表
-        proxies = ["x.x.x.x:3128", "x.x.x.x:80"]
-        for proxy in proxies:
-            yield proxy
-        # 确保每个proxy都是 host:ip正确的格式返回
+    def fetch(self):
+        r = WebRequest().get("https://www.example.com/api/proxies")
+        for item in r.json:
+            yield item["ip"] + ":" + item["port"]
 ```
 
-* 2、添加好方法后，修改[setting.py](https://github.com/jhao104/proxy_pool/blob/1a3666283806a22ef287fba1a8efab7b94e94bac/setting.py#L47)文件中的`PROXY_FETCHER`项：
+* 2、添加好后，`schedule` 进程下次抓取时会自动扫描 `fetcher/sources/` 目录并启用新代理源，无需修改配置。
 
-　　在`PROXY_FETCHER`下添加自定义方法的名字:
+　　可用 `python proxyPool.py fetcher` 命令查看当前启用的代理源列表。
 
-```python
-PROXY_FETCHER = [
-    "freeProxy01",    
-    "freeProxy02",
-    # ....
-    "freeProxyCustom1"  #  # 确保名字和你添加方法名字一致
-]
-```
-
-
-　　`schedule` 进程会每隔一段时间抓取一次代理，下次抓取时会自动识别调用你定义的方法。
+　　如需临时禁用某个代理源，在 [setting.py](setting.py) 的 `PROXY_FETCHER_EXCLUDE` 黑名单中添加其 `name` 即可。
 
 ### 免费代理源
 
-   目前实现的采集免费代理网站有(排名不分先后, 下面仅是对其发布的免费代理情况, 付费代理测评可以参考[这里](https://zhuanlan.zhihu.com/p/33576641)): 
+   目前实现的采集免费代理网站有(排名不分先后, 下面仅是对其发布的免费代理情况, 付费代理测评可以参考[这里](https://zhuanlan.zhihu.com/p/33576641)):
    
   | 代理名称          |  状态  |  更新速度 |  可用率  |  地址 | 代码                                             |
   |---------------|  ---- | --------  | ------  | ----- |------------------------------------------------|
-  | 66代理          |  ✔    |     ★     |   *     | [地址](http://www.66ip.cn/)         | [`freeProxy02`](/fetcher/proxyFetcher.py#L50)  |
-  | 开心代理          |   ✔   |     ★     |   *     | [地址](http://www.kxdaili.com/)     | [`freeProxy03`](/fetcher/proxyFetcher.py#L63)  |
-  | FreeProxyList |   ✔  |    ★     |   *    | [地址](https://www.freeproxylists.net/zh/) | [`freeProxy04`](/fetcher/proxyFetcher.py#L74)  |
-  | 快代理           |  ✔    |     ★     |   *     | [地址](https://www.kuaidaili.com/)  | [`freeProxy05`](/fetcher/proxyFetcher.py#L92)  |
-  | 冰凌代理          |  ✔    |    ★★★    |   *     | [地址](https://www.binglx.cn/) | [`freeProxy06`](/fetcher/proxyFetcher.py#L111) |
-  | 云代理           |  ✔    |    ★     |   *     | [地址](http://www.ip3366.net/)      | [`freeProxy07`](/fetcher/proxyFetcher.py#L123) |
-  | 小幻代理          |  ✔    |    ★★    |    *    | [地址](https://ip.ihuan.me/)        | [`freeProxy08`](/fetcher/proxyFetcher.py#L133) |
-  | 免费代理库         |  ✔    |     ☆     |    *    | [地址](http://ip.jiangxianli.com/)   | [`freeProxy09`](/fetcher/proxyFetcher.py#L143) |
-  | 89代理          |  ✔    |     ☆     |   *     | [地址](https://www.89ip.cn/)         | [`freeProxy10`](/fetcher/proxyFetcher.py#L154) |
-  | 稻壳代理          |  ✔    |     ★★    |   ***   | [地址](https://www.docip.ne)         | [`freeProxy11`](/fetcher/proxyFetcher.py#L164) |
-  | 谷德代理          |  ✔    |     ★★    |   ***   | [地址](https://www.goodips.com)         | [`freeProxy12`](/fetcher/proxyFetcher.py#L174) |
+  | 66代理          |  ✔    |     ★     |   *     | [地址](http://www.66ip.cn/)         | [`ip66.py`](/fetcher/sources/ip66.py)  |
+  | 开心代理          |   ✔   |     ★     |   *     | [地址](http://www.kxdaili.com/)     | [`kxdaili.py`](/fetcher/sources/kxdaili.py)  |
+  | FreeProxyList |   ✔  |    ★     |   *    | [地址](https://www.freeproxylists.net/zh/) | [`freeproxylist.py`](/fetcher/sources/freeproxylist.py)  |
+  | 快代理           |  ✔    |     ★     |   *     | [地址](https://www.kuaidaili.com/)  | [`kuaidaili.py`](/fetcher/sources/kuaidaili.py)  |
+  | 云代理           |  ✔    |    ★     |   *     | [地址](http://www.ip3366.net/)      | [`ip3366.py`](/fetcher/sources/ip3366.py) |
+  | 小幻代理          |  ✔    |    ★★    |    *    | [地址](https://ip.ihuan.me/)        | [`ihuan.py`](/fetcher/sources/ihuan.py) |
+  | 免费代理库         |  ✔    |     ☆     |    *    | [地址](http://ip.jiangxianli.com/)   | [`jiangxianli.py`](/fetcher/sources/jiangxianli.py) |
+  | 89代理          |  ✔    |     ☆     |   *     | [地址](https://www.89ip.cn/)         | [`ip89.py`](/fetcher/sources/ip89.py) |
+  | 稻壳代理          |  ✔    |     ★★    |   ***   | [地址](https://www.docip.ne)         | [`docip.py`](/fetcher/sources/docip.py) |
+  | 谷德代理          |  ✔    |     ★★    |   ***   | [地址](https://www.goodips.com)         | [`goodips.py`](/fetcher/sources/goodips.py) |
+  | Proxifly      |  ✔    |     ★★    |   **    | [地址](https://proxifly.dev)         | [`proxifly.py`](/fetcher/sources/proxifly.py) |
 
   
   如果还有其他好的免费代理网站, 可以在提交在[issues](https://github.com/jhao104/proxy_pool/issues/71), 下次更新时会考虑在项目中支持。
