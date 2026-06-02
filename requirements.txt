@@ -1,5 +1,5 @@
 requests==2.31.0
-gunicorn==19.9.0
+gunicorn==22.0.0
 lxml==4.9.2
 redis>=4.2.0
 APScheduler==3.10.0;python_version>="3.10"
