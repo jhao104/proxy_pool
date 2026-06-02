@@ -63,7 +63,7 @@ class TestFetcherInterface(object):
         ("fetcher.sources.docip", "DocipFetcher"),
         ("fetcher.sources.goodips", "GoodipsFetcher"),
         ("fetcher.sources.geonode", "GeonodeFetcher"),
-        ("fetcher.sources.freeproxylist", "FreeProxyListFetcher"),
+
         ("fetcher.sources.kuaidaili", "KuaidailiFetcher"),
         ("fetcher.sources.freevpnnode", "FreeVPNNodeFetcher"),
         ("fetcher.sources.scdn", "ScdnFetcher"),
@@ -199,22 +199,6 @@ class TestGeonodeFetcher(object):
             json_data={}, text="1.2.3.4:8080")
         result = list(GeonodeFetcher().fetch())
         assert "1.2.3.4:8080" in result
-
-
-class TestFreeProxyListFetcher(object):
-
-    @patch("fetcher.sources.freeproxylist.WebRequest")
-    def test_fetch(self, mock_wr):
-        from fetcher.sources.freeproxylist import FreeProxyListFetcher
-        # FreeProxyList 使用 JS 混淆 IP，这里模拟 script 标签中包含编码后的 IP
-        script_content = "document.write('%31%2E%32%2E%33%2E%34')"
-        html = '<table><tr class="Odd"><td><script>%s</script></td><td>8080</td></tr></table>' % script_content
-        tree = etree.HTML(html)
-        mock_wr.return_value.get.return_value = _make_response(tree=tree)
-        result = list(FreeProxyListFetcher().fetch())
-        # 注意：实际 JS 解码逻辑可能需要更复杂的 mock
-        # 这里主要验证 fetch() 不报错且返回列表
-        assert isinstance(result, list)
 
 
 class TestKuaidailiFetcher(object):

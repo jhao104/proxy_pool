@@ -14,6 +14,7 @@
    - 新增 `PROXY_FETCHER_EXCLUDE` 黑名单配置
    - 新增 `proxyPool.py fetcher` 命令查看启用的代理源
 8. 新增代理源 **Proxifly**; (2026-06-01)
+9. 移除失效代理源 **FreeProxyList**; (2026-06-02)
 
 
 ## 2.4.2 (2024-01-18)
