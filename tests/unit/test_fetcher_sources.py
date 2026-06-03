@@ -314,30 +314,37 @@ class TestZdayeFetcher(object):
 
 class TestIhuanFetcher(object):
 
-    @patch("fetcher.sources.ihuan.WebRequest")
-    def test_fetch(self, mock_wr):
+    @patch("fetcher.sources.ihuan.requests")
+    def test_fetch(self, mock_requests):
         from fetcher.sources.ihuan import IhuanFetcher
-        ti_tree = etree.HTML(
-            '<form><input name="key" value="abc123def456789012345678"></form>')
-        post_tree = etree.HTML(_html_table([("1.2.3.4", "8080")]))
-
-        ti_resp = _make_response(tree=ti_tree, text="")
-        post_resp = _make_response(tree=post_tree, text="1.2.3.4:8080")
-
-        mock_instance = MagicMock()
-        mock_instance.get.return_value = ti_resp
-        mock_instance.post.return_value = post_resp
-        mock_wr.return_value = mock_instance
+        html = (
+            '<table class="table table-hover table-bordered">'
+            '<tr><td>1.2.3.4</td><td>8080</td></tr>'
+            '<tr><td>5.6.7.8</td><td>3128</td></tr>'
+            '</table>'
+        )
+        mock_session = MagicMock()
+        mock_resp = MagicMock()
+        mock_resp.text = html
+        # 第一次 get 获取 cookie，第二次 get 返回数据
+        mock_session.get.return_value = mock_resp
+        mock_requests.session.return_value = mock_session
 
         result = list(IhuanFetcher().fetch())
         assert "1.2.3.4:8080" in result
+        assert "5.6.7.8:3128" in result
+        assert mock_session.get.call_count == 2
 
-    @patch("fetcher.sources.ihuan.WebRequest")
-    def test_fetch_no_key_returns_empty(self, mock_wr):
+    @patch("fetcher.sources.ihuan.requests")
+    def test_fetch_empty_table_returns_empty(self, mock_requests):
         from fetcher.sources.ihuan import IhuanFetcher
-        ti_tree = etree.HTML('<form></form>')
-        ti_resp = _make_response(tree=ti_tree, text="no key here")
-        mock_wr.return_value.get.return_value = ti_resp
+        html = '<table class="table table-hover table-bordered"></table>'
+        mock_session = MagicMock()
+        mock_resp = MagicMock()
+        mock_resp.text = html
+        mock_session.get.return_value = mock_resp
+        mock_requests.session.return_value = mock_session
+
         result = list(IhuanFetcher().fetch())
         assert result == []
 

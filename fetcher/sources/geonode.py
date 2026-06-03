@@ -20,14 +20,14 @@ logger = LogHandler("fetcher")
 
 
 class GeonodeFetcher(BaseFetcher):
-    """Geonode Free Proxy https://geonode.com/free-proxy-list/"""
+    """Geonode Free Proxy https://geonode.com/"""
 
     name = "geonode"
-    url = "https://geonode.com/free-proxy-list/"
+    url = "https://geonode.com/"
 
     def fetch(self):
         url = ("https://proxylist.geonode.com/api/proxy-list?"
-               "limit=500&page=1&sort_by=lastChecked&sort_type=desc")
+               "filterLastChecked=10&page=1&limit=100&sort_by=lastChecked&sort_type=desc")
         r = WebRequest().get(url, timeout=5, retry_time=1, verify=False)
         try:
             proxies = []
