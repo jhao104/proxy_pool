@@ -198,7 +198,6 @@ class MyProxyFetcher(BaseFetcher):
   |---------------|  ---- | --------  | ------  | ----- |------------------------------------------------|
   | 66代理          |  ✔    |     ★     |   *     | [地址](http://www.66ip.cn/)         | [`ip66.py`](/fetcher/sources/ip66.py)  |
   | 开心代理          |   ✔   |     ★     |   *     | [地址](http://www.kxdaili.com/)     | [`kxdaili.py`](/fetcher/sources/kxdaili.py)  |
-
   | 快代理           |  ✔    |     ★     |   *     | [地址](https://www.kuaidaili.com/)  | [`kuaidaili.py`](/fetcher/sources/kuaidaili.py)  |
   | 云代理           |  ✔    |    ★     |   *     | [地址](http://www.ip3366.net/)      | [`ip3366.py`](/fetcher/sources/ip3366.py) |
   | 小幻代理          |  ✔    |    ★★    |    *    | [地址](https://ip.ihuan.me/)        | [`ihuan.py`](/fetcher/sources/ihuan.py) |
