@@ -14,7 +14,6 @@ proxy_pool/
 │   ├── baseFetcher.py      #   BaseFetcher 基类（共享解析方法）
 │   └── sources/            #   各代理源独立文件
 │       ├── zdaye.py        #     站大爷
-│       ├── ip66.py         #     代理66
 │       ├── kxdaili.py      #     开心代理
 │       ├── kuaidaili.py    #     快代理
 │       ├── geonode.py      #     Geonode

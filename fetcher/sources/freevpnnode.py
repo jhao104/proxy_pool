@@ -19,10 +19,10 @@ from util.webRequest import WebRequest
 
 
 class FreeVPNNodeFetcher(BaseFetcher):
-    """FreeVPNNode https://cn.freevpnnode.com/free-proxy/"""
+    """FreeVPNNode https://cn.freevpnnode.com"""
 
     name = "freevpnnode"
-    url = "https://cn.freevpnnode.com/free-proxy/"
+    url = "https://cn.freevpnnode.com"
 
     def fetch(self):
         url = "https://cn.freevpnnode.com/free-proxy/"
