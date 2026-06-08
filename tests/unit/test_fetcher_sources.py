@@ -55,7 +55,6 @@ class TestFetcherInterface(object):
     """所有 fetcher 的接口约定"""
 
     FETCHER_CLASSES = [
-        ("fetcher.sources.ip66", "Ip66Fetcher"),
         ("fetcher.sources.kxdaili", "KxdailiFetcher"),
         ("fetcher.sources.ip3366", "Ip3366Fetcher"),
         ("fetcher.sources.jiangxianli", "JiangxianliFetcher"),
@@ -70,6 +69,7 @@ class TestFetcherInterface(object):
         ("fetcher.sources.zdaye", "ZdayeFetcher"),
         ("fetcher.sources.ihuan", "IhuanFetcher"),
         ("fetcher.sources.proxifly", "ProxiFlyFetcher"),
+        ("fetcher.sources.daili66", "DaiLi66Fetcher"),
     ]
 
     def test_all_fetchers_have_name_url_enabled(self):
@@ -94,21 +94,6 @@ class TestFetcherInterface(object):
 
 
 # --------------- 各 fetcher 逻辑测试 ---------------
-
-class TestIp66Fetcher(object):
-
-    @patch("fetcher.sources.ip66.WebRequest")
-    def test_fetch(self, mock_wr):
-        from fetcher.sources.ip66 import Ip66Fetcher
-        # ip66 使用 (//table)[3] 取第3个table，if i > 0 跳过第一行
-        html = ("<table></table><table></table>"
-                + _html_table([("IP", "Port"), ("1.2.3.4", "8080"), ("5.6.7.8", "3128")]))
-        tree = etree.HTML(html)
-        mock_wr.return_value.get.return_value = _make_response(tree=tree)
-        result = list(Ip66Fetcher().fetch())
-        assert "1.2.3.4:8080" in result
-        assert "5.6.7.8:3128" in result
-
 
 class TestKxdailiFetcher(object):
 
@@ -386,3 +371,27 @@ class TestProxiFlyFetcher(object):
         result = list(ProxiFlyFetcher().fetch())
         assert "1.2.3.4:8080" in result
         assert "9.9.9.9:8080" not in result
+
+
+class TestDaiLi66Fetcher(object):
+
+    @patch("fetcher.sources.daili66.WebRequest")
+    def test_fetch(self, mock_wr):
+        from fetcher.sources.daili66 import DaiLi66Fetcher
+        json_data = {
+            "data": [
+                {"ip": "1.2.3.4", "port": "8080"},
+                {"ip": "5.6.7.8", "port": "3128"},
+            ]
+        }
+        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+        result = list(DaiLi66Fetcher().fetch())
+        assert "1.2.3.4:8080" in result
+        assert "5.6.7.8:3128" in result
+
+    @patch("fetcher.sources.daili66.WebRequest")
+    def test_fetch_empty_data_returns_empty(self, mock_wr):
+        from fetcher.sources.daili66 import DaiLi66Fetcher
+        mock_wr.return_value.get.return_value = _make_response(json_data={})
+        result = list(DaiLi66Fetcher().fetch())
+        assert result == []
