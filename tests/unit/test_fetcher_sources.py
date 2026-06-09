@@ -57,7 +57,6 @@ class TestFetcherInterface(object):
     FETCHER_CLASSES = [
         ("fetcher.sources.kxdaili", "KxdailiFetcher"),
         ("fetcher.sources.ip3366", "Ip3366Fetcher"),
-        ("fetcher.sources.jiangxianli", "JiangxianliFetcher"),
         ("fetcher.sources.ip89", "Ip89Fetcher"),
         ("fetcher.sources.docip", "DocipFetcher"),
         ("fetcher.sources.goodips", "GoodipsFetcher"),
@@ -70,6 +69,7 @@ class TestFetcherInterface(object):
         ("fetcher.sources.ihuan", "IhuanFetcher"),
         ("fetcher.sources.proxifly", "ProxiFlyFetcher"),
         ("fetcher.sources.daili66", "DaiLi66Fetcher"),
+        ("fetcher.sources.roundproxies", "RoundProxiesFetcher"),
     ]
 
     def test_all_fetchers_have_name_url_enabled(self):
@@ -118,18 +118,6 @@ class TestIp3366Fetcher(object):
         result = list(Ip3366Fetcher().fetch())
         assert "1.2.3.4:8080" in result
         assert "5.6.7.8:3128" in result
-
-
-class TestJiangxianliFetcher(object):
-
-    @patch("fetcher.sources.jiangxianli.WebRequest")
-    def test_fetch(self, mock_wr):
-        from fetcher.sources.jiangxianli import JiangxianliFetcher
-        html = _html_table([("IP", "Port"), ("1.2.3.4", "8080")])
-        tree = etree.HTML(html)
-        mock_wr.return_value.get.return_value = _make_response(tree=tree)
-        result = list(JiangxianliFetcher().fetch())
-        assert "1.2.3.4:8080" in result
 
 
 class TestIp89Fetcher(object):
@@ -394,4 +382,35 @@ class TestDaiLi66Fetcher(object):
         from fetcher.sources.daili66 import DaiLi66Fetcher
         mock_wr.return_value.get.return_value = _make_response(json_data={})
         result = list(DaiLi66Fetcher().fetch())
+        assert result == []
+
+
+class TestRoundProxiesFetcher(object):
+
+    @patch("fetcher.sources.roundproxies.WebRequest")
+    def test_fetch(self, mock_wr):
+        from fetcher.sources.roundproxies import RoundProxiesFetcher
+        json_data = {
+            "data": [
+                {"ip": "1.2.3.4", "port": "8080"},
+                {"ip": "5.6.7.8", "port": "3128"},
+            ]
+        }
+        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+        result = list(RoundProxiesFetcher().fetch())
+        assert "1.2.3.4:8080" in result
+        assert "5.6.7.8:3128" in result
+
+    @patch("fetcher.sources.roundproxies.WebRequest")
+    def test_fetch_empty_data_returns_empty(self, mock_wr):
+        from fetcher.sources.roundproxies import RoundProxiesFetcher
+        mock_wr.return_value.get.return_value = _make_response(json_data={})
+        result = list(RoundProxiesFetcher().fetch())
+        assert result == []
+
+    @patch("fetcher.sources.roundproxies.WebRequest")
+    def test_fetch_exception_returns_empty(self, mock_wr):
+        from fetcher.sources.roundproxies import RoundProxiesFetcher
+        mock_wr.return_value.get.return_value = _make_response(json_data=None)
+        result = list(RoundProxiesFetcher().fetch())
         assert result == []
