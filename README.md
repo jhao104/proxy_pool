@@ -1,3 +1,5 @@
+[![MseeP.ai Security Assessment Badge](https://mseep.net/pr/jhao104-proxy-pool-badge.png)](https://mseep.ai/app/jhao104-proxy-pool)
+
 
 ProxyPool 爬虫代理IP池
 =======
