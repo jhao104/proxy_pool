@@ -13,12 +13,13 @@
                    2026/09/05: 失败代理拉黑(伪造120分钟/网络失败60分钟), 池内连续失败满5分钟才作废
                    2026/11/14: 新代理验证通过时记录各源可用数量, 供采集统计使用
                    2026/11/14: 记录校验时间戳, 供校验速度统计使用
+                   2026/11/14: 校验过程中周期性落库统计, 避免大批量验证时接口长时间为0
 -------------------------------------------------
 """
 __author__ = 'JHao'
 
 from util.six import Empty
-from threading import Thread
+from threading import Thread, Event
 from datetime import datetime
 from util.webRequest import WebRequest
 from handler.logHandler import LogHandler
@@ -28,6 +29,9 @@ from helper.speedStat import speed_stat
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
 from helper.blacklist import fail_blacklist, FAIL_EXPIRE_TIME
+
+# 统计落库间隔(秒): 大批量验证时长时间才有整轮结束, 期间也要能查到数据
+STAT_FLUSH_INTERVAL = 30
 
 
 class DoValidator(object):
@@ -164,6 +168,34 @@ class _ThreadChecker(Thread):
                 self.proxy_handler.put(proxy)
 
 
+class _StatFlusher(Thread):
+    """校验期间周期性落库统计, 避免大批量验证时接口长时间读不到数据"""
+
+    def __init__(self, stop_event, interval=STAT_FLUSH_INTERVAL):
+        Thread.__init__(self, name="stat_flusher")
+        self.stop_event = stop_event
+        self.interval = interval
+        self.log = LogHandler("checker")
+
+    def run(self):
+        while not self.stop_event.wait(self.interval):
+            flushStats()
+
+    def final(self):
+        """校验结束后补一次, 确保最后一批数据入库"""
+        flushStats()
+
+
+def flushStats():
+    """把当前采集/速度统计写入数据库"""
+    try:
+        handler = ProxyHandler()
+        handler.saveSourceStat(source_stat.snapshot())
+        handler.saveSpeedStat(speed_stat.dump())
+    except Exception as e:
+        LogHandler("checker").error("Stat flush error: %s" % str(e))
+
+
 def Checker(tp, queue):
     """
     run Proxy ThreadChecker
@@ -175,9 +207,19 @@ def Checker(tp, queue):
     for index in range(20):
         thread_list.append(_ThreadChecker(tp, queue, "thread_%s" % str(index).zfill(2)))
 
-    for thread in thread_list:
-        thread.setDaemon(True)
-        thread.start()
+    # 校验期间每 30 秒落库一次统计
+    stop_event = Event()
+    flusher = _StatFlusher(stop_event)
+    flusher.setDaemon(True)
+    flusher.start()
 
-    for thread in thread_list:
-        thread.join()
+    try:
+        for thread in thread_list:
+            thread.setDaemon(True)
+            thread.start()
+
+        for thread in thread_list:
+            thread.join()
+    finally:
+        stop_event.set()
+        flusher.final()

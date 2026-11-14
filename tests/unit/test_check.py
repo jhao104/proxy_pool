@@ -213,6 +213,58 @@ class TestThreadCheckerSpeedStat:
         mock_speed.record.assert_called_once()
 
 
+class TestFlushStats:
+    """校验统计周期性落库"""
+
+    @patch("helper.check.ProxyHandler")
+    @patch("helper.check.source_stat")
+    @patch("helper.check.speed_stat")
+    def test_flush_writes_both_stats(self, mock_speed, mock_source, mock_ph_cls):
+        from helper.check import flushStats
+        mock_source.snapshot.return_value = {"ip89": {"fetched": 1}}
+        mock_speed.dump.return_value = [1.0]
+
+        flushStats()
+
+        handler = mock_ph_cls.return_value
+        handler.saveSourceStat.assert_called_once_with({"ip89": {"fetched": 1}})
+        handler.saveSpeedStat.assert_called_once_with([1.0])
+
+    @patch("helper.check.LogHandler")
+    @patch("helper.check.ProxyHandler")
+    def test_flush_error_is_logged(self, mock_ph_cls, mock_log_cls):
+        from helper.check import flushStats
+        mock_ph_cls.return_value.saveSourceStat.side_effect = RuntimeError("db down")
+
+        flushStats()  # 不抛出
+
+        mock_log_cls.return_value.error.assert_called_once()
+
+    @patch("helper.check.flushStats")
+    def test_checker_flushes_after_finish(self, mock_flush):
+        """Checker 结束后补一次落库"""
+        from helper.check import Checker
+        with patch("helper.check._ThreadChecker"):
+            Checker("raw", MagicMock())
+
+        mock_flush.assert_called_once()
+
+    @patch("helper.check.flushStats")
+    def test_flusher_thread_periodic(self, mock_flush):
+        """_StatFlusher 按间隔触发落库, stop 后退出"""
+        from helper.check import _StatFlusher
+        from threading import Event
+        stop = Event()
+        flusher = _StatFlusher(stop, interval=0.01)
+        flusher.start()
+        stop.wait(0.1)
+        stop.set()
+        flusher.join(2)
+
+        assert mock_flush.call_count >= 1
+        assert not flusher.is_alive()
+
+
 class TestRegionGetter:
     """DoValidator.regionGetter 测试"""
 

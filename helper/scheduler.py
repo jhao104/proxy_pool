@@ -12,6 +12,7 @@
                    2026/09/05: 采集跳过拉黑期内代理, 避免重复验活积压队列
                    2026/11/14: 每轮采集结束后保存各源采集统计
                    2026/11/14: 每轮校验后保存校验速度统计
+                   2026/11/14: 统计改为校验过程中周期性落库(见 helper/check.py)
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -23,7 +24,6 @@ from util.six import Queue
 from helper.fetch import Fetcher
 from helper.check import Checker
 from helper.sourceStat import source_stat
-from helper.speedStat import speed_stat
 from handler.logHandler import LogHandler
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
@@ -43,24 +43,6 @@ def __runProxyFetch():
         proxy_queue.put(proxy)
 
     Checker("raw", proxy_queue)
-    __saveSourceStat()
-    __saveSpeedStat()
-
-
-def __saveSourceStat():
-    """把本轮采集统计落库, 供 server 进程的 /count/source 读取"""
-    try:
-        ProxyHandler().saveSourceStat(source_stat.snapshot())
-    except Exception as e:
-        LogHandler("scheduler").error("SourceStat save error: %s" % str(e))
-
-
-def __saveSpeedStat():
-    """把最近10分钟校验时间戳落库, 供 server 进程的 /count/speed 读取"""
-    try:
-        ProxyHandler().saveSpeedStat(speed_stat.dump())
-    except Exception as e:
-        LogHandler("scheduler").error("SpeedStat save error: %s" % str(e))
 
 
 def __runProxyCheck():
@@ -70,8 +52,8 @@ def __runProxyCheck():
         __runProxyFetch()
     for proxy in proxy_handler.getAll():
         proxy_queue.put(proxy)
+    # Checker 结束后会落库统计
     Checker("use", proxy_queue)
-    __saveSpeedStat()
 
 
 def runScheduler():
