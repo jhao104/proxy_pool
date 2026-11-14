@@ -10,6 +10,7 @@
    Change Activity:
                    2016/12/02:   DB工厂类
                    2020/07/03:   取消raw_proxy储存
+                   2026/11/14:   新增按来源采集统计的读写转发
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -115,6 +116,18 @@ class DbClient(withMetaclass(Singleton)):
 
     def getCount(self):
         return self.client.getCount()
+
+    def putSourceStat(self, stat_dict):
+        return self.client.putSourceStat(stat_dict)
+
+    def getSourceStat(self):
+        return self.client.getSourceStat()
+
+    def putSpeedStat(self, events):
+        return self.client.putSpeedStat(events)
+
+    def getSpeedStat(self):
+        return self.client.getSpeedStat()
 
     def test(self):
         return self.client.test()

@@ -85,12 +85,18 @@ def app():
         with patch.object(proxy_handler, "get") as mock_get, \
              patch.object(proxy_handler, "pop") as mock_pop, \
              patch.object(proxy_handler, "getAll") as mock_getAll, \
-             patch.object(proxy_handler, "delete") as mock_delete:
+             patch.object(proxy_handler, "delete") as mock_delete, \
+             patch.object(proxy_handler, "getSourceStat") as mock_getSourceStat, \
+             patch.object(proxy_handler, "getSpeedStat") as mock_getSpeedStat:
+            mock_getSourceStat.return_value = {}
+            mock_getSpeedStat.return_value = []
             flask_app._test_mocks = {
                 "get": mock_get,
                 "pop": mock_pop,
                 "getAll": mock_getAll,
                 "delete": mock_delete,
+                "getSourceStat": mock_getSourceStat,
+                "getSpeedStat": mock_getSpeedStat,
             }
             yield flask_app
 

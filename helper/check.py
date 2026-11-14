@@ -11,6 +11,8 @@
                    2021/05/25: 分别校验http和https
                    2022/08/16: 获取代理Region信息
                    2026/09/05: 失败代理拉黑(伪造120分钟/网络失败60分钟), 池内连续失败满5分钟才作废
+                   2026/11/14: 新代理验证通过时记录各源可用数量, 供采集统计使用
+                   2026/11/14: 记录校验时间戳, 供校验速度统计使用
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -21,6 +23,8 @@ from datetime import datetime
 from util.webRequest import WebRequest
 from handler.logHandler import LogHandler
 from helper.validator import ProxyValidator
+from helper.sourceStat import source_stat
+from helper.speedStat import speed_stat
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
 from helper.blacklist import fail_blacklist, FAIL_EXPIRE_TIME
@@ -113,6 +117,8 @@ class _ThreadChecker(Thread):
                 self.log.info("{}ProxyCheck - {}: complete".format(self.work_type.title(), self.name))
                 break
             proxy = DoValidator.validator(proxy, self.work_type)
+            # 记录一次校验完成(无论结果), 供 1/5/10 分钟速度统计
+            speed_stat.record()
             if self.work_type == "raw":
                 self.__ifRaw(proxy)
             else:
@@ -126,6 +132,8 @@ class _ThreadChecker(Thread):
             else:
                 self.log.info('RawProxyCheck - {}: {} pass'.format(self.name, proxy.proxy.ljust(23)))
                 self.proxy_handler.put(proxy)
+            # 抓取后验证通过即计入该来源的可用数量(已存在池中同样算可用)
+            source_stat.recordValid(proxy)
         else:
             # 失败拉黑, 拉黑期内采集直接跳过: 伪造120分钟, 其他失败60分钟
             fail_blacklist.add(proxy.proxy, fake=getattr(proxy, "fake_flag", False))

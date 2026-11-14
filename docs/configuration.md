@@ -69,6 +69,19 @@ PROXY_FETCHER_EXCLUDE = [
 
 如需永久禁用，建议直接在源文件中设置 `enabled = False`。
 
+### 抓取频率
+
+调度器固定每 5 分钟执行一轮采集（代码内硬编码），池内代理数低于 `POOL_SIZE_MIN` 时还会由 2 分钟一次的检查任务触发补采。
+
+个别源有严格限流或更新较慢，可在源类上声明 `interval`（秒）限制最短抓取间隔，未到期的源在采集时被跳过。例如站大爷开放接口 `zdopen.py` 因接口限流（每 10 秒最多 2 次）设为每 2 小时一轮：
+
+```python
+class ZdopenFetcher(BaseFetcher):
+    interval = 2 * 60 * 60
+```
+
+`interval = 0`（默认）表示每轮都抓取。
+
 ## 校验配置
 
 ### `HTTP_URL`

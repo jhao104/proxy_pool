@@ -70,6 +70,7 @@ class TestFetcherInterface(object):
         ("fetcher.sources.proxifly", "ProxiFlyFetcher"),
         ("fetcher.sources.daili66", "DaiLi66Fetcher"),
         ("fetcher.sources.roundproxies", "RoundProxiesFetcher"),
+        ("fetcher.sources.zdopen", "ZdopenFetcher"),
     ]
 
     def test_all_fetchers_have_name_url_enabled(self):
@@ -418,3 +419,73 @@ class TestRoundProxiesFetcher(object):
         mock_wr.return_value.get.return_value = _make_response(json_data=None)
         result = list(RoundProxiesFetcher().fetch())
         assert result == []
+
+
+class TestZdopenFetcher(object):
+
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_fetch(self, mock_wr):
+        from fetcher.sources.zdopen import ZdopenFetcher
+        json_data = {
+            "code": "10001",
+            "msg": "获取成功",
+            "data": {
+                "count": 2,
+                "proxy_list": [
+                    {"ip": "1.2.3.4", "port": 8080, "protocol": "http"},
+                    {"ip": "5.6.7.8", "port": 3128, "protocol": "http"},
+                ],
+            },
+        }
+        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+        result = list(ZdopenFetcher().fetch())
+        assert "1.2.3.4:8080" in result
+        assert "5.6.7.8:3128" in result
+
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_fetch_filters_non_http(self, mock_wr):
+        """socks 代理池内无法验证, 应被过滤"""
+        from fetcher.sources.zdopen import ZdopenFetcher
+        json_data = {
+            "code": "10001",
+            "data": {"proxy_list": [
+                {"ip": "1.2.3.4", "port": 8080, "protocol": "http"},
+                {"ip": "9.9.9.9", "port": 1080, "protocol": "socks5"},
+            ]},
+        }
+        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+        result = list(ZdopenFetcher().fetch())
+        assert "1.2.3.4:8080" in result
+        assert "9.9.9.9:1080" not in result
+
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_fetch_error_code_returns_empty(self, mock_wr):
+        """接口返回非成功 code 时不 yield"""
+        from fetcher.sources.zdopen import ZdopenFetcher
+        json_data = {"code": "10002", "msg": "请求过于频繁", "data": {}}
+        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+        result = list(ZdopenFetcher().fetch())
+        assert result == []
+
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_fetch_empty_data_returns_empty(self, mock_wr):
+        from fetcher.sources.zdopen import ZdopenFetcher
+        mock_wr.return_value.get.return_value = _make_response(json_data={})
+        result = list(ZdopenFetcher().fetch())
+        assert result == []
+
+    def test_interval_is_two_hours(self):
+        """接口限流严格, 抓取间隔应为 2 小时"""
+        from fetcher.sources.zdopen import ZdopenFetcher
+        assert ZdopenFetcher.interval == 2 * 60 * 60
+
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_isp_appended_when_set(self, mock_wr):
+        """设置 isp 时附加编码后的运营商参数"""
+        from fetcher.sources.zdopen import ZdopenFetcher
+        mock_wr.return_value.get.return_value = _make_response(json_data={})
+        fetcher = ZdopenFetcher()
+        fetcher.isp = "电信"
+        list(fetcher.fetch())
+        url = mock_wr.return_value.get.call_args[0][0]
+        assert "isp=%E7%94%B5%E4%BF%A1" in url

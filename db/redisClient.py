@@ -10,6 +10,7 @@
                    2019/08/09: 封装Redis相关操作
                    2020/06/23: 优化pop方法, 改用hscan命令
                    2021/05/26: 区别http/https代理
+                   2026/11/14: 新增按来源采集统计的读写
 ------------------------------------------------------
 """
 __author__ = 'JHao'
@@ -41,7 +42,11 @@ class RedisClient(object):
         :return:
         """
         self.name = ""
-        kwargs.pop("username")
+        # 支持 ACL 用户名: DB_CONN 形如 redis://user:pass@host:port/db
+        # 不再丢弃 username, 否则 default 用户被禁用时无法认证
+        username = kwargs.pop("username", None)
+        if username:
+            kwargs["username"] = username
         self.__conn = Redis(connection_pool=BlockingConnectionPool(decode_responses=True,
                                                                    timeout=5,
                                                                    socket_timeout=5,
@@ -138,6 +143,58 @@ class RedisClient(object):
         :return:
         """
         self.name = name
+
+    def putSourceStat(self, stat_dict):
+        """
+        保存各源采集统计, 存放在独立hash: <TABLE_NAME>:source_stat
+        :param stat_dict: {source: {fetched, valid, last_fetch_time}}
+        :return:
+        """
+        if not stat_dict:
+            return
+        stat_key = "%s:source_stat" % self.name
+        mapping = {source: json.dumps(stat, ensure_ascii=False)
+                   for source, stat in stat_dict.items()}
+        return self.__conn.hset(stat_key, mapping=mapping)
+
+    def getSourceStat(self):
+        """
+        读取各源采集统计
+        :return: {source: {fetched, valid, last_fetch_time}}
+        """
+        stat_key = "%s:source_stat" % self.name
+        items = self.__conn.hgetall(stat_key)
+        result = {}
+        for source, value in items.items():
+            try:
+                result[source] = json.loads(value)
+            except (ValueError, TypeError):
+                continue
+        return result
+
+    def putSpeedStat(self, events):
+        """
+        保存校验时间戳列表, 存放在独立hash: <TABLE_NAME>:speed_stat
+        :param events: 时间戳列表(最近10分钟)
+        :return:
+        """
+        stat_key = "%s:speed_stat" % self.name
+        return self.__conn.hset(stat_key, "events", json.dumps(list(events)))
+
+    def getSpeedStat(self):
+        """
+        读取校验时间戳列表
+        :return: 时间戳列表, 无数据返回 []
+        """
+        stat_key = "%s:speed_stat" % self.name
+        value = self.__conn.hget(stat_key, "events")
+        if not value:
+            return []
+        try:
+            data = json.loads(value)
+        except (ValueError, TypeError):
+            return []
+        return data if isinstance(data, list) else []
 
     def test(self):
         log = LogHandler('redis_client')

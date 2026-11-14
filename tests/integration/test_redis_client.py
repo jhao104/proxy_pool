@@ -36,6 +36,27 @@ def _make_proxy(proxy_str, https=False, source="test"):
                  https=https)
 
 
+class TestRedisAclUsername:
+
+    def test_username_passed_to_pool(self):
+        """ACL 用户名必须传给连接池, 否则 default 用户被禁用时无法认证"""
+        with patch("db.redisClient.BlockingConnectionPool") as mock_pool:
+            RedisClient(host="localhost", port=6379,
+                        username="redis", password="pwd", db="0")
+        kwargs = mock_pool.call_args[1]
+        assert kwargs.get("username") == "redis"
+        assert kwargs.get("password") == "pwd"
+
+    def test_no_username_omitted(self):
+        """无用户名时不传 username, 保持兼容旧配置"""
+        with patch("db.redisClient.BlockingConnectionPool") as mock_pool:
+            RedisClient(host="localhost", port=6379,
+                        username=None, password="pwd", db="0")
+        kwargs = mock_pool.call_args[1]
+        assert "username" not in kwargs
+        assert kwargs.get("password") == "pwd"
+
+
 class TestRedisPutGet:
 
     def test_put_and_get(self, redis_client):
@@ -147,3 +168,76 @@ class TestRedisChangeTable:
         assert redis_client.getCount()["total"] == 0
         redis_client.changeTable("test_proxy")
         assert redis_client.getCount()["total"] == 1
+
+
+class TestRedisSourceStat:
+
+    def test_put_and_get_source_stat(self, redis_client):
+        """统计写入独立 hash, 可原样读回"""
+        stat = {"ip89": {"fetched": 10, "valid": 4, "last_fetch_time": "2026-11-14 10:00:00"}}
+        redis_client.putSourceStat(stat)
+        assert redis_client.getSourceStat() == stat
+
+    def test_get_source_stat_empty(self, redis_client):
+        assert redis_client.getSourceStat() == {}
+
+    def test_put_source_stat_empty_noop(self, redis_client):
+        """空字典不写入"""
+        redis_client.putSourceStat({})
+        assert redis_client.getSourceStat() == {}
+
+    def test_source_stat_does_not_pollute_proxy_hash(self, redis_client):
+        """统计存放于 <table>:source_stat, 不影响代理 hash"""
+        redis_client.put(_make_proxy("1.2.3.4:8080"))
+        redis_client.putSourceStat({"ip89": {"fetched": 1, "valid": 1, "last_fetch_time": ""}})
+        assert redis_client.getCount()["total"] == 1
+
+    def test_put_source_stat_overwrites(self, redis_client):
+        """同一源再次写入覆盖旧统计"""
+        redis_client.putSourceStat({"ip89": {"fetched": 1, "valid": 0, "last_fetch_time": "t1"}})
+        redis_client.putSourceStat({"ip89": {"fetched": 9, "valid": 5, "last_fetch_time": "t2"}})
+        assert redis_client.getSourceStat()["ip89"]["fetched"] == 9
+
+    def test_get_source_stat_skips_corrupt_value(self, redis_client, fake_redis):
+        """非法 JSON 值被跳过, 不抛异常"""
+        fake_redis.hset("test_proxy:source_stat", "broken", "not-json")
+        fake_redis.hset("test_proxy:source_stat", "ok",
+                        '{"fetched": 1, "valid": 1, "last_fetch_time": "t"}')
+        result = redis_client.getSourceStat()
+        assert "broken" not in result
+        assert result["ok"]["fetched"] == 1
+
+
+class TestRedisSpeedStat:
+
+    def test_put_and_get_speed_stat(self, redis_client):
+        """时间戳列表可原样读回"""
+        events = [1700000000.0, 1700000001.5]
+        redis_client.putSpeedStat(events)
+        assert redis_client.getSpeedStat() == events
+
+    def test_get_speed_stat_empty(self, redis_client):
+        assert redis_client.getSpeedStat() == []
+
+    def test_put_empty_list(self, redis_client):
+        redis_client.putSpeedStat([])
+        assert redis_client.getSpeedStat() == []
+
+    def test_put_overwrites(self, redis_client):
+        redis_client.putSpeedStat([1.0, 2.0])
+        redis_client.putSpeedStat([3.0])
+        assert redis_client.getSpeedStat() == [3.0]
+
+    def test_does_not_pollute_proxy_hash(self, redis_client):
+        """速度统计独立存放, 不影响代理 hash"""
+        redis_client.put(_make_proxy("1.2.3.4:8080"))
+        redis_client.putSpeedStat([1.0, 2.0])
+        assert redis_client.getCount()["total"] == 1
+
+    def test_corrupt_value_returns_empty(self, redis_client, fake_redis):
+        fake_redis.hset("test_proxy:speed_stat", "events", "not-json")
+        assert redis_client.getSpeedStat() == []
+
+    def test_non_list_value_returns_empty(self, redis_client, fake_redis):
+        fake_redis.hset("test_proxy:speed_stat", "events", '{"a": 1}')
+        assert redis_client.getSpeedStat() == []

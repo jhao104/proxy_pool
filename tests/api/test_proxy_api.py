@@ -14,6 +14,7 @@
 __author__ = 'JHao'
 
 import pytest
+import time
 from unittest.mock import patch, MagicMock
 from helper.proxy import Proxy
 from api.proxyApi import JsonResponse
@@ -166,16 +167,57 @@ class TestCountSource:
             Proxy("6.6.6.6:80", source="kuaidaili"),
         ]
         mocks["getAll"].return_value = proxies
+        mocks["getSourceStat"].return_value = {
+            "ip89": {"fetched": 10, "valid": 4, "last_fetch_time": "2026-11-14 10:00:00"},
+            "kuaidaili": {"fetched": 8, "valid": 2, "last_fetch_time": "2026-11-14 10:05:00"},
+        }
 
         resp = client.get("/count/source/")
         assert resp.status_code == 200
         data = resp.get_json()
-        # 多来源代理在各来源下分别计数
-        assert data["source"] == {"ip89": 2, "kuaidaili": 2}
         assert data["count"] == 3
+        # 多来源代理在各来源下分别计数
+        assert data["source"]["ip89"]["pool_count"] == 2
+        assert data["source"]["kuaidaili"]["pool_count"] == 2
+
+    def test_count_source_includes_fetch_stats(self, client, mocks):
+        mocks["getAll"].return_value = [Proxy("1.2.3.4:8080", source="ip89")]
+        mocks["getSourceStat"].return_value = {
+            "ip89": {"fetched": 10, "valid": 4, "last_fetch_time": "2026-11-14 10:00:00"},
+        }
+
+        resp = client.get("/count/source/")
+        stat = resp.get_json()["source"]["ip89"]
+        assert stat["fetched"] == 10
+        assert stat["valid"] == 4
+        assert stat["survival_rate"] == 0.4
+        assert stat["last_fetch_time"] == "2026-11-14 10:00:00"
+
+    def test_count_source_zero_fetched_rate(self, client, mocks):
+        """抓取数为 0 时存活率返回 0.0, 不除零"""
+        mocks["getAll"].return_value = []
+        mocks["getSourceStat"].return_value = {
+            "empty_src": {"fetched": 0, "valid": 0, "last_fetch_time": "2026-11-14 10:00:00"},
+        }
+
+        stat = client.get("/count/source/").get_json()["source"]["empty_src"]
+        assert stat["survival_rate"] == 0.0
+
+    def test_count_source_merges_pool_only_source(self, client, mocks):
+        """池中存在但无统计记录的来源也要返回, 统计字段取默认值"""
+        mocks["getAll"].return_value = [Proxy("1.2.3.4:8080", source="legacy")]
+        mocks["getSourceStat"].return_value = {}
+
+        stat = client.get("/count/source/").get_json()["source"]["legacy"]
+        assert stat["pool_count"] == 1
+        assert stat["fetched"] == 0
+        assert stat["valid"] == 0
+        assert stat["survival_rate"] == 0.0
+        assert stat["last_fetch_time"] == ""
 
     def test_count_source_empty(self, client, mocks):
         mocks["getAll"].return_value = []
+        mocks["getSourceStat"].return_value = {}
 
         resp = client.get("/count/source/")
         data = resp.get_json()
@@ -183,8 +225,38 @@ class TestCountSource:
         assert data["count"] == 0
 
 
-class TestRefresh:
+class TestCountSpeed:
 
+    def test_count_speed_empty(self, client, mocks):
+        mocks["getSpeedStat"].return_value = []
+
+        resp = client.get("/count/speed/")
+        assert resp.status_code == 200
+        data = resp.get_json()
+        assert data["speed"]["1min"]["count"] == 0
+        assert data["speed"]["1min"]["speed"] == 0.0
+
+    def test_count_speed_recent_events(self, client, mocks):
+        now = time.time()
+        mocks["getSpeedStat"].return_value = [now] * 30
+
+        data = client.get("/count/speed/").get_json()
+        assert data["speed"]["1min"]["count"] == 30
+        assert data["speed"]["1min"]["speed"] == 0.5  # 30/60
+        assert data["speed"]["5min"]["count"] == 30
+
+    def test_count_speed_old_events_excluded(self, client, mocks):
+        now = time.time()
+        # 7 分钟前的 10 条只应出现在 10min 窗口
+        mocks["getSpeedStat"].return_value = [now - 420] * 10
+
+        data = client.get("/count/speed/").get_json()
+        assert data["speed"]["1min"]["count"] == 0
+        assert data["speed"]["5min"]["count"] == 0
+        assert data["speed"]["10min"]["count"] == 10
+
+
+class TestRefresh:
     def test_refresh_returns_success(self, client):
         resp = client.get("/refresh/")
         assert resp.status_code == 200

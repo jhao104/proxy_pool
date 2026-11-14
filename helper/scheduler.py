@@ -10,6 +10,8 @@
                    2019/08/05: proxyScheduler
                    2021/02/23: runProxyCheck时,剩余代理少于POOL_SIZE_MIN时执行抓取
                    2026/09/05: 采集跳过拉黑期内代理, 避免重复验活积压队列
+                   2026/11/14: 每轮采集结束后保存各源采集统计
+                   2026/11/14: 每轮校验后保存校验速度统计
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -20,6 +22,8 @@ from apscheduler.executors.pool import ProcessPoolExecutor
 from util.six import Queue
 from helper.fetch import Fetcher
 from helper.check import Checker
+from helper.sourceStat import source_stat
+from helper.speedStat import speed_stat
 from handler.logHandler import LogHandler
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
@@ -30,6 +34,8 @@ def __runProxyFetch():
     proxy_queue = Queue()
     proxy_fetcher = Fetcher()
 
+    # 统计按轮重置: 本轮抓取数/可用数只反映这一轮
+    source_stat.reset()
     for proxy in proxy_fetcher.run():
         # 拉黑期内的代理直接跳过, 不再重复验活
         if fail_blacklist.isBlacklisted(proxy.proxy):
@@ -37,6 +43,24 @@ def __runProxyFetch():
         proxy_queue.put(proxy)
 
     Checker("raw", proxy_queue)
+    __saveSourceStat()
+    __saveSpeedStat()
+
+
+def __saveSourceStat():
+    """把本轮采集统计落库, 供 server 进程的 /count/source 读取"""
+    try:
+        ProxyHandler().saveSourceStat(source_stat.snapshot())
+    except Exception as e:
+        LogHandler("scheduler").error("SourceStat save error: %s" % str(e))
+
+
+def __saveSpeedStat():
+    """把最近10分钟校验时间戳落库, 供 server 进程的 /count/speed 读取"""
+    try:
+        ProxyHandler().saveSpeedStat(speed_stat.dump())
+    except Exception as e:
+        LogHandler("scheduler").error("SpeedStat save error: %s" % str(e))
 
 
 def __runProxyCheck():
@@ -47,6 +71,7 @@ def __runProxyCheck():
     for proxy in proxy_handler.getAll():
         proxy_queue.put(proxy)
     Checker("use", proxy_queue)
+    __saveSpeedStat()
 
 
 def runScheduler():

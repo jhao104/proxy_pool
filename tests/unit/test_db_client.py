@@ -43,6 +43,13 @@ class TestParseDbConn:
         assert DbClient.db_port == 6379
         assert DbClient.db_name == "0"
 
+    def test_redis_uri_with_acl_username(self):
+        """redis://user:pass@host:port/db 需解析出 ACL 用户名"""
+        DbClient.parseDbConn("redis://redis:pwd@127.0.0.1:6379/0")
+        assert DbClient.db_type == "REDIS"
+        assert DbClient.db_user == "redis"
+        assert DbClient.db_pwd == "pwd"
+
     def test_ssdb_uri_no_password(self):
         DbClient.parseDbConn("ssdb://@127.0.0.1:8888")
         assert DbClient.db_type == "SSDB"

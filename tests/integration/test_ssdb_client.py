@@ -146,3 +146,69 @@ class TestSsdbChangeTable:
         assert ssdb_client.getCount()["total"] == 0
         ssdb_client.changeTable("test_proxy")
         assert ssdb_client.getCount()["total"] == 1
+
+class TestSsdbSourceStat:
+
+    def test_put_and_get_source_stat(self, ssdb_client):
+        """统计写入独立 hash, 可原样读回"""
+        stat = {"ip89": {"fetched": 10, "valid": 4, "last_fetch_time": "2026-11-14 10:00:00"}}
+        ssdb_client.putSourceStat(stat)
+        assert ssdb_client.getSourceStat() == stat
+
+    def test_get_source_stat_empty(self, ssdb_client):
+        assert ssdb_client.getSourceStat() == {}
+
+    def test_put_source_stat_empty_noop(self, ssdb_client):
+        ssdb_client.putSourceStat({})
+        assert ssdb_client.getSourceStat() == {}
+
+    def test_source_stat_does_not_pollute_proxy_hash(self, ssdb_client):
+        ssdb_client.put(_make_proxy("1.2.3.4:8080"))
+        ssdb_client.putSourceStat({"ip89": {"fetched": 1, "valid": 1, "last_fetch_time": ""}})
+        assert ssdb_client.getCount()["total"] == 1
+
+    def test_put_source_stat_overwrites(self, ssdb_client):
+        ssdb_client.putSourceStat({"ip89": {"fetched": 1, "valid": 0, "last_fetch_time": "t1"}})
+        ssdb_client.putSourceStat({"ip89": {"fetched": 9, "valid": 5, "last_fetch_time": "t2"}})
+        assert ssdb_client.getSourceStat()["ip89"]["fetched"] == 9
+
+    def test_get_source_stat_skips_corrupt_value(self, ssdb_client, fake_redis):
+        fake_redis.hset("test_proxy:source_stat", "broken", "not-json")
+        fake_redis.hset("test_proxy:source_stat", "ok",
+                        '{"fetched": 1, "valid": 1, "last_fetch_time": "t"}')
+        result = ssdb_client.getSourceStat()
+        assert "broken" not in result
+        assert result["ok"]["fetched"] == 1
+
+
+class TestSsdbSpeedStat:
+
+    def test_put_and_get_speed_stat(self, ssdb_client):
+        events = [1700000000.0, 1700000001.5]
+        ssdb_client.putSpeedStat(events)
+        assert ssdb_client.getSpeedStat() == events
+
+    def test_get_speed_stat_empty(self, ssdb_client):
+        assert ssdb_client.getSpeedStat() == []
+
+    def test_put_empty_list(self, ssdb_client):
+        ssdb_client.putSpeedStat([])
+        assert ssdb_client.getSpeedStat() == []
+
+    def test_put_overwrites(self, ssdb_client):
+        ssdb_client.putSpeedStat([1.0, 2.0])
+        ssdb_client.putSpeedStat([3.0])
+        assert ssdb_client.getSpeedStat() == [3.0]
+
+    def test_does_not_pollute_proxy_hash(self, ssdb_client):
+        ssdb_client.put(_make_proxy("1.2.3.4:8080"))
+        ssdb_client.putSpeedStat([1.0, 2.0])
+        assert ssdb_client.getCount()["total"] == 1
+
+    def test_corrupt_value_returns_empty(self, ssdb_client, fake_redis):
+        fake_redis.hset("test_proxy:speed_stat", "events", "not-json")
+        assert ssdb_client.getSpeedStat() == []
+
+    def test_non_list_value_returns_empty(self, ssdb_client, fake_redis):
+        fake_redis.hset("test_proxy:speed_stat", "events", '{"a": 1}')
+        assert ssdb_client.getSpeedStat() == []

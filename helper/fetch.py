@@ -9,17 +9,21 @@
    Change Activity:
                    2019/08/06: 多线程采集
                    2026/05/31: 重构为动态加载 fetcher 插件
+                   2026/11/14: 支持 fetcher.interval, 按源限制最短抓取间隔
+                   2026/11/14: 采集时记录各源抓取数量, 供采集统计使用
 -------------------------------------------------
 """
 __author__ = 'JHao'
 
 import os
 import sys
+import time
 import importlib
-from threading import Thread
+from threading import Thread, Lock
 
 from helper.proxy import Proxy
 from helper.check import DoValidator
+from helper.sourceStat import source_stat
 from handler.logHandler import LogHandler
 from handler.configHandler import ConfigHandler
 from fetcher.baseFetcher import BaseFetcher
@@ -28,6 +32,26 @@ _logger = LogHandler("fetch")
 
 # 模块缓存: {module_name: (mtime, module)}
 _module_cache = {}
+
+# 各源上次抓取时间: {fetcher_name: timestamp}
+_last_fetch_time = {}
+_last_fetch_lock = Lock()
+
+
+def _is_due(fetcher_class):
+    """判断该源是否已到抓取间隔(interval=0 视为每轮都抓)"""
+    interval = getattr(fetcher_class, 'interval', 0) or 0
+    if interval <= 0:
+        return True
+    with _last_fetch_lock:
+        last = _last_fetch_time.get(fetcher_class.name)
+    return last is None or (time.time() - last) >= interval
+
+
+def _mark_fetched(fetcher_class):
+    """记录该源本次抓取时间"""
+    with _last_fetch_lock:
+        _last_fetch_time[fetcher_class.name] = time.time()
 
 
 def _get_sources_dir():
@@ -102,10 +126,14 @@ class _ThreadFetcher(Thread):
     def run(self):
         fetcher_name = self.fetcher_class.name
         self.log.info("ProxyFetch - {func}: start".format(func=fetcher_name))
+        # 先记录抓取时间: 即使抓取失败也按 interval 等待, 避免触发源站限流
+        _mark_fetched(self.fetcher_class)
+        source_stat.start(fetcher_name)
         try:
             for proxy in self.fetcher_class().fetch():
                 self.log.info('ProxyFetch - %s: %s ok' % (fetcher_name, proxy.ljust(23)))
                 proxy = proxy.strip()
+                source_stat.recordFetched(fetcher_name, proxy)
                 if proxy in self.proxy_dict:
                     self.proxy_dict[proxy].add_source(fetcher_name)
                 else:
@@ -136,8 +164,14 @@ class Fetcher(object):
         fetcher_classes = _discover_fetchers(exclude_list)
         self.log.info("ProxyFetch : active fetchers [%s]" % ", ".join(c.name for c in fetcher_classes))
 
+        skipped = []
         for fetcher_class in fetcher_classes:
-            thread_list.append(_ThreadFetcher(fetcher_class, proxy_dict))
+            if _is_due(fetcher_class):
+                thread_list.append(_ThreadFetcher(fetcher_class, proxy_dict))
+            else:
+                skipped.append(fetcher_class.name)
+        if skipped:
+            self.log.info("ProxyFetch : interval not reached, skip [%s]" % ", ".join(skipped))
 
         for thread in thread_list:
             thread.setDaemon(True)

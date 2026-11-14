@@ -13,6 +13,8 @@
                    2020/06/23: 新增pop接口
                    2022/07/21: 更新count接口
                    2026/08/30: 新增/count/source按来源统计接口
+                   2026/11/14: /count/source 增加抓取数/可用数/存活率/上次抓取时间
+                   2026/11/14: 新增 /count/speed 校验速度统计接口
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -23,6 +25,7 @@ from flask import Flask, jsonify, request
 
 from util.six import iteritems
 from helper.proxy import Proxy
+from helper.speedStat import SpeedStat
 from handler.proxyHandler import ProxyHandler
 from handler.configHandler import ConfigHandler
 
@@ -48,7 +51,8 @@ api_list = [
     {"url": "/delete", "params": "proxy: 'e.g. 127.0.0.1:8080'", "desc": "delete an unable proxy"},
     {"url": "/all", "params": "type: ''https'|''", "desc": "get all proxy from proxy pool"},
     {"url": "/count", "params": "", "desc": "return proxy count"},
-    {"url": "/count/source", "params": "", "desc": "return proxy count by fetcher source"}
+    {"url": "/count/source", "params": "", "desc": "return proxy count by fetcher source"},
+    {"url": "/count/speed", "params": "", "desc": "return check speed in 1/5/10 minutes"}
     # 'refresh': 'refresh proxy pool',
 ]
 
@@ -107,13 +111,49 @@ def getCount():
 
 @app.route('/count/source/')
 def countSource():
-    """ 按代理来源(采集fetcher)统计池中可用代理, 多来源代理在各来源下分别计数 """
+    """
+    按代理来源(采集fetcher)统计, 每个来源返回:
+        pool_count        当前池中该来源贡献的可用代理数(多来源代理在各来源下分别计数)
+        fetched           最近一轮抓取到的数量(已按源去重)
+        valid             最近一轮抓取后验证通过的数量
+        survival_rate     存活率 = valid / fetched
+        last_fetch_time   最近一次抓取时间
+    抓取统计来自 schedule 进程采集后写入数据库, server 重启后仍可读
+    """
     proxies = proxy_handler.getAll()
-    source_dict = {}
+    pool_dict = {}
     for proxy in proxies:
         for source in proxy.source.split('/'):
-            source_dict[source] = source_dict.get(source, 0) + 1
-    return {"source": source_dict, "count": len(proxies)}
+            if not source:
+                continue
+            pool_dict[source] = pool_dict.get(source, 0) + 1
+
+    stat_dict = proxy_handler.getSourceStat()
+
+    result = {}
+    for source in set(pool_dict) | set(stat_dict):
+        stat = stat_dict.get(source, {})
+        fetched = stat.get("fetched", 0)
+        valid = stat.get("valid", 0)
+        result[source] = {
+            "pool_count": pool_dict.get(source, 0),
+            "fetched": fetched,
+            "valid": valid,
+            "survival_rate": round(float(valid) / fetched, 4) if fetched else 0.0,
+            "last_fetch_time": stat.get("last_fetch_time", ""),
+        }
+    return {"source": result, "count": len(proxies)}
+
+
+@app.route('/count/speed/')
+def countSpeed():
+    """
+    校验速度统计: 最近 1/5/10 分钟内校验的 ip 数量与实际速度
+    时间戳由 schedule 进程写入数据库, 窗口按查询时刻滑动计算
+        {"1min": {"count": N, "speed": 个/秒}, "5min": {...}, "10min": {...}}
+    """
+    events = proxy_handler.getSpeedStat()
+    return {"speed": SpeedStat.summarize(events)}
 
 
 def runFlask():

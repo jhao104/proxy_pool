@@ -20,6 +20,7 @@ from datetime import datetime
 from helper.proxy import Proxy
 from helper.check import DoValidator, _ThreadChecker
 from helper.blacklist import FAIL_EXPIRE_TIME
+from util.six import Empty
 
 
 class TestDoValidator:
@@ -164,6 +165,54 @@ class TestDoValidator:
         mock_region.assert_not_called()
 
 
+class TestThreadCheckerSpeedStat:
+    """校验速度统计埋点"""
+
+    def _run_once(self, work_type):
+        mock_ph = MagicMock()
+        proxy = Proxy("1.2.3.4:8080", source="ip89")
+        proxy.last_status = True
+
+        checker = _make_checker(work_type, mock_ph)
+        checker.target_queue = MagicMock()
+        checker.target_queue.get.side_effect = [proxy, Empty()]
+
+        with patch("helper.check.DoValidator.validator", return_value=proxy), \
+             patch("helper.check.speed_stat") as mock_speed, \
+             patch("helper.check.source_stat"), \
+             patch("helper.check.fail_blacklist"):
+            checker.run()
+        return mock_speed
+
+    def test_raw_records_speed(self):
+        """raw 校验后记录一次时间戳"""
+        mock_speed = self._run_once("raw")
+        mock_speed.record.assert_called_once()
+
+    def test_use_records_speed(self):
+        """use 校验后记录一次时间戳"""
+        mock_speed = self._run_once("use")
+        mock_speed.record.assert_called_once()
+
+    def test_records_even_when_check_fails(self):
+        """校验失败也要计入速度统计"""
+        mock_ph = MagicMock()
+        proxy = Proxy("1.2.3.4:8080", source="ip89")
+        proxy.last_status = False
+        proxy.fake_flag = False
+
+        checker = _make_checker("use", mock_ph)
+        checker.target_queue = MagicMock()
+        checker.target_queue.get.side_effect = [proxy, Empty()]
+
+        with patch("helper.check.DoValidator.validator", return_value=proxy), \
+             patch("helper.check.speed_stat") as mock_speed, \
+             patch("helper.check.fail_blacklist") as mock_bl:
+            mock_bl.markFail.return_value = 0
+            checker.run()
+        mock_speed.record.assert_called_once()
+
+
 class TestRegionGetter:
     """DoValidator.regionGetter 测试"""
 
@@ -229,6 +278,45 @@ class TestThreadCheckerIfRaw:
         checker = _make_checker("raw", mock_ph)
         checker._ThreadChecker__ifRaw(proxy)
         mock_ph.put.assert_called_once_with(proxy)
+
+    def test_ifraw_pass_records_valid_count(self):
+        """验证通过的代理计入来源可用数"""
+        mock_ph = MagicMock()
+        mock_ph.exists.return_value = False
+
+        proxy = Proxy("1.2.3.4:8080", source="ip89")
+        proxy.last_status = True
+
+        checker = _make_checker("raw", mock_ph)
+        with patch("helper.check.source_stat") as mock_stat:
+            checker._ThreadChecker__ifRaw(proxy)
+        mock_stat.recordValid.assert_called_once_with(proxy)
+
+    def test_ifraw_existing_also_records_valid(self):
+        """已在池中的代理本轮验证通过, 也算该源可用"""
+        mock_ph = MagicMock()
+        mock_ph.exists.return_value = True
+
+        proxy = Proxy("1.2.3.4:8080", source="ip89")
+        proxy.last_status = True
+
+        checker = _make_checker("raw", mock_ph)
+        with patch("helper.check.source_stat") as mock_stat:
+            checker._ThreadChecker__ifRaw(proxy)
+        mock_stat.recordValid.assert_called_once_with(proxy)
+
+    def test_ifraw_failed_not_recorded_valid(self):
+        """验证失败不计入可用数"""
+        mock_ph = MagicMock()
+
+        proxy = Proxy("1.2.3.4:8080", source="ip89")
+        proxy.last_status = False
+
+        checker = _make_checker("raw", mock_ph)
+        with patch("helper.check.source_stat") as mock_stat, \
+             patch("helper.check.fail_blacklist"):
+            checker._ThreadChecker__ifRaw(proxy)
+        mock_stat.recordValid.assert_not_called()
 
     def test_ifraw_existing_proxy_skipped(self):
         """last_status=True, exists=True -> 不 put"""

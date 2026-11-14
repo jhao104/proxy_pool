@@ -9,6 +9,7 @@
    Change Activity:
                    2016/12/03:
                    2020/05/26: 区分http和https
+                   2026/11/14: 新增采集统计的保存与查询
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -84,3 +85,33 @@ class ProxyHandler(object):
         """
         total_use_proxy = self.db.getCount()
         return {'count': total_use_proxy}
+
+    def saveSourceStat(self, stat_dict):
+        """
+        保存各源采集统计
+        :param stat_dict: {source: {fetched, valid, last_fetch_time}}
+        :return:
+        """
+        return self.db.putSourceStat(stat_dict)
+
+    def getSourceStat(self):
+        """
+        读取各源采集统计
+        :return: {source: {fetched, valid, last_fetch_time}}
+        """
+        return self.db.getSourceStat()
+
+    def saveSpeedStat(self, events):
+        """
+        保存校验时间戳列表
+        :param events: 时间戳列表
+        :return:
+        """
+        return self.db.putSpeedStat(events)
+
+    def getSpeedStat(self):
+        """
+        读取校验时间戳列表
+        :return: 时间戳列表
+        """
+        return self.db.getSpeedStat()

@@ -87,6 +87,24 @@ PROXY_FETCHER_EXCLUDE = ["MySourceFetcher"]
 | 属性 | 类型 | 默认值 | 说明 |
 |------|------|--------|------|
 | `enabled` | bool | `True` | 是否启用 |
+| `interval` | int | `0` | 最短抓取间隔（秒）。`0` 表示每轮采集都抓取；大于 `0` 时，距上次抓取未满该秒数则跳过本轮 |
+
+### 按源控制抓取频率
+
+默认所有源跟随调度器每轮采集（5 分钟）。若某个源有严格限流或更新很慢，可在子类声明 `interval`（秒），采集时未到期的源会被直接跳过：
+
+```python
+class SlowSourceFetcher(BaseFetcher):
+    name = "slowsource"
+    url = "https://example.com"
+    interval = 2 * 60 * 60   # 每 2 小时最多抓一次
+```
+
+注意：
+
+- `interval` 状态保存在进程内存中，重启后会立即抓取一次。
+- 抓取时间在抓取开始前记录，因此抓取失败也会等到间隔到期后再重试，避免反复触发源站限流。
+- 若池内数量低于 `POOL_SIZE_MIN` 触发的补采，同样遵守 `interval`，不会绕过限制。
 
 ### 必须实现的方法
 

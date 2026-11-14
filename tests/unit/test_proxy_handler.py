@@ -176,3 +176,23 @@ class TestProxyHandlerGetCount:
         result = handler.getCount()
 
         assert result == {"count": 42}
+
+
+class TestProxyHandlerSourceStat:
+    """采集统计读写测试"""
+
+    def test_saveSourceStat_delegates_to_db(self):
+        handler = _make_handler()
+        stat = {"ip89": {"fetched": 10, "valid": 4, "last_fetch_time": "2026-11-14 10:00:00"}}
+
+        handler.saveSourceStat(stat)
+
+        handler._mock_db.putSourceStat.assert_called_once_with(stat)
+
+    def test_getSourceStat_delegates_to_db(self):
+        handler = _make_handler()
+        handler._mock_db.getSourceStat.return_value = {"ip89": {"fetched": 1}}
+
+        result = handler.getSourceStat()
+
+        assert result == {"ip89": {"fetched": 1}}

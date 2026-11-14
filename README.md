@@ -208,6 +208,7 @@ class MyProxyFetcher(BaseFetcher):
   | FreeVPNNode  |  ✔    | ★★   | *   | [地址](https://cn.freevpnnode.com)                  | [`freevpnnode.py`](/fetcher/sources/freevpnnode.py)     |
   | Geonode      |  ✔    | ★★   | **  | [地址](https://geonode.com)                         | [`geonode.py`](/fetcher/sources/geonode.py)             |
   | RoundProxies |  ✔    | ★    | *   | [地址](https://roundproxies.com/free-proxy-list)    | [`roundproxies.py`](/fetcher/sources/roundproxies.py)   |
+  | 站大爷(开放接口) |  ✔   | ★★   | **  | [地址](http://www.zdopen.com/FreeProxy/Get/)        | [`zdopen.py`](/fetcher/sources/zdopen.py)               |
 
   
   如果还有其他好的免费代理网站, 可以在提交在[issues](https://github.com/jhao104/proxy_pool/issues/71), 下次更新时会考虑在项目中支持。

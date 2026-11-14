@@ -15,7 +15,7 @@
 - `db/` — `dbClient.py` 抽象接口 + `redisClient.py` / `ssdbClient.py` 实现
 - `handler/` — `configHandler.py`（配置+环境变量覆盖）、`proxyHandler.py`（业务 CRUD）、`logHandler.py`
 - `helper/` — `proxy.py`（Proxy 模型，JSON 序列化）、`validator.py`（验证）、`scheduler.py`（APScheduler 调度）、`fetch.py`（fetcher 发现/加载）、`launcher.py`（启动器）、`check.py`
-- `api/` — `proxyApi.py` Flask 接口（`/get` `/pop` `/all` `/count` `/count/source` `/delete`）
+- `api/` — `proxyApi.py` Flask 接口（`/get` `/pop` `/all` `/count` `/count/source` `/count/speed` `/delete`）
 - `util/` — `singleton.py`（单例元类）、`lazyProperty.py`、`six.py`（内置的 six 副本，勿用 pip six 替代）、`webRequest.py`
 - `docs/` — mkdocs 文档；`tests/` — unit / api / integration 三层
 
