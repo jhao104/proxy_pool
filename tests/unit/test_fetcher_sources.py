@@ -423,69 +423,124 @@ class TestRoundProxiesFetcher(object):
 
 class TestZdopenFetcher(object):
 
-    @patch("fetcher.sources.zdopen.WebRequest")
-    def test_fetch(self, mock_wr):
-        from fetcher.sources.zdopen import ZdopenFetcher
-        json_data = {
+    @staticmethod
+    def _ok(rows):
+        return {
             "code": "10001",
             "msg": "获取成功",
-            "data": {
-                "count": 2,
-                "proxy_list": [
-                    {"ip": "1.2.3.4", "port": 8080, "protocol": "http"},
-                    {"ip": "5.6.7.8", "port": 3128, "protocol": "http"},
-                ],
-            },
+            "data": {"count": len(rows), "proxy_list": rows},
         }
-        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+
+    @patch("fetcher.sources.zdopen.sleep", return_value=None)
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_fetch(self, mock_wr, mock_sleep):
+        from fetcher.sources.zdopen import ZdopenFetcher
+        mock_wr.return_value.get.return_value = _make_response(
+            json_data=self._ok([
+                {"ip": "1.2.3.4", "port": 8080, "protocol": "http"},
+                {"ip": "5.6.7.8", "port": 3128, "protocol": "http"},
+            ]))
         result = list(ZdopenFetcher().fetch())
         assert "1.2.3.4:8080" in result
         assert "5.6.7.8:3128" in result
 
+    @patch("fetcher.sources.zdopen.sleep", return_value=None)
     @patch("fetcher.sources.zdopen.WebRequest")
-    def test_fetch_filters_non_http(self, mock_wr):
+    def test_fetch_covers_all_isp(self, mock_wr, mock_sleep):
+        """每轮依次请求全部运营商"""
+        from fetcher.sources.zdopen import ZdopenFetcher
+        mock_wr.return_value.get.return_value = _make_response(json_data=self._ok([]))
+        list(ZdopenFetcher().fetch())
+        urls = [c[0][0] for c in mock_wr.return_value.get.call_args_list]
+        assert len(urls) == len(ZdopenFetcher.isp_list)
+        assert "isp=%E7%94%B5%E4%BF%A1" in urls[0]        # 电信
+        assert "isp=%E8%81%94%E9%80%9A" in urls[1]        # 联通
+        assert "isp=%E7%A7%BB%E5%8A%A8" in urls[2]        # 移动
+        assert "isp=%E9%98%BF%E9%87%8C%E4%BA%91" in urls[5]  # 阿里云
+        assert "isp=%E8%85%BE%E8%AE%AF%E4%BA%91" in urls[6]  # 腾讯云
+
+    @patch("fetcher.sources.zdopen.sleep", return_value=None)
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_request_interval_between_requests(self, mock_wr, mock_sleep):
+        """请求之间按限流间隔休眠, 首个请求不休眠"""
+        from fetcher.sources.zdopen import ZdopenFetcher
+        mock_wr.return_value.get.return_value = _make_response(json_data=self._ok([]))
+        list(ZdopenFetcher().fetch())
+
+        assert mock_sleep.call_count == len(ZdopenFetcher.isp_list) - 1
+        for c in mock_sleep.call_args_list:
+            assert c[0][0] == ZdopenFetcher.request_interval
+
+    @patch("fetcher.sources.zdopen.sleep", return_value=None)
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_dedup_across_isp(self, mock_wr, mock_sleep):
+        """同一代理在不同运营商下只产出一次"""
+        from fetcher.sources.zdopen import ZdopenFetcher
+        mock_wr.return_value.get.return_value = _make_response(
+            json_data=self._ok([{"ip": "1.2.3.4", "port": 8080, "protocol": "http"}]))
+        result = list(ZdopenFetcher().fetch())
+        assert result.count("1.2.3.4:8080") == 1
+
+    @patch("fetcher.sources.zdopen.sleep", return_value=None)
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_fetch_filters_non_http(self, mock_wr, mock_sleep):
         """socks 代理池内无法验证, 应被过滤"""
         from fetcher.sources.zdopen import ZdopenFetcher
-        json_data = {
-            "code": "10001",
-            "data": {"proxy_list": [
+        mock_wr.return_value.get.return_value = _make_response(
+            json_data=self._ok([
                 {"ip": "1.2.3.4", "port": 8080, "protocol": "http"},
                 {"ip": "9.9.9.9", "port": 1080, "protocol": "socks5"},
-            ]},
-        }
-        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+            ]))
         result = list(ZdopenFetcher().fetch())
         assert "1.2.3.4:8080" in result
         assert "9.9.9.9:1080" not in result
 
+    @patch("fetcher.sources.zdopen.sleep", return_value=None)
     @patch("fetcher.sources.zdopen.WebRequest")
-    def test_fetch_error_code_returns_empty(self, mock_wr):
+    def test_fetch_error_code_returns_empty(self, mock_wr, mock_sleep):
         """接口返回非成功 code 时不 yield"""
         from fetcher.sources.zdopen import ZdopenFetcher
-        json_data = {"code": "10002", "msg": "请求过于频繁", "data": {}}
-        mock_wr.return_value.get.return_value = _make_response(json_data=json_data)
+        mock_wr.return_value.get.return_value = _make_response(
+            json_data={"code": "10002", "msg": "请求过于频繁", "data": {}})
         result = list(ZdopenFetcher().fetch())
         assert result == []
 
+    @patch("fetcher.sources.zdopen.sleep", return_value=None)
     @patch("fetcher.sources.zdopen.WebRequest")
-    def test_fetch_empty_data_returns_empty(self, mock_wr):
+    def test_fetch_empty_data_returns_empty(self, mock_wr, mock_sleep):
         from fetcher.sources.zdopen import ZdopenFetcher
         mock_wr.return_value.get.return_value = _make_response(json_data={})
         result = list(ZdopenFetcher().fetch())
         assert result == []
+
+    @patch("fetcher.sources.zdopen.sleep", return_value=None)
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_one_isp_failure_does_not_abort_others(self, mock_wr, mock_sleep):
+        """某个运营商请求异常时继续抓其余运营商"""
+        from fetcher.sources.zdopen import ZdopenFetcher
+        ok = _make_response(json_data=self._ok(
+            [{"ip": "5.6.7.8", "port": 3128, "protocol": "http"}]))
+
+        def side_effect(url, **kwargs):
+            if "isp=%E7%94%B5%E4%BF%A1" in url:      # 电信: 抛异常
+                raise RuntimeError("boom")
+            return ok
+
+        mock_wr.return_value.get.side_effect = side_effect
+        result = list(ZdopenFetcher().fetch())
+        assert "5.6.7.8:3128" in result
+
+    @patch("fetcher.sources.zdopen.sleep", return_value=None)
+    @patch("fetcher.sources.zdopen.WebRequest")
+    def test_no_retry_to_avoid_rate_limit(self, mock_wr, mock_sleep):
+        """不重试, 避免失败重试叠加请求次数超出限流"""
+        from fetcher.sources.zdopen import ZdopenFetcher
+        mock_wr.return_value.get.return_value = _make_response(json_data=self._ok([]))
+        list(ZdopenFetcher().fetch())
+        for c in mock_wr.return_value.get.call_args_list:
+            assert c[1].get("retry_time") == 1
 
     def test_interval_is_two_hours(self):
         """接口限流严格, 抓取间隔应为 2 小时"""
         from fetcher.sources.zdopen import ZdopenFetcher
         assert ZdopenFetcher.interval == 2 * 60 * 60
-
-    @patch("fetcher.sources.zdopen.WebRequest")
-    def test_isp_appended_when_set(self, mock_wr):
-        """设置 isp 时附加编码后的运营商参数"""
-        from fetcher.sources.zdopen import ZdopenFetcher
-        mock_wr.return_value.get.return_value = _make_response(json_data={})
-        fetcher = ZdopenFetcher()
-        fetcher.isp = "电信"
-        list(fetcher.fetch())
-        url = mock_wr.return_value.get.call_args[0][0]
-        assert "isp=%E7%94%B5%E4%BF%A1" in url

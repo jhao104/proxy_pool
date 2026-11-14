@@ -82,6 +82,8 @@ class ZdopenFetcher(BaseFetcher):
 
 `interval = 0`（默认）表示每轮都抓取。
 
+注意 `interval` 控制的是**两轮之间的最小间隔**，不限制单轮内的请求次数。像站大爷开放接口这种需要按运营商逐个抓取的源，单轮内会依次发多个请求，请求间隔由源文件里的 `request_interval` 控制（见 `fetcher/sources/zdopen.py`）。
+
 ## 校验配置
 
 ### `HTTP_URL`
