@@ -8,6 +8,7 @@
 -------------------------------------------------
    Change Activity:
                    2026/05/31:
+                   2026/11/21: 增加 fps 免费代理页面
 -------------------------------------------------
 """
 __author__ = 'JHao'
@@ -28,6 +29,7 @@ class KuaidailiFetcher(BaseFetcher):
         url_pattern = [
             'https://www.kuaidaili.com/free/inha/{}/',
             'https://www.kuaidaili.com/free/intr/{}/',
+            'https://www.kuaidaili.com/free/fps/{}/',
         ]
         url_list = []
         for page_index in range(1, page_count + 1):
